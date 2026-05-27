@@ -334,13 +334,9 @@
 
         /* Other UI components */
         .sender-filter-sidebar { width: 260px; height: 75vh; background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; }
-        #sidebarPanelsContainer { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
         .sender-filter-panel { display: none; flex: 1; flex-direction: column; }
         .sender-filter-panel.active { display: flex; min-height: 0; overflow: hidden; }
-        .sender-filter-list { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 8px; scrollbar-width: thin; }
-        .sender-filter-list::-webkit-scrollbar { width: 8px; }
-        .sender-filter-list::-webkit-scrollbar-thumb { background: rgba(100,116,139,0.45); border-radius: 999px; }
-        .sender-filter-list::-webkit-scrollbar-track { background: transparent; }
+        .sender-filter-list { flex: 1; overflow-y: auto; padding: 8px; }
         .sender-filter-item { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.8rem; background: transparent; color: var(--text-color); }
         .sender-filter-item.active { background: var(--primary); color: white; border-color: var(--primary); }
         
@@ -1079,7 +1075,7 @@
                 <span id="fileNameDisplay"></span>
                 <span id="fileSourceBadge" class="badge rounded-pill" style="font-size:0.65rem;font-weight:800;padding:2px 8px;flex-shrink:0"></span>
             </div>
-            <div class="d-flex align-items-center gap-2 px-3 py-1 rounded-pill flex-shrink-0" style="font-size:0.8rem;font-weight:600;background:rgba(100,116,139,0.15);color:var(--text-color)" id="employeeBadge" title="اسم الحساب">
+            <div class="d-flex align-items-center gap-2 px-3 py-1 rounded-pill flex-shrink-0" style="font-size:0.8rem;font-weight:600;background:rgba(100,116,139,0.15);color:var(--text-color);cursor:pointer" id="employeeBadge" onclick="promptEmployeeName()" title="اضغط لتغيير اسم الموظف">
                 <i class="fas fa-user"></i>
                 <span id="employeeNameDisplay">موظف</span>
             </div>
@@ -1439,7 +1435,7 @@
     }
 
     function getEmployeeName() {
-        return getLoggedInEmployeeName();
+        return String(localStorage.getItem('employee_name') || '').trim() || getLoggedInEmployeeName();
     }
 
     function setEmployeeNameDisplay(name) {
@@ -1448,16 +1444,46 @@
     }
 
     function promptEmployeeName() {
-        setEmployeeNameDisplay(getEmployeeName());
+        Swal.fire({
+            title: 'اسم الموظف',
+            input: 'text',
+            inputValue: getEmployeeName() || '',
+            showCancelButton: true,
+            confirmButtonText: 'حفظ',
+            cancelButtonText: 'إلغاء',
+            reverseButtons: true
+        }).then(r => {
+            if (r.isConfirmed && r.value) {
+                localStorage.setItem('employee_name', r.value);
+                setEmployeeNameDisplay(r.value);
+            }
+        });
     }
 
     async function ensureEmployeeName() {
         const name = getEmployeeName();
         if (name) {
+            localStorage.setItem('employee_name', name);
             setEmployeeNameDisplay(name);
             return name;
         }
-        return '';
+        const result = await Swal.fire({
+            title: 'اسم الموظف مطلوب',
+            text: 'يرجى إدخال اسمك قبل إجراء أي تعديل',
+            input: 'text',
+            inputPlaceholder: 'اسم الموظف',
+            showCancelButton: true,
+            confirmButtonText: 'حفظ',
+            cancelButtonText: 'إلغاء',
+            reverseButtons: true,
+            inputValidator: v => v ? null : 'يجب إدخال الاسم'
+        });
+        if (result.isConfirmed && result.value) {
+            localStorage.setItem('employee_name', result.value);
+            setEmployeeNameDisplay(result.value);
+            return result.value;
+        }
+        return null;
     }
 
     function showFileName(name, source) {
@@ -3562,6 +3588,7 @@
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) document.body.setAttribute('data-bs-theme', savedTheme);
     const empName = getEmployeeName();
+    if (empName) localStorage.setItem('employee_name', empName);
     setEmployeeNameDisplay(empName);
     updateClearFiltersBtnState();
     checkInitialRestore();

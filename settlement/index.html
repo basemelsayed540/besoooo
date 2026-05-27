@@ -60,6 +60,18 @@
             position: relative; overflow: hidden; display: flex; flex-direction: column;
             justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); min-height: 85px;
         }
+        .toolbar-stat-slot { position: relative; min-height: 85px; }
+        .toolbar-stat-slot .toolbar-stat-card { width: 100%; height: 100%; }
+        .stat-admin-back-btn {
+            position: absolute; top: 7px; left: 8px; z-index: 5;
+            width: 28px; height: 28px; border-radius: 50%;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.92); color: var(--primary);
+            border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(15,23,42,0.12);
+            text-decoration: none; font-size: 0.78rem;
+        }
+        [data-bs-theme="dark"] .stat-admin-back-btn { background: rgba(30,41,59,0.95); color: #bfdbfe; }
+        .stat-admin-back-btn:hover { color: #fff; background: var(--primary); border-color: var(--primary); }
 
         .toolbar-stat-icon {
             position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
@@ -811,9 +823,6 @@
     </style>
 </head>
 <body>
-    <a href="../index.html#/admin" title="العودة إلى تبويبات لوحة المدير" style="position:fixed;top:14px;right:14px;z-index:3000;background:#3b82f6;color:#fff;text-decoration:none;border-radius:999px;padding:10px 16px;font:700 13px 'Cairo',sans-serif;box-shadow:0 10px 20px rgba(15,23,42,.18);">
-        العودة إلى لوحة المدير
-    </a>
 
 <div id="globalLoading" class="loading-overlay" style="display: none;">
     <div class="loading-card">
@@ -991,7 +1000,7 @@
                     <p>تقسيم الشحنات حسب اسم الراسل ورفع ملف منفصل لكل راسل</p>
                 </div>
             </div>
-            <div class="export-option-card" id="exportCacheOption">
+            <div class="export-option-card" id="exportCacheOption" style="display:none">
                 <div class="export-option-icon" style="background:rgba(16,185,129,0.12);color:#10b981"><i class="fas fa-file-archive"></i></div>
                 <div class="export-option-text">
                     <h4>تصدير الملف المحفوظ</h4>
@@ -1006,11 +1015,16 @@
     <!-- Professional Stats Cards -->
     <div class="toolbar-card">
         <div class="toolbar-stats-cards">
-            <button type="button" class="toolbar-stat-card toolbar-stat-filter card-total" data-stat-filter="total">
-                <i class="fas fa-boxes toolbar-stat-icon"></i>
-                <span class="toolbar-stat-label">إجمالي الشحنات</span>
-                <strong id="totalRowsCount" class="toolbar-stat-value">0</strong>
-            </button>
+            <div class="toolbar-stat-slot">
+                <a href="../index.html#/admin" class="stat-admin-back-btn" title="العودة إلى لوحة المدير" aria-label="العودة إلى لوحة المدير">
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <button type="button" class="toolbar-stat-card toolbar-stat-filter card-total" data-stat-filter="total">
+                    <i class="fas fa-boxes toolbar-stat-icon"></i>
+                    <span class="toolbar-stat-label">إجمالي الشحنات</span>
+                    <strong id="totalRowsCount" class="toolbar-stat-value">0</strong>
+                </button>
+            </div>
             <button type="button" class="toolbar-stat-card toolbar-stat-filter card-visible active" data-stat-filter="visible">
                 <i class="fas fa-eye toolbar-stat-icon"></i>
                 <span class="toolbar-stat-label">الظاهر الآن</span>
@@ -1055,9 +1069,6 @@
             <button id="loadDailyFromDatabaseBtn" type="button" class="btn btn-primary btn-sm rounded-pill px-4" style="display:none">
                 <i class="fas fa-database me-1"></i> عرض بيانات اليومية
             </button>
-            <button id="refreshDailyFilterBtn" type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" title="تحديث اليوميات">
-                <i class="fas fa-sync-alt"></i>
-            </button>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mt-3 gap-3" id="fileNameRow" style="display:none">
@@ -1073,15 +1084,7 @@
         </div>
 
         <div class="d-flex justify-content-end gap-2 mt-2">
-            <button id="errorLogBtn" class="btn btn-light btn-sm rounded-circle shadow-sm position-relative" title="سجل الأخطاء البرمجية">
-                <i class="fas fa-bug"></i>
-                <span id="errorBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light" style="font-size:0.55rem;display:none">0</span>
-            </button>
-            <button id="themeToggleBtn" class="btn btn-light btn-sm rounded-circle shadow-sm"><i class="fas fa-moon"></i></button>
-            <button id="qrActionBtn" class="btn btn-light btn-sm rounded-circle shadow-sm" type="button" title="QR"><i class="fas fa-qrcode"></i></button>
-            <button id="dashboardBtn" class="btn btn-light btn-sm rounded-circle shadow-sm" title="لوحة الإحصائيات"><i class="fas fa-chart-line"></i></button>
             <button id="undoBtn" class="btn btn-light btn-sm rounded-circle shadow-sm" title="تراجع" disabled><i class="fas fa-undo"></i></button>
-            <button id="historyBtn" class="btn btn-light btn-sm rounded-circle shadow-sm" title="سجل العمليات"><i class="fas fa-history"></i></button>
             <button id="clearFiltersBtn" class="btn btn-outline-danger btn-sm rounded-pill">مسح الفلاتر</button>
             <button id="printLabelsBtn" class="btn btn-outline-dark btn-sm rounded-pill px-4">
                 <i class="fas fa-print me-1"></i> طباعة البوليصات
@@ -1126,6 +1129,17 @@
         <section class="shipments-table-wrapper">
             <div class="table-top-controls">
                 <input type="text" id="globalSearchInput" class="form-control form-control-sm rounded-pill" placeholder="🔍 بحث سريع في البيانات...">
+                <button id="refreshDailyFilterBtn" type="button" class="btn btn-outline-secondary btn-sm rounded-circle shadow-sm flex-shrink-0" title="تحديث اليوميات">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button id="qrActionBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" type="button" title="QR"><i class="fas fa-qrcode"></i></button>
+                <button id="themeToggleBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="الوضع الليلي"><i class="fas fa-moon"></i></button>
+                <button id="historyBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="سجل العمليات"><i class="fas fa-history"></i></button>
+                <button id="errorLogBtn" class="btn btn-light btn-sm rounded-circle shadow-sm position-relative flex-shrink-0" title="سجل الأخطاء البرمجية">
+                    <i class="fas fa-bug"></i>
+                    <span id="errorBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light" style="font-size:0.55rem;display:none">0</span>
+                </button>
+                <button id="dashboardBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="لوحة الإحصائيات"><i class="fas fa-chart-line"></i></button>
                 <button id="columnsConfigBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="تنسيق الأعمدة"><i class="fas fa-columns"></i></button>
             </div>
             <div class="table-scroll-viewport">
@@ -1495,11 +1509,9 @@
                 badge.style.background = 'rgba(255,255,255,0.25)';
                 badge.style.color = '#fff';
             } else {
-                badge.innerText = 'مخبأ';
-                container.style.background = 'var(--primary)';
-                container.style.color = '#fff';
-                badge.style.background = 'rgba(255,255,255,0.25)';
-                badge.style.color = '#fff';
+                row.style.display = 'none';
+                span.innerText = '';
+                badge.innerText = '';
             }
         } else {
             row.style.display = 'none';
@@ -1851,6 +1863,7 @@
         btn.classList.toggle('btn-danger', !hasChanges);
         saveToLocalStorage();
         document.getElementById('uploadShipmentsBtn').disabled = !fullDataset.length;
+        document.getElementById('exportSavedBtn').disabled = !fullDataset.length;
     }
 
     function toggleColFilter(c, b) {
@@ -2253,17 +2266,36 @@
     async function bulkAssignStatus(status) {
         if (!await ensureEmployeeName()) return;
         let count = 0;
+        const shouldClearStatusDetails = normalize(status) === 'قيد التوصيل';
+        const setFieldValueIfChanged = (row, id, col, newVal) => {
+            const oldFieldVal = row[col] ?? '';
+            if (normalize(oldFieldVal) === normalize(newVal)) return;
+            actionHistory.push({ id: parseInt(id), col, oldVal: oldFieldVal, newVal, time: new Date() });
+            if (!modifiedCells.has(id + '_' + col)) modifiedCells.set(id + '_' + col, oldFieldVal);
+            else if (normalize(newVal) === normalize(modifiedCells.get(id + '_' + col))) modifiedCells.delete(id + '_' + col);
+            row[col] = newVal;
+        };
+        const clearFieldIfNeeded = (row, id, col) => {
+            const oldFieldVal = row[col];
+            if (!normalize(oldFieldVal)) return;
+            setFieldValueIfChanged(row, id, col, '');
+        };
         selectedIds.forEach(id => {
             errorCache.delete(parseInt(id));
             const r = fullDataset.find(x => x._id == id);
             if (r && normalize(r.status) !== status) {
                 const oldVal = r.status;
+                const wasPending = normalize(oldVal).includes('معلق');
                 actionHistory.push({ id: parseInt(id), col: 'status', oldVal, newVal: status, time: new Date() });
                 
                 if (!modifiedCells.has(id + '_status')) modifiedCells.set(id + '_status', oldVal);
                 else if (normalize(status) === normalize(modifiedCells.get(id + '_status'))) modifiedCells.delete(id + '_status');
 
                 r.status = status;
+                if (shouldClearStatusDetails && wasPending) {
+                    clearFieldIfNeeded(r, id, 'السعر بعد التعديل');
+                    clearFieldIfNeeded(r, id, 'سبب الحالة');
+                }
                 count++;
             }
         });
@@ -2454,7 +2486,7 @@
                     if (!String(key).startsWith(prefix)) return;
                     const col = String(key).slice(prefix.length);
                     const dbCol = internalToUpload[col] || Object.keys(colMap).find(k => colMap[k] === col) || col;
-                    if (dbCol && dbCol !== '_id') record[dbCol] = row[col] ?? null;
+                    if (dbCol && dbCol !== '_id' && canWriteUploadCol(dbCol)) record[dbCol] = row[col] ?? null;
                 });
                 record['اسم الموظف'] = empName;
                 record['حدث'] = row['حدث'] || 'تعديل من لوحة التسوية';
@@ -2698,39 +2730,13 @@
         });
     };
 
-    // IndexedDB Persistence
+    // Browser file-cache is disabled; data now comes from the selected daily database filter.
     async function saveToCache(file, buffer) {
-        try {
-            const db = await openDB();
-            const tx = db.transaction("files", "readwrite");
-            tx.objectStore("files").put({ name: file.name, data: buffer, time: Date.now() }, "lastFile");
-            document.getElementById('exportSavedBtn').disabled = false;
-        } catch(e) {}
+        return;
     }
 
     async function exportSavedCopy() {
-        try {
-            const db = await openDB();
-            const entry = await new Promise(r => {
-                const req = db.transaction("files").objectStore("files").get("lastFile");
-                req.onsuccess = () => r(req.result);
-            });
-            if (!entry) { Swal.fire('تنبيه', 'لا يوجد ملف محفوظ', 'info'); return; }
-            if (window.desktopAPI && window.desktopAPI.saveExcelToDesktop) {
-                await window.desktopAPI.saveExcelToDesktop({ name: entry.name, data: new Uint8Array(entry.data) });
-                Swal.fire('تم', 'تم تصدير الملف إلى سطح المكتب: ' + entry.name, 'success');
-            } else {
-                const blob = new Blob([entry.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = entry.name;
-                a.click();
-                URL.revokeObjectURL(a.href);
-                Swal.fire('تم', 'تم تحميل الملف: ' + entry.name, 'success');
-            }
-        } catch(e) {
-            Swal.fire('خطأ', 'فشل تصدير الملف المحفوظ', 'error');
-        }
+        Swal.fire('تنبيه', 'تم إلغاء حفظ نسخة داخل المتصفح. استخدم التصدير حسب المندوب أو الراسل.', 'info');
     }
 
     function openDB() {
@@ -2742,18 +2748,12 @@
         });
     }
 
-    // Initial check for last file
-    openDB().then(db => {
-        const req = db.transaction("files").objectStore("files").get("lastFile");
-        req.onsuccess = () => { if(req.result) { document.getElementById('exportSavedBtn').disabled = false; showFileName(req.result.name, 'cache'); } };
-    });
+    // Remove any old cached Excel copy from previous versions.
+    try { indexedDB.deleteDatabase("shipmentDB"); } catch(e) {}
 
-    // Update handleFile to save to cache
+    // Keep Excel opening direct to server upload without storing a browser copy.
     const originalHandleFile = handleFile;
     handleFile = async (file) => {
-        const reader = new FileReader();
-        reader.onload = (e) => saveToCache(file, e.target.result);
-        reader.readAsArrayBuffer(file);
         return originalHandleFile(file);
     };
 
@@ -3041,11 +3041,30 @@
         actionHistory = [];
         localStorage.removeItem(HISTORY_KEY);
     }
-    const SUPABASE_URL = "https://evrqxgnqwngokukqerps.supabase.co/rest/v1/elsayed";
-    const SUPABASE_USERS_URL = SUPABASE_URL.replace(/\/elsayed$/, '/users');
+    const SUPABASE_URL = "https://evrqxgnqwngokukqerps.supabase.co/rest/v1/abdo";
+    const SUPABASE_USERS_URL = SUPABASE_URL.replace(/\/abdo$/, '/users');
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2cnF4Z25xd25nb2t1a3FlcnBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5ODE3NjgsImV4cCI6MjA5MjU1Nzc2OH0.2Ym96D5j5iuTZ43rdxlZk8EMu6Pyg4XfX2NOdMhqqr4";
     let _serverRepAccounts = [];
     const UPLOAD_COLS = ["m", "اسم العميل", "العنوان", "الزون", "المنتج", "الهاتف", "هاتف بديل", "المبلغ", "الراسل", "كود الشحنة", "المندوب", "الحالة", "سبب الحالة", "السعر بعد التعديل", "ملاحظات", "تاريخ التحديث", "الصافي", "الشحن", "عدد", "تقفيل", "عمولة المندوب", "اسم الموظف", "حدث", "اليومية", "نوع المندوب", "ارشيف", "المندوب الفرعي", "عمولة المندوب الفرعي", "call_attempts", "last_contact_at", "last_contact_method"];
+    const ABDO_EXCLUDED_UPLOAD_COLS = new Set([
+        "m",
+        "\u0639\u062f\u062f",
+        "\u0627\u0631\u0634\u064a\u0641",
+        "\u0627\u0644\u0645\u0646\u062f\u0648\u0628 \u0627\u0644\u0641\u0631\u0639\u064a",
+        "\u0639\u0645\u0648\u0644\u0629 \u0627\u0644\u0645\u0646\u062f\u0648\u0628 \u0627\u0644\u0641\u0631\u0639\u064a",
+        "call_attempts",
+        "last_contact_at",
+        "last_contact_method"
+    ]);
+    function isAbdoTable() {
+        return /\/abdo(?:\?|$)/.test(SUPABASE_URL);
+    }
+    function getUploadCols() {
+        return isAbdoTable() ? UPLOAD_COLS.filter(c => !ABDO_EXCLUDED_UPLOAD_COLS.has(c)) : UPLOAD_COLS;
+    }
+    function canWriteUploadCol(col) {
+        return getUploadCols().includes(col);
+    }
 
     const internalToUpload = {
         sender: "الراسل", customerName: "اسم العميل", phone: "الهاتف", altPhone: "هاتف بديل",
@@ -3058,7 +3077,7 @@
 
     function rowToUploadRecord(row, idx) {
         const r = {};
-        UPLOAD_COLS.forEach(c => {
+        getUploadCols().forEach(c => {
             let val = "";
             if (c === "اسم العميل") {
                 val = row.customerName || row["اسم العميل"] || "";
@@ -3506,7 +3525,21 @@
     document.getElementById('uploadShipmentsBtn').onclick = uploadShipments;
     document.getElementById('loadDailyFromDatabaseBtn').onclick = loadSelectedDailyFromDatabase;
     document.getElementById('databaseDailyFilter').onchange = loadSelectedDailyFromDatabase;
-    document.getElementById('refreshDailyFilterBtn').onclick = loadDailyFilterOptions;
+    document.getElementById('refreshDailyFilterBtn').onclick = async () => {
+        if (modifiedCells && modifiedCells.size > 0) {
+            const result = await Swal.fire({
+                icon: 'warning',
+                title: 'تعديلات غير محفوظة',
+                text: 'تحديث اليوميات قد يعيد تحميل البيانات ويفقد التعديلات غير المحفوظة. هل تريد المتابعة؟',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، تحديث',
+                cancelButtonText: 'إلغاء',
+                confirmButtonColor: '#ef4444'
+            });
+            if (!result.isConfirmed) return;
+        }
+        await loadDailyFilterOptions();
+    };
     document.getElementById('exportSavedBtn').onclick = () => { document.getElementById('exportDialogOverlay').hidden = false; };
     document.getElementById('exportRepOption').onclick = () => { document.getElementById('exportDialogOverlay').hidden = true; exportByRep(); };
     document.getElementById('exportSenderOption').onclick = () => { document.getElementById('exportDialogOverlay').hidden = true; exportBySender(); };

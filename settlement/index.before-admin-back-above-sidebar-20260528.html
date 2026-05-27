@@ -74,16 +74,6 @@
         }
         [data-bs-theme="dark"] .stat-admin-back-btn { background: rgba(30,41,59,0.95); color: #bfdbfe; }
         .stat-admin-back-btn:hover { color: #fff; background: var(--primary); border-color: var(--primary); }
-        .sidebar-admin-back-btn {
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            margin: 10px; padding: 10px 12px; border-radius: 16px;
-            background: rgba(59,130,246,0.12); color: var(--primary);
-            border: 1px solid rgba(59,130,246,0.25); text-decoration: none;
-            font-size: 0.78rem; font-weight: 800; transition: all 0.2s;
-        }
-        .sidebar-admin-back-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-1px); }
-        [data-bs-theme="dark"] .sidebar-admin-back-btn { background: rgba(59,130,246,0.16); color: #bfdbfe; border-color: rgba(147,197,253,0.22); }
-        [data-bs-theme="dark"] .sidebar-admin-back-btn:hover { background: #2563eb; color: #fff; }
 
         .toolbar-stat-icon {
             position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
@@ -1057,6 +1047,9 @@
     <div class="toolbar-card settlement-toolbar-card">
         <div class="toolbar-stats-cards">
             <div class="toolbar-stat-slot">
+                <a href="../index.html#/admin" class="stat-admin-back-btn" title="العودة إلى لوحة المدير" aria-label="العودة إلى لوحة المدير">
+                    <i class="fas fa-arrow-right"></i>
+                </a>
                 <button type="button" class="toolbar-stat-card toolbar-stat-filter card-total" data-stat-filter="total">
                     <i class="fas fa-boxes toolbar-stat-icon"></i>
                     <span class="toolbar-stat-label">إجمالي الشحنات</span>
@@ -1138,10 +1131,6 @@
 
     <div class="d-flex gap-3">
         <aside class="sender-filter-sidebar">
-            <a href="../index.html#/admin" class="sidebar-admin-back-btn" title="العودة إلى لوحة المدير" aria-label="العودة إلى لوحة المدير">
-                <i class="fas fa-arrow-right"></i>
-                <span>العودة إلى لوحة المدير</span>
-            </a>
             <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center gap-1">
                     <strong class="small">الفلاتر الجانبية</strong>

@@ -48,8 +48,6 @@
             background: var(--card-bg); border-radius: 24px; border: 1px solid var(--border);
             padding: 1.5rem; margin-bottom: 1.8rem; box-shadow: 0 4px 12px rgba(0,0,0,0.02);
         }
-        .settlement-toolbar-card { margin-right: calc(260px + 1rem); }
-        @media (max-width: 900px) { .settlement-toolbar-card { margin-right: 0; } }
 
         .toolbar-stats-cards {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -74,16 +72,6 @@
         }
         [data-bs-theme="dark"] .stat-admin-back-btn { background: rgba(30,41,59,0.95); color: #bfdbfe; }
         .stat-admin-back-btn:hover { color: #fff; background: var(--primary); border-color: var(--primary); }
-        .sidebar-admin-back-btn {
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            margin: 10px; padding: 10px 12px; border-radius: 16px;
-            background: rgba(59,130,246,0.12); color: var(--primary);
-            border: 1px solid rgba(59,130,246,0.25); text-decoration: none;
-            font-size: 0.78rem; font-weight: 800; transition: all 0.2s;
-        }
-        .sidebar-admin-back-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-1px); }
-        [data-bs-theme="dark"] .sidebar-admin-back-btn { background: rgba(59,130,246,0.16); color: #bfdbfe; border-color: rgba(147,197,253,0.22); }
-        [data-bs-theme="dark"] .sidebar-admin-back-btn:hover { background: #2563eb; color: #fff; }
 
         .toolbar-stat-icon {
             position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
@@ -202,26 +190,6 @@
         [data-bs-theme="dark"] #bulkActionBar .input-group-text, [data-bs-theme="dark"] #bulkActionBar .form-control {
             background: rgba(255,255,255,0.05);
             color: #f8fafc;
-        }
-        [data-bs-theme="dark"] #bulkRepInput {
-            background: #0f172a !important;
-            color: #f8fafc !important;
-            border: 1px solid #475569 !important;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
-        }
-        [data-bs-theme="dark"] #bulkRepInput::placeholder {
-            color: #94a3b8;
-            opacity: 1;
-        }
-        [data-bs-theme="dark"] #bulkRepInput:focus {
-            background: #111827 !important;
-            border-color: #38bdf8 !important;
-            box-shadow: 0 0 0 3px rgba(56,189,248,0.22);
-        }
-        [data-bs-theme="dark"] #bulkActionBar .input-group-text {
-            border: 1px solid #475569 !important;
-            border-left: 0 !important;
-            color: #bfdbfe;
         }
         #bulkActionBar .dropdown-item:hover {
             background: rgba(59,130,246,0.08);
@@ -369,8 +337,7 @@
         }
 
         /* Other UI components */
-        .sender-filter-sidebar { width: 260px; height: calc(75vh + 140px); max-height: calc(100vh - 40px); margin-top: calc(-140px - 1.8rem); background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; }
-        @media (max-width: 900px) { .sender-filter-sidebar { height: 75vh; max-height: none; margin-top: 0; } }
+        .sender-filter-sidebar { width: 260px; height: 75vh; background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; }
         #sidebarPanelsContainer { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
         .sender-filter-panel { display: none; flex: 1; flex-direction: column; }
         .sender-filter-panel.active { display: flex; min-height: 0; overflow: hidden; }
@@ -1054,9 +1021,12 @@
 
 <div class="main-container">
     <!-- Professional Stats Cards -->
-    <div class="toolbar-card settlement-toolbar-card">
+    <div class="toolbar-card">
         <div class="toolbar-stats-cards">
             <div class="toolbar-stat-slot">
+                <a href="../index.html#/admin" class="stat-admin-back-btn" title="العودة إلى لوحة المدير" aria-label="العودة إلى لوحة المدير">
+                    <i class="fas fa-arrow-right"></i>
+                </a>
                 <button type="button" class="toolbar-stat-card toolbar-stat-filter card-total" data-stat-filter="total">
                     <i class="fas fa-boxes toolbar-stat-icon"></i>
                     <span class="toolbar-stat-label">إجمالي الشحنات</span>
@@ -1138,10 +1108,6 @@
 
     <div class="d-flex gap-3">
         <aside class="sender-filter-sidebar">
-            <a href="../index.html#/admin" class="sidebar-admin-back-btn" title="العودة إلى لوحة المدير" aria-label="العودة إلى لوحة المدير">
-                <i class="fas fa-arrow-right"></i>
-                <span>العودة إلى لوحة المدير</span>
-            </a>
             <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center gap-1">
                     <strong class="small">الفلاتر الجانبية</strong>
@@ -1915,39 +1881,11 @@
         document.getElementById('exportSavedBtn').disabled = !fullDataset.length;
     }
 
-    function getRowsForColumnFilterOptions(excludeCol) {
-        const search = (document.getElementById('globalSearchInput')?.value || '').toLowerCase();
-        let rows = fullDataset.filter(r => {
-            if(search && !r._search.includes(search)) return false;
-            if(activeSenderFilter.length > 0 && !activeSenderFilter.includes(r.sender)) return false;
-            if(activeRepFilter.length > 0 && !activeRepFilter.includes(r.rep)) return false;
-            if(activeStatusFilter.length > 0 && !activeStatusFilter.includes(r.status)) return false;
-
-            if(activeStatsFilter === 'withRep') return !!r.rep;
-            if(activeStatsFilter === 'withoutRep') return !r.rep;
-            if(activeStatsFilter === 'withoutPhone') return !r.phone && !r.altPhone;
-            if(activeStatsFilter === 'withoutAmount') return !r.amount || isNaN(parseFloat(r.amount));
-            if(activeStatsFilter === 'duplicate') return r._dup;
-            return true;
-        });
-        Object.entries(activeColumnFilters).forEach(([col, v]) => {
-            if(col === excludeCol || !v || !v.length) return;
-            if (Array.isArray(v)) {
-                rows = rows.filter(r => v.includes(normalize(r[col])));
-            } else {
-                const vl = v.toLowerCase();
-                rows = rows.filter(r => normalize(r[col]).toLowerCase().includes(vl));
-            }
-        });
-        return rows;
-    }
-
     function toggleColFilter(c, b) {
         const popup = document.createElement('div'); popup.className = 'column-filter-popup';
         popup.onclick = e => e.stopPropagation();
         const selected = new Set(activeColumnFilters[c] || []);
-        const optionRows = getRowsForColumnFilterOptions(c);
-        const opts = Array.from(new Set(optionRows.map(r => normalize(r[c])))).filter(Boolean).sort();
+        const opts = Array.from(new Set(fullDataset.map(r => normalize(r[c])))).filter(Boolean).sort();
         function esc(v) { return v.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
         function renderOpts(term) {
             return opts.filter(o => !term || o.toLowerCase().includes(term)).slice(0, 80).map(o =>

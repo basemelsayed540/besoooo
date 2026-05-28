@@ -28,58 +28,6 @@
         }
       })();
     </script>
-    <script>
-      (function() {
-        var KEY = 'app_scroll';
-        var lastY = 0;
-        var ticking = false;
-
-        function save() {
-          try { localStorage.setItem(KEY, String(window.scrollY)); } catch(e) {}
-        }
-
-        function restore() {
-          var val;
-          try { val = localStorage.getItem(KEY); } catch(e) {}
-          if (val) {
-            var y = parseInt(val, 10);
-            if (!isNaN(y)) {
-              var timer = setInterval(function() {
-                if (document.body.scrollHeight > y || document.querySelector('#root > *')) {
-                  window.scrollTo(0, y);
-                  clearInterval(timer);
-                }
-              }, 200);
-              setTimeout(function() { clearInterval(timer); }, 8000);
-            }
-          }
-        }
-
-        document.addEventListener('scroll', function() {
-          lastY = window.scrollY;
-          if (!ticking) {
-            ticking = true;
-            requestAnimationFrame(function() { ticking = false; save(); });
-          }
-        }, { passive: true });
-
-        window.addEventListener('beforeunload', save);
-        window.addEventListener('pagehide', save);
-        document.addEventListener('visibilitychange', function() {
-          if (document.hidden) save();
-        });
-        document.addEventListener('freeze', save);
-        window.addEventListener('pageshow', function(e) {
-          if (e.persisted) restore();
-        });
-
-        if (document.readyState === 'complete') {
-          restore();
-        } else {
-          window.addEventListener('load', restore);
-        }
-      })();
-    </script>
     <script type="module" crossorigin src="./assets/index-DSLXP2uv.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-Bj83hHVr.css">
   </head>

@@ -48,8 +48,14 @@
             background: var(--card-bg); border-radius: 24px; border: 1px solid var(--border);
             padding: 1.5rem; margin-bottom: 1.8rem; box-shadow: 0 4px 12px rgba(0,0,0,0.02);
         }
-        .settlement-toolbar-card { margin-right: calc(260px + 1rem); }
-        @media (max-width: 900px) { .settlement-toolbar-card { margin-right: 0; } }
+        .settlement-stats-frame {
+            margin-inline-start: calc(260px + 1rem);
+        }
+        @media (max-width: 991.98px) {
+            .settlement-stats-frame {
+                margin-inline-start: 0;
+            }
+        }
 
         .toolbar-stats-cards {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -65,25 +71,16 @@
         .toolbar-stat-slot { position: relative; min-height: 85px; }
         .toolbar-stat-slot .toolbar-stat-card { width: 100%; height: 100%; }
         .stat-admin-back-btn {
-            position: absolute; top: 7px; left: 8px; z-index: 5;
-            width: 28px; height: 28px; border-radius: 50%;
+            min-height: 34px; border-radius: 999px; padding: 0 12px; gap: 8px;
             display: inline-flex; align-items: center; justify-content: center;
             background: rgba(255,255,255,0.92); color: var(--primary);
             border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(15,23,42,0.12);
-            text-decoration: none; font-size: 0.78rem;
+            text-decoration: none; font-size: 0.78rem; font-weight: 800;
         }
+        .sidebar-back-row { padding: 10px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+        .sidebar-back-row .stat-admin-back-btn { width: 100%; }
         [data-bs-theme="dark"] .stat-admin-back-btn { background: rgba(30,41,59,0.95); color: #bfdbfe; }
         .stat-admin-back-btn:hover { color: #fff; background: var(--primary); border-color: var(--primary); }
-        .sidebar-admin-back-btn {
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            margin: 10px; padding: 10px 12px; border-radius: 16px;
-            background: rgba(59,130,246,0.12); color: var(--primary);
-            border: 1px solid rgba(59,130,246,0.25); text-decoration: none;
-            font-size: 0.78rem; font-weight: 800; transition: all 0.2s;
-        }
-        .sidebar-admin-back-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-1px); }
-        [data-bs-theme="dark"] .sidebar-admin-back-btn { background: rgba(59,130,246,0.16); color: #bfdbfe; border-color: rgba(147,197,253,0.22); }
-        [data-bs-theme="dark"] .sidebar-admin-back-btn:hover { background: #2563eb; color: #fff; }
 
         .toolbar-stat-icon {
             position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
@@ -203,25 +200,39 @@
             background: rgba(255,255,255,0.05);
             color: #f8fafc;
         }
-        [data-bs-theme="dark"] #bulkRepInput {
-            background: #0f172a !important;
-            color: #f8fafc !important;
-            border: 1px solid #475569 !important;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+        [data-bs-theme="dark"] #bulkActionBar .input-group {
+            background: rgba(15, 23, 42, 0.88);
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
         }
-        [data-bs-theme="dark"] #bulkRepInput::placeholder {
+        [data-bs-theme="dark"] #bulkActionBar .input-group-text,
+        [data-bs-theme="dark"] #bulkActionBar #bulkRepInput {
+            background: transparent !important;
+        }
+        [data-bs-theme="dark"] #bulkActionBar .input-group-text {
+            color: #93c5fd;
+            border-inline-end: 1px solid rgba(148, 163, 184, 0.22) !important;
+        }
+        [data-bs-theme="dark"] #bulkActionBar #bulkRepInput {
+            color: #f8fafc;
+            caret-color: #60a5fa;
+        }
+        [data-bs-theme="dark"] #bulkActionBar #bulkRepInput::placeholder {
             color: #94a3b8;
             opacity: 1;
         }
-        [data-bs-theme="dark"] #bulkRepInput:focus {
-            background: #111827 !important;
-            border-color: #38bdf8 !important;
-            box-shadow: 0 0 0 3px rgba(56,189,248,0.22);
+        [data-bs-theme="dark"] #bulkActionBar .input-group:focus-within {
+            border-color: rgba(96, 165, 250, 0.72);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18), 0 12px 26px rgba(0, 0, 0, 0.34) !important;
         }
-        [data-bs-theme="dark"] #bulkActionBar .input-group-text {
-            border: 1px solid #475569 !important;
-            border-left: 0 !important;
-            color: #bfdbfe;
+        [data-bs-theme="dark"] #bulkActionBar .input-group .btn-primary {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #fff;
+        }
+        [data-bs-theme="dark"] #bulkActionBar .input-group .btn-primary:hover {
+            background: #1d4ed8;
+            border-color: #1d4ed8;
         }
         #bulkActionBar .dropdown-item:hover {
             background: rgba(59,130,246,0.08);
@@ -283,11 +294,7 @@
         .col-std { min-width: 60px; position: relative; }
 
         /* Quick Assign */
-        .quick-assign-input { padding: 4px 8px; font-size: 0.75rem; border-radius: 15px; border: 1px solid var(--border); width: 100%; background: #fff; color: #0f172a; outline: none; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
-        .quick-assign-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
-        [data-bs-theme="dark"] .quick-assign-input { background: #0f172a; color: #f8fafc; border-color: #475569; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); }
-        [data-bs-theme="dark"] .quick-assign-input::placeholder { color: #94a3b8; opacity: 1; }
-        [data-bs-theme="dark"] .quick-assign-input:focus { background: #111827; border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56,189,248,0.22); }
+        .quick-assign-input { padding: 4px 8px; font-size: 0.75rem; border-radius: 15px; border: 1px solid var(--border); width: 100%; }
         .row-assign-trigger { background: #fb923c; color: white; border: none; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; cursor: pointer; width: 100%; overflow: hidden; text-overflow: ellipsis; }
         .row-assign-trigger.is-empty { background: #fdba74; }
 
@@ -369,15 +376,16 @@
         }
 
         /* Other UI components */
-        .sender-filter-sidebar { width: 260px; height: calc(75vh + 140px); max-height: calc(100vh - 40px); margin-top: calc(-140px - 1.8rem); background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; }
-        @media (max-width: 900px) { .sender-filter-sidebar { height: 75vh; max-height: none; margin-top: 0; } }
+        .sender-filter-sidebar { width: 260px; height: calc(75vh + 190px); margin-top: -220px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; }
+        #sidebarTabsContainer { flex-shrink: 0; }
         #sidebarPanelsContainer { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
         .sender-filter-panel { display: none; flex: 1; flex-direction: column; }
         .sender-filter-panel.active { display: flex; min-height: 0; overflow: hidden; }
-        .sender-filter-list { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 8px; scrollbar-width: thin; }
+        .sender-filter-list { flex: 1; min-height: 0; overflow-y: auto; padding: 8px; overscroll-behavior: contain; }
         .sender-filter-list::-webkit-scrollbar { width: 8px; }
-        .sender-filter-list::-webkit-scrollbar-thumb { background: rgba(100,116,139,0.45); border-radius: 999px; }
         .sender-filter-list::-webkit-scrollbar-track { background: transparent; }
+        .sender-filter-list::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.42); border-radius: 999px; }
+        .sender-filter-list::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.62); }
         .sender-filter-item { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 0.8rem; background: transparent; color: var(--text-color); }
         .sender-filter-item.active { background: var(--primary); color: white; border-color: var(--primary); }
         
@@ -1054,7 +1062,7 @@
 
 <div class="main-container">
     <!-- Professional Stats Cards -->
-    <div class="toolbar-card settlement-toolbar-card">
+    <div class="toolbar-card settlement-stats-frame">
         <div class="toolbar-stats-cards">
             <div class="toolbar-stat-slot">
                 <button type="button" class="toolbar-stat-card toolbar-stat-filter card-total" data-stat-filter="total">
@@ -1107,41 +1115,42 @@
             <button id="loadDailyFromDatabaseBtn" type="button" class="btn btn-primary btn-sm rounded-pill px-4" style="display:none">
                 <i class="fas fa-database me-1"></i> عرض بيانات اليومية
             </button>
-            <div class="d-flex justify-content-between align-items-center gap-3" id="fileNameRow" style="display:none">
+            <div class="d-flex align-items-center gap-2" id="fileNameRow" style="display:none;min-width:0;flex:1 1 320px">
             <div class="d-flex align-items-center gap-2 px-3 py-1 rounded-pill" style="font-size:0.85rem;font-weight:700;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:1;min-width:0" id="fileNameBadge" onclick="clickFileNameBadge()">
                 <i class="fas fa-file-excel"></i>
                 <span id="fileNameDisplay"></span>
                 <span id="fileSourceBadge" class="badge rounded-pill" style="font-size:0.65rem;font-weight:800;padding:2px 8px;flex-shrink:0"></span>
             </div>
-            <div class="d-flex align-items-center gap-2 px-3 py-1 rounded-pill flex-shrink-0" style="font-size:0.8rem;font-weight:600;background:rgba(100,116,139,0.15);color:var(--text-color)" id="employeeBadge" title="اسم الحساب">
+            <div class="d-flex align-items-center gap-2 px-3 py-1 rounded-pill flex-shrink-0" style="font-size:0.8rem;font-weight:600;background:rgba(100,116,139,0.15);color:var(--text-color);cursor:pointer" id="employeeBadge" onclick="promptEmployeeName()" title="اضغط لتغيير اسم الموظف">
                 <i class="fas fa-user"></i>
                 <span id="employeeNameDisplay">موظف</span>
             </div>
-            <span id="activeFilterDisplay" class="badge rounded-pill" style="display:none;font-size:0.75rem;font-weight:800;padding:5px 12px;flex-shrink:0;background:#f59e0b;color:#111827;max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
-        </div>
+            <button id="clearFiltersBtn" class="btn btn-outline-danger btn-sm rounded-pill flex-shrink-0">مسح الفلاتر</button>
+            </div>
         </div>
 
         <div class="d-flex justify-content-end gap-2 mt-2">
             <button id="undoBtn" class="btn btn-light btn-sm rounded-circle shadow-sm" title="تراجع" disabled><i class="fas fa-undo"></i></button>
-            <button id="clearFiltersBtn" class="btn btn-outline-danger btn-sm rounded-pill">مسح الفلاتر</button>
-            <button id="printLabelsBtn" class="btn btn-outline-dark btn-sm rounded-pill px-4">
-                <i class="fas fa-print me-1"></i> طباعة البوليصات
-            </button>
-            <button id="exportTemplateBtn" class="btn btn-outline-secondary btn-sm rounded-pill px-4">
-                <i class="fas fa-file-download me-1"></i> تحميل قالب فارغ
-            </button>
-            <button id="generateCodesBtn" class="btn btn-outline-warning btn-sm rounded-pill px-4">
-                <i class="fas fa-barcode me-1"></i> توليد أكواد فريدة
-            </button>
         </div>
     </div>
 
     <div class="d-flex gap-3">
         <aside class="sender-filter-sidebar">
-            <a href="../index.html#/admin" class="sidebar-admin-back-btn" title="العودة إلى لوحة المدير" aria-label="العودة إلى لوحة المدير">
-                <i class="fas fa-arrow-right"></i>
-                <span>العودة إلى لوحة المدير</span>
-            </a>
+            <div class="sidebar-back-row">
+                <a href="../index.html#/admin" class="stat-admin-back-btn" title="العودة إلى لوحة المدير" aria-label="العودة إلى لوحة المدير">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>العودة للمدير</span>
+                </a>
+                <button id="printLabelsBtn" class="btn btn-outline-dark btn-sm rounded-pill w-100">
+                    <i class="fas fa-print me-1"></i> طباعة البوليصات
+                </button>
+                <button id="exportTemplateBtn" class="btn btn-outline-secondary btn-sm rounded-pill w-100">
+                    <i class="fas fa-file-download me-1"></i> تحميل قالب فارغ
+                </button>
+                <button id="generateCodesBtn" class="btn btn-outline-warning btn-sm rounded-pill w-100">
+                    <i class="fas fa-barcode me-1"></i> توليد أكواد فريدة
+                </button>
+            </div>
             <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center gap-1">
                     <strong class="small">الفلاتر الجانبية</strong>
@@ -1477,7 +1486,7 @@
     }
 
     function getEmployeeName() {
-        return getLoggedInEmployeeName();
+        return String(localStorage.getItem('employee_name') || '').trim() || getLoggedInEmployeeName();
     }
 
     function setEmployeeNameDisplay(name) {
@@ -1486,16 +1495,46 @@
     }
 
     function promptEmployeeName() {
-        setEmployeeNameDisplay(getEmployeeName());
+        Swal.fire({
+            title: 'اسم الموظف',
+            input: 'text',
+            inputValue: getEmployeeName() || '',
+            showCancelButton: true,
+            confirmButtonText: 'حفظ',
+            cancelButtonText: 'إلغاء',
+            reverseButtons: true
+        }).then(r => {
+            if (r.isConfirmed && r.value) {
+                localStorage.setItem('employee_name', r.value);
+                setEmployeeNameDisplay(r.value);
+            }
+        });
     }
 
     async function ensureEmployeeName() {
         const name = getEmployeeName();
         if (name) {
+            localStorage.setItem('employee_name', name);
             setEmployeeNameDisplay(name);
             return name;
         }
-        return '';
+        const result = await Swal.fire({
+            title: 'اسم الموظف مطلوب',
+            text: 'يرجى إدخال اسمك قبل إجراء أي تعديل',
+            input: 'text',
+            inputPlaceholder: 'اسم الموظف',
+            showCancelButton: true,
+            confirmButtonText: 'حفظ',
+            cancelButtonText: 'إلغاء',
+            reverseButtons: true,
+            inputValidator: v => v ? null : 'يجب إدخال الاسم'
+        });
+        if (result.isConfirmed && result.value) {
+            localStorage.setItem('employee_name', result.value);
+            setEmployeeNameDisplay(result.value);
+            return result.value;
+        }
+        return null;
     }
 
     function showFileName(name, source) {
@@ -1529,42 +1568,6 @@
             row.style.display = 'none';
             span.innerText = '';
             badge.innerText = '';
-        }
-        updateActiveFilterDisplay();
-    }
-
-    function updateActiveFilterDisplay() {
-        const badge = document.getElementById('activeFilterDisplay');
-        const row = document.getElementById('fileNameRow');
-        if (!badge || !row || row.style.display === 'none') return;
-        const labels = [];
-        const addList = (title, values) => {
-            if (Array.isArray(values) && values.length) labels.push(title + ': ' + values.join(', '));
-        };
-        addList('الراسل', activeSenderFilter);
-        addList('المندوب', activeRepFilter);
-        addList('الحالة', activeStatusFilter);
-        const statLabels = {
-            total: 'كل الشحنات',
-            withRep: 'مع مندوب',
-            withoutRep: 'بدون مندوب',
-            withoutPhone: 'بدون هاتف',
-            withoutAmount: 'بدون مبلغ',
-            duplicate: 'مكرر'
-        };
-        if (activeStatsFilter && activeStatsFilter !== 'visible') labels.push('الإحصائية: ' + (statLabels[activeStatsFilter] || activeStatsFilter));
-        const columnFilterCount = Object.keys(activeColumnFilters || {}).filter(k => {
-            const v = activeColumnFilters[k];
-            return Array.isArray(v) ? v.length > 0 : !!v;
-        }).length;
-        if (columnFilterCount) labels.push('الأعمدة: ' + columnFilterCount);
-        const nextText = labels.join(' | ');
-        if (labels.length) {
-            if (badge.textContent !== nextText) badge.textContent = nextText;
-            if (badge.style.display === 'none') badge.style.display = '';
-        } else {
-            if (badge.textContent) badge.textContent = '';
-            if (badge.style.display !== 'none') badge.style.display = 'none';
         }
     }
 
@@ -1684,7 +1687,6 @@
 
         updateStats(); renderTable();
         updateClearFiltersBtnState();
-        updateActiveFilterDisplay();
     }
 
     function updateClearFiltersBtnState() {
@@ -1915,39 +1917,11 @@
         document.getElementById('exportSavedBtn').disabled = !fullDataset.length;
     }
 
-    function getRowsForColumnFilterOptions(excludeCol) {
-        const search = (document.getElementById('globalSearchInput')?.value || '').toLowerCase();
-        let rows = fullDataset.filter(r => {
-            if(search && !r._search.includes(search)) return false;
-            if(activeSenderFilter.length > 0 && !activeSenderFilter.includes(r.sender)) return false;
-            if(activeRepFilter.length > 0 && !activeRepFilter.includes(r.rep)) return false;
-            if(activeStatusFilter.length > 0 && !activeStatusFilter.includes(r.status)) return false;
-
-            if(activeStatsFilter === 'withRep') return !!r.rep;
-            if(activeStatsFilter === 'withoutRep') return !r.rep;
-            if(activeStatsFilter === 'withoutPhone') return !r.phone && !r.altPhone;
-            if(activeStatsFilter === 'withoutAmount') return !r.amount || isNaN(parseFloat(r.amount));
-            if(activeStatsFilter === 'duplicate') return r._dup;
-            return true;
-        });
-        Object.entries(activeColumnFilters).forEach(([col, v]) => {
-            if(col === excludeCol || !v || !v.length) return;
-            if (Array.isArray(v)) {
-                rows = rows.filter(r => v.includes(normalize(r[col])));
-            } else {
-                const vl = v.toLowerCase();
-                rows = rows.filter(r => normalize(r[col]).toLowerCase().includes(vl));
-            }
-        });
-        return rows;
-    }
-
     function toggleColFilter(c, b) {
         const popup = document.createElement('div'); popup.className = 'column-filter-popup';
         popup.onclick = e => e.stopPropagation();
         const selected = new Set(activeColumnFilters[c] || []);
-        const optionRows = getRowsForColumnFilterOptions(c);
-        const opts = Array.from(new Set(optionRows.map(r => normalize(r[c])))).filter(Boolean).sort();
+        const opts = Array.from(new Set(fullDataset.map(r => normalize(r[c])))).filter(Boolean).sort();
         function esc(v) { return v.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
         function renderOpts(term) {
             return opts.filter(o => !term || o.toLowerCase().includes(term)).slice(0, 80).map(o =>
@@ -3121,6 +3095,7 @@
     const SUPABASE_URL = "https://evrqxgnqwngokukqerps.supabase.co/rest/v1/abdo";
     const SUPABASE_USERS_URL = SUPABASE_URL.replace(/\/abdo$/, '/users');
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2cnF4Z25xd25nb2t1a3FlcnBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5ODE3NjgsImV4cCI6MjA5MjU1Nzc2OH0.2Ym96D5j5iuTZ43rdxlZk8EMu6Pyg4XfX2NOdMhqqr4";
+    const SUPABASE_FETCH_PAGE_SIZE = 1000;
     let _serverRepAccounts = [];
     const UPLOAD_COLS = ["m", "اسم العميل", "العنوان", "الزون", "المنتج", "الهاتف", "هاتف بديل", "المبلغ", "الراسل", "كود الشحنة", "المندوب", "الحالة", "سبب الحالة", "السعر بعد التعديل", "ملاحظات", "تاريخ التحديث", "الصافي", "الشحن", "عدد", "تقفيل", "عمولة المندوب", "اسم الموظف", "حدث", "اليومية", "نوع المندوب", "ارشيف", "المندوب الفرعي", "عمولة المندوب الفرعي", "call_attempts", "last_contact_at", "last_contact_method"];
     const ABDO_EXCLUDED_UPLOAD_COLS = new Set([
@@ -3223,6 +3198,30 @@
         }, extra || {});
     }
 
+    async function fetchAllSupabaseRows(params, options) {
+        const pageSize = options?.pageSize || SUPABASE_FETCH_PAGE_SIZE;
+        const signal = options?.signal;
+        const rows = [];
+        let offset = 0;
+
+        while (true) {
+            const res = await fetch(buildSupabaseUrl({
+                ...params,
+                limit: String(pageSize),
+                offset: String(offset)
+            }), { signal, headers: supabaseHeaders() });
+            if (!res.ok) throw new Error(await res.text());
+
+            const pageRows = await res.json();
+            rows.push(...(pageRows || []));
+
+            if (!pageRows || pageRows.length < pageSize) break;
+            offset += pageSize;
+        }
+
+        return rows;
+    }
+
     async function loadServerColumnsForConfig() {
         try {
             const res = await fetch(buildSupabaseUrl({ select: '*', limit: '1' }), { headers: supabaseHeaders() });
@@ -3263,30 +3262,17 @@
         const current = select.value;
         select.disabled = true;
         try {
-            const pageSize = 1000;
-            let rows = [];
-            for (let from = 0; ; from += pageSize) {
-                const to = from + pageSize - 1;
-                const res = await fetch(buildSupabaseUrl({
-                    select: "اليومية",
-                    "اليومية": "not.is.null",
-                    order: "اليومية.desc"
-                }), {
-                    headers: { ...supabaseHeaders(), Range: from + '-' + to }
-                });
-                if (!res.ok) throw new Error(await res.text());
-                const batch = await res.json();
-                rows = rows.concat(batch || []);
-                if (!batch || batch.length < pageSize) break;
-            }
-            const dailyCounts = new Map();
-            (rows || []).forEach(r => {
-                const v = normalize(r["اليومية"]);
-                if (v) dailyCounts.set(v, (dailyCounts.get(v) || 0) + 1);
-            });
-            const values = Array.from(dailyCounts.keys());
+            const res = await fetch(buildSupabaseUrl({
+                select: "اليومية",
+                "اليومية": "not.is.null",
+                order: "اليومية.desc",
+                limit: "10000"
+            }), { headers: supabaseHeaders() });
+            if (!res.ok) throw new Error(await res.text());
+            const rows = await res.json();
+            const values = Array.from(new Set((rows || []).map(r => normalize(r["اليومية"])).filter(Boolean)));
             select.innerHTML = '<option value="">اختر اليومية من قاعدة البيانات</option>' +
-                values.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)} (${dailyCounts.get(v) || 0})</option>`).join('');
+                values.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
             const rememberedDaily = getSettlementUiState().daily || current;
             if (rememberedDaily && values.includes(rememberedDaily)) {
                 select.value = rememberedDaily;
@@ -3319,24 +3305,11 @@
         const ac = new AbortController();
         showLoading(true, 'جاري تحميل بيانات اليومية من قاعدة البيانات...', 20, () => ac.abort());
         try {
-            const pageSize = 1000;
-            let allRows = [];
-            for (let from = 0; ; from += pageSize) {
-                const to = from + pageSize - 1;
-                const res = await fetch(buildSupabaseUrl({
-                    select: "*",
-                    "اليومية": "eq." + daily,
-                    order: "كود الشحنة.asc"
-                }), {
-                    signal: ac.signal,
-                    headers: { ...supabaseHeaders(), Range: from + '-' + to }
-                });
-                if (!res.ok) throw new Error(await res.text());
-                const batch = await res.json();
-                allRows = allRows.concat(batch || []);
-                if (!batch || batch.length < pageSize) break;
-            }
-            const rows = allRows;
+            const rows = await fetchAllSupabaseRows({
+                select: "*",
+                "اليومية": "eq." + daily,
+                order: "كود الشحنة.asc"
+            }, { signal: ac.signal });
             if (rows && rows[0]) registerAvailableColumns(Object.keys(rows[0]), 'server');
             fullDataset = (rows || []).map(databaseRowToTableRow);
             currentDisplayData = [];
@@ -3492,23 +3465,6 @@
     function checkInitialRestore() {
         localStorage.removeItem(STORAGE_KEY);
         localStorage.removeItem(HISTORY_KEY);
-        const state = getSettlementUiState();
-        restoreSettlementFiltersFromState();
-        const select = document.getElementById('databaseDailyFilter');
-        if (select && state.daily) select.value = state.daily;
-        const hasSavedFilters =
-            (state.search && String(state.search).trim()) ||
-            (Array.isArray(state.sender) && state.sender.length) ||
-            (Array.isArray(state.rep) && state.rep.length) ||
-            (Array.isArray(state.status) && state.status.length) ||
-            (state.stats && state.stats !== 'visible') ||
-            (state.columnFilters && Object.keys(state.columnFilters).length);
-        if (state.daily) {
-            showFileName('\u0622\u062e\u0631 \u064a\u0648\u0645\u064a\u0629: ' + state.daily, 'database');
-        } else if (hasSavedFilters) {
-            showFileName('\u0622\u062e\u0631 \u0627\u062e\u062a\u064a\u0627\u0631 \u0645\u062d\u0641\u0648\u0638', 'database');
-        }
-        updateActiveFilterDisplay();
     }
 
     function showCachedFileBadge() {}
@@ -3628,6 +3584,7 @@
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) document.body.setAttribute('data-bs-theme', savedTheme);
     const empName = getEmployeeName();
+    if (empName) localStorage.setItem('employee_name', empName);
     setEmployeeNameDisplay(empName);
     updateClearFiltersBtnState();
     checkInitialRestore();

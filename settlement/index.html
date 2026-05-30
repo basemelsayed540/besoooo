@@ -114,7 +114,7 @@
         /* Compressed Table Styles */
         .shipments-table-wrapper { flex: 1; min-width: 0; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 8px 20px rgba(0,0,0,0.03); }
         .table-top-controls { padding: 0.8rem; border-bottom: 1px solid var(--border); display: flex; gap: 0.8rem; align-items: center; }
-        .sticky-search-bar { position: sticky; top: 0; z-index: 30; background: var(--bg-color); padding: 0.6rem 0; margin-bottom: 0.5rem; }
+        .sticky-search-bar { width: 100%; overflow: hidden; margin-top: 0.8rem; }
         .sticky-search-bar-inner { display: flex; align-items: center; gap: 0.5rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 0.5rem 0.8rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
         .table-scroll-viewport { flex: 1; overflow: auto; max-height: 65vh; }
         
@@ -1139,19 +1139,16 @@
             </div>
         </div>
 
-        <div class="d-flex justify-content-end gap-2 mt-2">
-            <button id="undoBtn" class="btn btn-light btn-sm rounded-circle shadow-sm" title="تراجع" disabled><i class="fas fa-undo"></i></button>
-        </div>
-    </div>
-
-    <div class="sticky-search-bar">
-        <div class="sticky-search-bar-inner">
-            <input type="text" id="globalSearchInput" class="form-control form-control-sm rounded-pill" placeholder="🔍 بحث سريع في البيانات..." style="border:none;background:transparent;padding:0.3rem 0.5rem;font-size:0.85rem">
-            <button id="refreshDailyFilterBtn" type="button" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="تحديث اليوميات" style="width:32px;height:32px;padding:0;font-size:0.8rem"><i class="fas fa-sync-alt"></i></button>
-            <button id="qrActionBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" type="button" title="QR" style="width:32px;height:32px;padding:0;font-size:0.8rem"><i class="fas fa-qrcode"></i></button>
-            <button id="themeToggleBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="الوضع الليلي" style="width:32px;height:32px;padding:0;font-size:0.8rem"><i class="fas fa-moon"></i></button>
-            <button id="historyBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="سجل العمليات" style="width:32px;height:32px;padding:0;font-size:0.8rem"><i class="fas fa-history"></i></button>
-            <button id="dashboardBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="لوحة الإحصائيات" style="width:32px;height:32px;padding:0;font-size:0.8rem"><i class="fas fa-chart-line"></i></button>
+        <div class="sticky-search-bar">
+            <div class="sticky-search-bar-inner">
+                <input type="text" id="globalSearchInput" class="form-control form-control-sm rounded-pill" placeholder="🔍 بحث سريع في البيانات..." style="width:300px;flex-shrink:0;border:none;background:transparent;padding:0.3rem 0.5rem;font-size:0.85rem">
+                <button id="refreshDailyFilterBtn" type="button" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="تحديث اليوميات" style="width:32px;height:32px;padding:0;font-size:0.8rem"><i class="fas fa-sync-alt"></i></button>
+                <button id="qrActionBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" type="button" title="QR" style="width:32px;height:32px;padding:0;font-size:0.8rem"><i class="fas fa-qrcode"></i></button>
+                <button id="themeToggleBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="الوضع الليلي" style="width:32px;height:32px;padding:0;font-size:0.8rem"><i class="fas fa-moon"></i></button>
+                <button id="undoBtn" class="btn btn-light btn-sm rounded-circle shadow-sm" title="تراجع" disabled><i class="fas fa-undo"></i></button>
+                <button id="historyBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="سجل العمليات" style="width:32px;height:32px;padding:0;font-size:0.8rem"><i class="fas fa-history"></i></button>
+                <button id="dashboardBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="لوحة الإحصائيات" style="width:32px;height:32px;padding:0;font-size:0.8rem"><i class="fas fa-chart-line"></i></button>
+            </div>
         </div>
     </div>
     <div class="d-flex gap-3">

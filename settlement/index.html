@@ -96,6 +96,11 @@
             border-color: transparent; box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
         }
 
+        .toolbar-stats-cards-sm .toolbar-stat-card { padding: 0.5rem 0.75rem; min-height: 55px; }
+        .toolbar-stats-cards-sm .toolbar-stat-card .toolbar-stat-icon { font-size: 1.2rem; }
+        .toolbar-stats-cards-sm .toolbar-stat-card .toolbar-stat-label { font-size: 0.65rem; }
+        .toolbar-stats-cards-sm .toolbar-stat-card .toolbar-stat-value { font-size: 1rem; }
+        .toolbar-stats-cards-sm { grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 0.5rem; }
         .toolbar-stat-filter.active .toolbar-stat-label,
         .toolbar-stat-filter.active .toolbar-stat-value,
         .toolbar-stat-filter.active .toolbar-stat-icon { color: #ffffff !important; opacity: 1; }
@@ -256,7 +261,26 @@
             text-overflow: ellipsis; vertical-align: middle;
             color: var(--text-color); font-weight: 500;
         }
-
+        .status-select {
+            width: 100%; padding: 2px 4px; border: 1px solid transparent;
+            border-radius: 6px; background: transparent; color: inherit;
+            font: inherit; font-size: 0.85rem; font-weight: 500;
+            cursor: pointer; outline: none; transition: all 0.15s;
+            -webkit-appearance: none; -moz-appearance: none; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2364748b'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: left 6px center;
+            padding-inline-end: 18px; padding-inline-start: 4px;
+        }
+        .status-select:hover { border-color: var(--border); background-color: rgba(59,130,246,0.03); }
+        .status-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+        [data-bs-theme="dark"] .status-select:focus { background-color: #1e293b; }
+        .data-table tr.row-archived { opacity: 0.55; background-color: rgba(100,116,139,0.08); }
+        [data-bs-theme="dark"] .data-table tr.row-archived { background-color: rgba(100,116,139,0.15); }
+        .data-table .cell-locked { cursor: default !important; user-select: text; }
+        .data-table tr.row-archived td[contenteditable] { pointer-events: none; }
+        .data-table tr.row-archived select { pointer-events: none; opacity: 0.6; }
+        .data-table tr.row-archived .row-assign-trigger { pointer-events: none; opacity: 0.5; }
+ 
         /* Column Filter Styles */
         .column-filter-trigger {
             width: 100%; border: 1px solid rgba(148, 163, 184, 0.15); background: rgba(255,255,255,0.5);
@@ -1051,6 +1075,13 @@
                     <p>تقسيم الشحنات حسب اسم الراسل ورفع ملف منفصل لكل راسل</p>
                 </div>
             </div>
+            <div class="export-option-card" id="exportVisibleOption">
+                <div class="export-option-icon" style="background:rgba(139,92,246,0.12);color:#8b5cf6"><i class="fas fa-eye"></i></div>
+                <div class="export-option-text">
+                    <h4>تصدير الظاهر</h4>
+                    <p>تصدير جميع الشحنات الظاهرة حالياً في الجدول</p>
+                </div>
+            </div>
             <div class="export-option-card" id="exportCacheOption" style="display:none">
                 <div class="export-option-icon" style="background:rgba(16,185,129,0.12);color:#10b981"><i class="fas fa-file-archive"></i></div>
                 <div class="export-option-text">
@@ -1109,6 +1140,47 @@
                 <strong id="duplicateCount" class="toolbar-stat-value">0</strong>
             </button>
         </div>
+        <div class="toolbar-stats-cards toolbar-stats-cards-sm" style="margin-top:8px">
+            <div class="toolbar-stat-card card-status" style="border-right:4px solid #f59e0b;background:#f59e0b;color:#fff">
+                <span class="toolbar-stat-label" style="color:#fff">قيد التوصيل</span>
+                <strong id="statusقيدالتوصيلCount" class="toolbar-stat-value" style="color:#fff">0</strong>
+            </div>
+            <div class="toolbar-stat-card card-status" style="border-right:4px solid #22c55e;background:#22c55e;color:#fff">
+                <span class="toolbar-stat-label" style="color:#fff">تم</span>
+                <strong id="statusتمCount" class="toolbar-stat-value" style="color:#fff">0</strong>
+            </div>
+            <div class="toolbar-stat-card card-status" style="border-right:4px solid #3b82f6;background:#3b82f6;color:#fff">
+                <span class="toolbar-stat-label" style="color:#fff">تعديل سعر</span>
+                <strong id="statusتعديلسعرCount" class="toolbar-stat-value" style="color:#fff">0</strong>
+            </div>
+            <div class="toolbar-stat-card card-status" style="border-right:4px solid #8b5cf6;background:#8b5cf6;color:#fff">
+                <span class="toolbar-stat-label" style="color:#fff">شحن</span>
+                <strong id="statusشحنCount" class="toolbar-stat-value" style="color:#fff">0</strong>
+            </div>
+            <div class="toolbar-stat-card card-status" style="border-right:4px solid #ef4444;background:#ef4444;color:#fff">
+                <span class="toolbar-stat-label" style="color:#fff">إلغاء</span>
+                <strong id="statusإلغاءCount" class="toolbar-stat-value" style="color:#fff">0</strong>
+            </div>
+            <div class="toolbar-stat-card card-status" style="border-right:4px solid #eab308;background:#eab308;color:#000">
+                <span class="toolbar-stat-label" style="color:#000">مؤجل</span>
+                <strong id="statusمؤجلCount" class="toolbar-stat-value" style="color:#000">0</strong>
+            </div>
+            <div class="toolbar-stat-card card-collection" style="border-right:4px solid #059669;background:#059669;color:#fff">
+                <i class="fas fa-hand-holding-usd" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:1rem;opacity:0.3;color:#fff"></i>
+                <span class="toolbar-stat-label" style="color:#fff">التحصيل</span>
+                <strong id="collectionAmountCount" class="toolbar-stat-value" style="color:#fff">0</strong>
+            </div>
+            <div class="toolbar-stat-card card-commission" style="border-right:4px solid #6366f1;background:#6366f1;color:#fff">
+                <i class="fas fa-percentage" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:1rem;opacity:0.3;color:#fff"></i>
+                <span class="toolbar-stat-label" style="color:#fff">عمولة المندوب</span>
+                <strong id="commissionCount" class="toolbar-stat-value" style="color:#fff">0</strong>
+            </div>
+            <div class="toolbar-stat-card card-supply" style="border-right:4px solid #0ea5e9;background:#0ea5e9;color:#fff">
+                <i class="fas fa-truck-loading" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:1rem;opacity:0.3;color:#fff"></i>
+                <span class="toolbar-stat-label" style="color:#fff">التوريد</span>
+                <strong id="supplyCount" class="toolbar-stat-value" style="color:#fff">0</strong>
+            </div>
+        </div>
 
         <div class="mt-3 d-flex flex-wrap align-items-center gap-2">
             <select id="databaseDailyFilter" class="form-select form-select-sm rounded-pill" style="max-width:260px">
@@ -1125,31 +1197,26 @@
                     <li><button class="dropdown-item text-end" onclick="clearDailySelection()"><i class="fas fa-times me-2"></i> إلغاء تحديد اليومية</button></li>
                 </ul>
             </div>
+            <select id="archiveFilterSelect" class="form-select form-select-sm rounded-pill" style="max-width:180px" onchange="toggleArchiveFilter(this.value)">
+                <option value="">جميع الشحنات</option>
+                <option value="active">النشطة فقط</option>
+                <option value="archived">المؤرشفة فقط</option>
+            </select>
             <div class="d-flex align-items-center gap-2" id="fileNameRow" style="display:none;min-width:0;flex:1 1 320px">
             <div class="d-flex align-items-center gap-2 px-3 py-1 rounded-pill" style="font-size:0.85rem;font-weight:700;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:1;min-width:0" id="fileNameBadge" onclick="clickFileNameBadge()">
                 <i class="fas fa-file-excel"></i>
                 <span id="fileNameDisplay"></span>
                 <span id="fileSourceBadge" class="badge rounded-pill" style="font-size:0.65rem;font-weight:800;padding:2px 8px;flex-shrink:0"></span>
             </div>
-            <div class="d-flex align-items-center gap-2 px-3 py-1 rounded-pill flex-shrink-0" style="font-size:0.8rem;font-weight:600;background:rgba(100,116,139,0.15);color:var(--text-color);cursor:pointer" id="employeeBadge" onclick="promptEmployeeName()" title="اضغط لتغيير اسم الموظف">
+            <div class="d-flex align-items-center gap-2 px-3 py-1 rounded-pill flex-shrink-0" style="font-size:0.8rem;font-weight:600;background:rgba(100,116,139,0.15);color:var(--text-color)" id="employeeBadge">
                 <i class="fas fa-user"></i>
                 <span id="employeeNameDisplay">موظف</span>
             </div>
             <button id="clearFiltersBtn" class="btn btn-outline-danger btn-sm rounded-pill flex-shrink-0">مسح الفلاتر</button>
+            <span id="autoSaveIndicator" class="badge rounded-pill flex-shrink-0" style="font-size:0.65rem;font-weight:700;padding:3px 8px;background:rgba(34,197,94,0.15);color:#22c55e;display:none"><i class="fas fa-clock me-1"></i> حفظ تلقائي كل 2د</span>
             </div>
         </div>
 
-        <div class="sticky-search-bar">
-            <div class="sticky-search-bar-inner">
-                <input type="text" id="globalSearchInput" class="form-control form-control-sm rounded-pill" placeholder="🔍 بحث سريع في البيانات..." style="width:300px;flex-shrink:0;border:none;background:transparent;padding:0.3rem 0.5rem;font-size:0.85rem">
-                <button id="refreshDailyFilterBtn" type="button" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="تحديث اليوميات" style="width:32px;height:32px;padding:0;font-size:0.8rem"><i class="fas fa-sync-alt"></i></button>
-                <button id="qrActionBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" type="button" title="QR" style="width:32px;height:32px;padding:0;font-size:0.8rem"><i class="fas fa-qrcode"></i></button>
-                <button id="themeToggleBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="الوضع الليلي" style="width:32px;height:32px;padding:0;font-size:0.8rem"><i class="fas fa-moon"></i></button>
-                <button id="undoBtn" class="btn btn-light btn-sm rounded-circle shadow-sm" title="تراجع" disabled><i class="fas fa-undo"></i></button>
-                <button id="historyBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="سجل العمليات" style="width:32px;height:32px;padding:0;font-size:0.8rem"><i class="fas fa-history"></i></button>
-                <button id="dashboardBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="لوحة الإحصائيات" style="width:32px;height:32px;padding:0;font-size:0.8rem"><i class="fas fa-chart-line"></i></button>
-            </div>
-        </div>
     </div>
     <div class="d-flex gap-3">
         <aside class="sender-filter-sidebar">
@@ -1166,6 +1233,12 @@
                 </button>
                 <button id="generateCodesBtn" class="btn btn-outline-warning btn-sm rounded-pill w-100">
                     <i class="fas fa-barcode me-1"></i> توليد أكواد فريدة
+                </button>
+                <button id="archiveBtn" class="btn btn-outline-secondary btn-sm rounded-pill w-100">
+                    <i class="fas fa-archive me-1"></i> أرشفة الشحنات الظاهرة
+                </button>
+                <button id="restoreArchiveBtn" class="btn btn-outline-info btn-sm rounded-pill w-100">
+                    <i class="fas fa-undo-alt me-1"></i> استعادة الأرشيف
                 </button>
             </div>
             <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
@@ -1196,11 +1269,20 @@
 
         <section class="shipments-table-wrapper">
             <div class="table-top-controls">
-                <button id="errorLogBtn" class="btn btn-light btn-sm rounded-circle shadow-sm position-relative flex-shrink-0" title="سجل الأخطاء البرمجية">
+                <div class="d-flex align-items-center gap-2 flex-grow-1">
+                    <input type="text" id="globalSearchInput" class="form-control form-control-sm rounded-pill" placeholder="🔍 بحث سريع في البيانات..." style="max-width:260px;border:none;background:transparent;padding:0.3rem 0.5rem;font-size:0.85rem">
+                    <button id="refreshDailyFilterBtn" type="button" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="تحديث اليوميات" style="width:30px;height:30px;padding:0;font-size:0.75rem"><i class="fas fa-sync-alt"></i></button>
+                    <button id="qrActionBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" type="button" title="QR" style="width:30px;height:30px;padding:0;font-size:0.75rem"><i class="fas fa-qrcode"></i></button>
+                    <button id="themeToggleBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="الوضع الليلي" style="width:30px;height:30px;padding:0;font-size:0.75rem"><i class="fas fa-moon"></i></button>
+                    <button id="undoBtn" class="btn btn-light btn-sm rounded-circle shadow-sm" title="تراجع" disabled style="width:30px;height:30px;padding:0;font-size:0.75rem"><i class="fas fa-undo"></i></button>
+                    <button id="historyBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="سجل العمليات" style="width:30px;height:30px;padding:0;font-size:0.75rem"><i class="fas fa-history"></i></button>
+                    <button id="dashboardBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="لوحة الإحصائيات" style="width:30px;height:30px;padding:0;font-size:0.75rem"><i class="fas fa-chart-line"></i></button>
+                </div>
+                <button id="errorLogBtn" class="btn btn-light btn-sm rounded-circle shadow-sm position-relative flex-shrink-0" title="سجل الأخطاء البرمجية" style="width:30px;height:30px;padding:0;font-size:0.75rem">
                     <i class="fas fa-bug"></i>
                     <span id="errorBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light" style="font-size:0.55rem;display:none">0</span>
                 </button>
-                <button id="columnsConfigBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="تنسيق الأعمدة"><i class="fas fa-columns"></i></button>
+                <button id="columnsConfigBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0" title="تنسيق الأعمدة" style="width:30px;height:30px;padding:0;font-size:0.75rem"><i class="fas fa-columns"></i></button>
             </div>
             <div class="table-scroll-viewport">
                 <table class="data-table" id="shipmentsDataTable">
@@ -1296,6 +1378,7 @@
     let selectedIds = new Set();
     let activeSenderFilter = []; let activeRepFilter = []; let activeStatusFilter = [];
     let activeStatsFilter = "visible"; let activeColumnFilters = {};
+    let activeArchiveFilter = ''; // '' = all, 'active' = non-archived only, 'archived' = archived only
     let sidebarTab = "sender"; let currentTablePage = 1; const ROWS_PER_PAGE = 500;
     const SETTLEMENT_UI_STATE_KEY = "settlement_ui_state";
     let quickAssignRepName = "";
@@ -1325,7 +1408,8 @@
     }
     
     // Column Config State
-    const allPossibleColumns = ["customerName", "address", "zone", "product", "phone", "altPhone", "amount", "sender", "code", "rep", "status", "daily"];
+    const allPossibleColumns = ["customerName", "address", "zone", "product", "phone", "altPhone", "amount", "sender", "code", "rep", "status", "daily", "archived"];
+    const defaultVisibleCols = ["customerName", "zone", "product", "phone", "altPhone", "amount", "sender", "code", "rep", "status", "سبب الحالة", "السعر بعد التعديل"];
     let colOrder = JSON.parse(localStorage.getItem('columns_order')) || [...allPossibleColumns];
     let savedVisible = JSON.parse(localStorage.getItem('columns_visible'));
     let _fileColumnSet = new Set(JSON.parse(localStorage.getItem('file_columns') || '[]'));
@@ -1346,15 +1430,17 @@
         }
     });
     
-    let visibleCols = new Set(savedVisible || allPossibleColumns);
-    if(savedVisible && !savedVisible.includes('address')) {
-        visibleCols.add('address');
-        localStorage.setItem('columns_visible', JSON.stringify(Array.from(visibleCols)));
+    let visibleCols = new Set(savedVisible || defaultVisibleCols);
+    // Migration: reset to new defaults if coming from old version
+    if (!localStorage.getItem('columns_visible_v2')) {
+        visibleCols = new Set(defaultVisibleCols);
+        localStorage.setItem('columns_visible', JSON.stringify(defaultVisibleCols));
+        localStorage.setItem('columns_visible_v3', '1');
     }
     
     let colWidths = JSON.parse(localStorage.getItem('columns_widths')) || {};
     
-    const colDisplay = { customerName: "اسم العميل", address: "العنوان", zone: "الزون", product: "المنتج", phone: "الهاتف", altPhone: "هاتف بديل", amount: "المبلغ", sender: "الراسل", code: "كود الشحنة", rep: "المندوب", status: "الحالة", daily: "اليومية" };
+    const colDisplay = { customerName: "اسم العميل", address: "العنوان", zone: "الزون", product: "المنتج", phone: "الهاتف", altPhone: "هاتف بديل", amount: "المبلغ", sender: "الراسل", code: "كود الشحنة", rep: "المندوب", status: "الحالة", daily: "اليومية", archived: "ارشيف" };
 
     const colMap = { 
         "اسم العميل": "customerName", 
@@ -1376,7 +1462,8 @@
         "الكود": "code",
         "المندوب": "rep", 
         "الحالة": "status",
-        "اليومية": "daily"
+        "اليومية": "daily",
+        "ارشيف": "archived"
     };
 
     function registerAvailableColumns(headers, source) {
@@ -1392,13 +1479,17 @@
             const mapped = colMap[h];
             const col = mapped || h;
             if (!allPossibleColumns.includes(col) && !colMap[h]) mergedExtras.add(h);
-            if (!colOrder.includes(col)) colOrder.push(col);
+            if (!colOrder.includes(col)) {
+                colOrder.push(col);
+                visibleCols.add(col);
+            }
             if (!colDisplay[col]) colDisplay[col] = h;
         });
         _extraColumns = Array.from(mergedExtras);
         localStorage.setItem('file_columns', JSON.stringify(Array.from(_fileColumnSet)));
         localStorage.setItem('extra_columns', JSON.stringify(_extraColumns));
         localStorage.setItem('columns_order', JSON.stringify(colOrder));
+        localStorage.setItem('columns_visible', JSON.stringify(Array.from(visibleCols)));
     }
     registerAvailableColumns(_serverColumns, 'server');
     let _cancelRequested = false;
@@ -1582,6 +1673,7 @@
 
     function saveSettlementUiState() {
         try {
+            const viewport = document.querySelector('.table-scroll-viewport');
             localStorage.setItem(SETTLEMENT_UI_STATE_KEY, JSON.stringify({
                 daily: document.getElementById('databaseDailyFilter')?.value || "",
                 search: document.getElementById('globalSearchInput')?.value || "",
@@ -1590,7 +1682,11 @@
                 status: activeStatusFilter,
                 stats: activeStatsFilter,
                 columnFilters: activeColumnFilters,
-                sidebarTab
+                sidebarTab,
+                archiveFilter: activeArchiveFilter,
+                page: currentTablePage,
+                scrollTop: viewport ? viewport.scrollTop : 0,
+                scrollLeft: viewport ? viewport.scrollLeft : 0
             }));
         } catch (e) {
             console.warn('Could not save settlement UI state', e);
@@ -1613,8 +1709,13 @@
         activeRepFilter = Array.isArray(state.rep) ? state.rep : [];
         activeStatusFilter = Array.isArray(state.status) ? state.status : [];
         activeStatsFilter = state.stats || "visible";
+        activeArchiveFilter = state.archiveFilter || '';
         activeColumnFilters = state.columnFilters && typeof state.columnFilters === 'object' ? state.columnFilters : {};
         if (state.sidebarTab) sidebarTab = state.sidebarTab;
+        if (state.page && state.page > 0) currentTablePage = state.page;
+        const archiveSelect = document.getElementById('archiveFilterSelect');
+        if (archiveSelect) archiveSelect.value = activeArchiveFilter;
+        window._savedScrollState = { top: state.scrollTop || 0, left: state.scrollLeft || 0 };
     }
 
     async function handleFile(file) {
@@ -1647,7 +1748,10 @@
                     });
                     buildCaches();
                     showFileName(file.name, 'local');
-                    modifiedCells.clear(); clearHistory(); clearLocalStorage(); errorCache.clear(); updateChangesBadge(); applyFilters(); rebuildSidebarTabs(); refreshSidebar();
+                    modifiedCells.clear(); clearHistory(); clearLocalStorage(); errorCache.clear(); updateChangesBadge();
+                    restoreSettlementFiltersFromState();
+                    applyFilters();
+                    rebuildSidebarTabs(); refreshSidebar();
                     showLoading(false);
                     await uploadShipments();
                 } catch(e) {
@@ -1676,6 +1780,8 @@
             if(activeStatsFilter === 'withoutPhone') return !r.phone && !r.altPhone;
             if(activeStatsFilter === 'withoutAmount') return !r.amount || isNaN(parseFloat(r.amount));
             if(activeStatsFilter === 'duplicate') return r._dup;
+            if(activeArchiveFilter === 'active' && normalize(r.archived || r['ارشيف'] || '').startsWith('ارشيف')) return false;
+            if(activeArchiveFilter === 'archived' && !normalize(r.archived || r['ارشيف'] || '').startsWith('ارشيف')) return false;
             return true;
         });
         Object.entries(activeColumnFilters).forEach(([c, v]) => { 
@@ -1716,12 +1822,15 @@
     function updateStats() {
         document.getElementById('filteredRowsCount').innerText = currentDisplayData.length;
         let withRep = 0, withoutRep = 0, totalAmount = 0, withoutPhone = 0, withoutAmount = 0, dupCount = 0;
+        const statusCounts = { 'قيد التوصيل': 0, 'تم': 0, 'تعديل سعر': 0, 'شحن': 0, 'إلغاء': 0, 'مؤجل': 0 };
         for (const r of fullDataset) {
             if (r.rep) withRep++; else withoutRep++;
             totalAmount += parseFloat(r.amount) || 0;
             if (!r.phone && !r.altPhone) withoutPhone++;
             if (!r.amount || isNaN(parseFloat(r.amount))) withoutAmount++;
             if (r._dup) dupCount++;
+            const s = normalize(r.status || '');
+            if (Object.hasOwn(statusCounts, s)) statusCounts[s]++;
         }
         document.getElementById('totalRowsCount').innerText = fullDataset.length;
         document.getElementById('withRepCount').innerText = withRep;
@@ -1730,6 +1839,24 @@
         document.getElementById('withoutPhoneCount').innerText = withoutPhone;
         document.getElementById('withoutAmountCount').innerText = withoutAmount;
         document.getElementById('duplicateCount').innerText = dupCount;
+        let collectionTotal = 0, commissionTotal = 0, supplyPriceTotal = 0;
+        for (const r of currentDisplayData) {
+            const s = normalize(r.status || '');
+            const price = parseFloat(r['السعر بعد التعديل'] || r['priceAfterEdit'] || 0) || 0;
+            collectionTotal += price;
+            if (['تم', 'تعديل سعر', 'شحن'].includes(s)) {
+                commissionTotal += parseFloat(r['عمولة المندوب'] || 0) || 0;
+                supplyPriceTotal += price;
+            }
+        }
+        document.getElementById('collectionAmountCount').innerText = collectionTotal.toLocaleString();
+        document.getElementById('commissionCount').innerText = commissionTotal.toLocaleString();
+        document.getElementById('supplyCount').innerText = (supplyPriceTotal - commissionTotal).toLocaleString();
+        Object.entries(statusCounts).forEach(([s, c]) => {
+            const id = 'status' + s.replace(/\s+/g, '') + 'Count';
+            const el = document.getElementById(id);
+            if (el) el.innerText = c;
+        });
         document.querySelectorAll('.toolbar-stat-filter').forEach(b => b.classList.toggle('active', b.dataset.statFilter === activeStatsFilter));
     }
 
@@ -1770,11 +1897,12 @@
             const isSelected = selectedIds.has(r._id.toString());
             const errors = getRowErrors(r);
             const hasAnyError = Object.keys(errors).length > 0;
-            const rowClass = [isRowModified ? 'changed-row' : '', hasAnyError ? 'error-row' : '', isSelected ? 'bg-primary-subtle' : ''].join(' ').trim();
+            const isArchived = normalize(r.archived || r['ارشيف'] || '').startsWith('ارشيف');
+            const rowClass = [isRowModified ? 'changed-row' : '', hasAnyError ? 'error-row' : '', isSelected ? 'bg-primary-subtle' : '', isArchived ? 'row-archived' : ''].join(' ').trim();
             return `
                 <tr data-id="${r._id}" class="${rowClass}">
                     <td><input type="checkbox" class="row-checkbox" ${isSelected?'checked':''} onclick="toggleSelectRow('${r._id}', this.checked)"></td>
-                    <td><button class="row-assign-trigger ${quickAssignRepName?'':'is-empty'}" onclick="assignRep(${r._id})">${quickAssignRepName || '...'}</button></td>
+                    <td><button class="row-assign-trigger ${quickAssignRepName?'':'is-empty'}" onclick="assignRep(${r._id})" ${isArchived?'disabled':''}>${quickAssignRepName || '...'}</button></td>
                     ${colOrder.filter(c => visibleCols.has(c)).map(c => {
                         const isModified = modifiedCells.has(r._id+'_'+c);
                         const hasError = !!errors[c];
@@ -1785,17 +1913,42 @@
                             isModified ? 'changed-cell' : '', 
                             hasError ? 'error-cell' : '',
                             isDuplicateCode ? 'duplicate-cell' : '',
-                            isDupPhone ? 'duplicate-phone-cell' : ''
+                            isDupPhone ? 'duplicate-phone-cell' : '',
+                            isArchived ? 'cell-locked' : ''
                         ].join(' ').trim();
                         
                         const title = hasError ? `title="${errors[c]}"` : (isDuplicateCode ? 'title="كود مكرر"' : (isDupPhone ? 'title="رقم مكرر"' : ''));
-                        return `<td class="${cls}" ${title} contenteditable="true" onblur="editCell(${r._id},'${c}',this.innerText)">${r[c]}</td>`;
+                        if (c === 'status') {
+                            if (isArchived) {
+                                return `<td class="${cls}">${r[c]||''}</td>`;
+                            }
+                            const val = r[c]||'';
+                            const statuses = ["قيد التوصيل","تم","تعديل سعر","شحن","إلغاء","مؤجل","مجاش"];
+                            const hasMatch = statuses.includes(val);
+                            let opts = `<option value="">—</option>`;
+                            if (val && !hasMatch) opts += `<option value="${val}" selected>${val}</option>`;
+                            statuses.forEach(s => { opts += `<option value="${s}" ${val===s?'selected':''}>${s}</option>`; });
+                            return `<td class="${cls}"><select class="status-select" onchange="onStatusCellChange(this,${r._id})">${opts}</select></td>`;
+                        }
+                        const lockedCols = new Set(['customerName', 'address', 'code', 'archived']);
+                        if (isArchived || lockedCols.has(c)) {
+                            return `<td class="${cls}" ${title}>${r[c]||''}</td>`;
+                        }
+                        return `<td class="${cls}" ${title} contenteditable="true" onblur="editCell(${r._id},'${c}',this.innerText)">${r[c]||''}</td>`;
                     }).join('')}
                 </tr>
             `;
         }).join('');
         
         updatePagination();
+        const sv = window._savedScrollState;
+        if (sv) {
+            requestAnimationFrame(() => {
+                const vp = document.querySelector('.table-scroll-viewport');
+                if (vp) { vp.scrollTop = sv.top; vp.scrollLeft = sv.left; }
+                window._savedScrollState = null;
+            });
+        }
     }
 
     function updatePagination() {
@@ -1922,6 +2075,11 @@
         btn.classList.toggle('btn-save-modified', hasChanges);
         btn.classList.toggle('btn-danger', !hasChanges);
         saveToLocalStorage();
+        const autoInd = document.getElementById('autoSaveIndicator');
+        if (autoInd) {
+            if (modifiedCells.size > 0) { autoInd.style.display = 'inline-block'; autoInd.innerHTML = '<i class="fas fa-clock me-1"></i> حفظ تلقائي كل 2د'; autoInd.style.background = 'rgba(34,197,94,0.15)'; autoInd.style.color = '#22c55e'; }
+            else { autoInd.style.display = 'none'; }
+        }
         document.getElementById('uploadShipmentsBtn').disabled = !fullDataset.length;
         document.getElementById('exportSavedBtn').disabled = !fullDataset.length;
     }
@@ -2226,6 +2384,111 @@
         }
     }
 
+    function toggleArchiveFilter(val) {
+        activeArchiveFilter = val;
+        applyFilters();
+    }
+
+    function showArchivePasswordPrompt() {
+        return Swal.fire({
+            title: 'كلمة مرور المدير',
+            input: 'password',
+            inputPlaceholder: 'أدخل كلمة المرور',
+            showCancelButton: true,
+            confirmButtonText: 'تأكيد',
+            cancelButtonText: 'إلغاء',
+            inputValidator: (v) => !v ? 'يرجى إدخال كلمة المرور' : null
+        });
+    }
+
+    document.getElementById('archiveBtn').onclick = async () => {
+        if (selectedIds.size === 0) return Swal.fire('تنبيه', 'يرجى تحديد الشحنات أولاً', 'info');
+        const confirm = await Swal.fire({
+            title: 'أرشفة الشحنات المحددة',
+            text: `سيتم أرشفة ${selectedIds.size} شحنة. هل أنت متأكد؟`,
+            showCancelButton: true,
+            confirmButtonText: 'نعم، أرشفة',
+            cancelButtonText: 'إلغاء'
+        });
+        if (!confirm.isConfirmed) return;
+        let count = 0;
+        const today = new Date();
+        const dateStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+        const archiveValue = 'ارشيف ' + dateStr;
+        const archivedIds = Array.from(selectedIds);
+        const archivedCodes = [];
+        archivedIds.forEach(id => {
+            const r = fullDataset.find(x => x._id == id);
+            if (r && !normalize(r.archived || r['ارشيف'] || '').startsWith('ارشيف')) {
+                const oldVal = r.archived || '';
+                actionHistory.push({ id: parseInt(id), col: 'archived', oldVal, newVal: archiveValue, time: new Date() });
+                if (!modifiedCells.has(id + '_archived')) modifiedCells.set(id + '_archived', oldVal);
+                r.archived = archiveValue;
+                if (r.code) archivedCodes.push({ "كود الشحنة": r.code, "ارشيف": archiveValue });
+                count++;
+            }
+        });
+        clearSelection();
+        if (count > 0) {
+            updateChangesBadge(); applyFilters(); refreshSidebar(); saveToLocalStorage();
+            try {
+                if (archivedCodes.length) {
+                    await fetch(SUPABASE_URL + '?on_conflict=كود الشحنة', {
+                        method: 'POST',
+                        headers: Object.assign({ 'Content-Type': 'application/json' }, supabaseHeaders({ 'Prefer': 'resolution=merge-duplicates' })),
+                        body: JSON.stringify(archivedCodes)
+                    });
+                }
+            } catch(e) {
+                console.warn('Auto-save archive to server failed, please save manually', e);
+            }
+            Swal.fire({ icon: 'success', title: `تم أرشفة ${count} شحنة وحفظها`, toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+        }
+    };
+
+    document.getElementById('restoreArchiveBtn').onclick = async () => {
+        if (selectedIds.size === 0) return Swal.fire('تنبيه', 'يرجى تحديد الشحنات المؤرشفة أولاً', 'info');
+        const pwdResult = await showArchivePasswordPrompt();
+        if (!pwdResult.isConfirmed) return;
+        const confirm = await Swal.fire({
+            title: 'استعادة الشحنات المحددة',
+            text: `سيتم استعادة ${selectedIds.size} شحنة من الأرشيف. هل أنت متأكد؟`,
+            showCancelButton: true,
+            confirmButtonText: 'نعم، استعادة',
+            cancelButtonText: 'إلغاء'
+        });
+        if (!confirm.isConfirmed) return;
+        let count = 0;
+        const restoredCodes = [];
+        selectedIds.forEach(id => {
+            const r = fullDataset.find(x => x._id == id);
+            if (r && normalize(r.archived || r['ارشيف'] || '').startsWith('ارشيف')) {
+                const oldVal = r.archived || '';
+                actionHistory.push({ id: parseInt(id), col: 'archived', oldVal, newVal: '', time: new Date() });
+                if (!modifiedCells.has(id + '_archived')) modifiedCells.set(id + '_archived', oldVal);
+                r.archived = '';
+                if (r.code) restoredCodes.push({ "كود الشحنة": r.code, "ارشيف": "" });
+                count++;
+            }
+        });
+        clearSelection();
+        if (count > 0) {
+            updateChangesBadge(); applyFilters(); refreshSidebar(); saveToLocalStorage();
+            try {
+                if (restoredCodes.length) {
+                    await fetch(SUPABASE_URL + '?on_conflict=كود الشحنة', {
+                        method: 'POST',
+                        headers: Object.assign({ 'Content-Type': 'application/json' }, supabaseHeaders({ 'Prefer': 'resolution=merge-duplicates' })),
+                        body: JSON.stringify(restoredCodes)
+                    });
+                }
+            } catch(e) {
+                console.warn('Auto-save restore to server failed, please save manually', e);
+            }
+            Swal.fire({ icon: 'success', title: `تم استعادة ${count} شحنة وحفظها`, toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+        }
+    };
+
     function toggleBulkStatusMenu(e) {
         e.stopPropagation();
         const menu = document.getElementById('bulkStatusMenu');
@@ -2250,7 +2513,7 @@
     function populateBulkStatusMenu() {
         const menu = document.getElementById('bulkStatusMenu');
         // Common statuses
-        const commonStatuses = ["تم", "الغاء", "مؤجل", "تأجيل", "قيد التوصيل", "تعديل سعر", "شحن", "فراغ"];
+        const commonStatuses = ["قيد التوصيل", "تم", "تعديل سعر", "شحن", "إلغاء", "مؤجل", "مجاش"];
         // Also add unique statuses from dataset
         const datasetStatuses = Array.from(new Set(fullDataset.map(r => normalize(r.status)))).filter(s => s && !commonStatuses.includes(s));
         
@@ -2335,10 +2598,75 @@
         }
     }
 
+    async function onStatusCellChange(sel, id) {
+        const status = sel.value;
+        const r = fullDataset.find(x => x._id == id);
+        if (!r) return;
+        const priceCol = 'السعر بعد التعديل';
+        if (status === 'تعديل سعر' || status === 'شحن') {
+            const result = await Swal.fire({
+                title: status === 'تعديل سعر' ? 'تعديل سعر الشحنة' : 'تأكيد شحن',
+                text: `أدخل السعر الجديد للشحنة`,
+                input: 'text',
+                inputValue: r[priceCol] || r.amount || '',
+                showCancelButton: true,
+                confirmButtonText: 'تأكيد',
+                cancelButtonText: 'إلغاء',
+                inputValidator: (value) => {
+                    if (!value || isNaN(parseFloat(value))) return 'يرجى إدخال رقم صحيح';
+                }
+            });
+            if (!result.isConfirmed) { sel.value = r.status || ''; return; }
+            const newPrice = String(parseFloat(result.value));
+            const oldPrice = r[priceCol] || '';
+            if (normalize(oldPrice) !== normalize(newPrice)) {
+                actionHistory.push({ id: parseInt(id), col: priceCol, oldVal: oldPrice, newVal: newPrice, time: new Date() });
+                if (!modifiedCells.has(id + '_' + priceCol)) modifiedCells.set(id + '_' + priceCol, oldPrice);
+                r[priceCol] = newPrice;
+            }
+        } else if (status === 'تم' && r.amount) {
+            const oldPrice = r[priceCol] || '';
+            if (normalize(oldPrice) !== normalize(r.amount)) {
+                actionHistory.push({ id: parseInt(id), col: priceCol, oldVal: oldPrice, newVal: r.amount, time: new Date() });
+                if (!modifiedCells.has(id + '_' + priceCol)) modifiedCells.set(id + '_' + priceCol, oldPrice);
+                r[priceCol] = r.amount;
+            }
+        } else if (status === 'قيد التوصيل') {
+            const reasonCol = 'سبب الحالة';
+            [priceCol, reasonCol].forEach(col => {
+                const oldVal = r[col] || '';
+                if (normalize(oldVal)) {
+                    actionHistory.push({ id: parseInt(id), col, oldVal, newVal: '', time: new Date() });
+                    if (!modifiedCells.has(id + '_' + col)) modifiedCells.set(id + '_' + col, oldVal);
+                    r[col] = '';
+                }
+            });
+        }
+        editCell(id, 'status', status);
+    }
+
     async function bulkAssignStatus(status) {
         if (!await ensureEmployeeName()) return;
+        const isPriceStatus = normalize(status) === 'تعديل سعر' || normalize(status) === 'شحن';
+        let bulkPrice = '';
+        if (isPriceStatus) {
+            const result = await Swal.fire({
+                title: status === 'تعديل سعر' ? 'تعديل سعر الشحنات' : 'تأكيد شحن',
+                text: `أدخل السعر الجديد للشحنات المحددة (${selectedIds.size} شحنة)`,
+                input: 'text',
+                showCancelButton: true,
+                confirmButtonText: 'تأكيد',
+                cancelButtonText: 'إلغاء',
+                inputValidator: (value) => {
+                    if (!value || isNaN(parseFloat(value))) return 'يرجى إدخال رقم صحيح';
+                }
+            });
+            if (!result.isConfirmed) return;
+            bulkPrice = String(parseFloat(result.value));
+        }
         let count = 0;
-        const shouldClearStatusDetails = normalize(status) === 'قيد التوصيل';
+        const isDoneStatus = normalize(status) === 'تم';
+        const shouldClearStatusDetails = normalize(status) === 'قيد التوصيل' || normalize(status) === 'شحن قيد التوصيل';
         const setFieldValueIfChanged = (row, id, col, newVal) => {
             const oldFieldVal = row[col] ?? '';
             if (normalize(oldFieldVal) === normalize(newVal)) return;
@@ -2357,14 +2685,31 @@
             const r = fullDataset.find(x => x._id == id);
             if (r && normalize(r.status) !== status) {
                 const oldVal = r.status;
-                const wasPending = normalize(oldVal).includes('معلق');
                 actionHistory.push({ id: parseInt(id), col: 'status', oldVal, newVal: status, time: new Date() });
                 
                 if (!modifiedCells.has(id + '_status')) modifiedCells.set(id + '_status', oldVal);
                 else if (normalize(status) === normalize(modifiedCells.get(id + '_status'))) modifiedCells.delete(id + '_status');
 
                 r.status = status;
-                if (shouldClearStatusDetails && wasPending) {
+                if (isPriceStatus && bulkPrice) {
+                    const priceCol = 'السعر بعد التعديل';
+                    const oldPrice = r[priceCol] || '';
+                    if (normalize(oldPrice) !== normalize(bulkPrice)) {
+                        if (!modifiedCells.has(id + '_' + priceCol)) modifiedCells.set(id + '_' + priceCol, oldPrice);
+                        actionHistory.push({ id: parseInt(id), col: priceCol, oldVal: oldPrice, newVal: bulkPrice, time: new Date() });
+                        r[priceCol] = bulkPrice;
+                    }
+                }
+                if (isDoneStatus && r.amount) {
+                    const priceCol = 'السعر بعد التعديل';
+                    const oldPrice = r[priceCol] || '';
+                    if (normalize(oldPrice) !== normalize(r.amount)) {
+                        if (!modifiedCells.has(id + '_' + priceCol)) modifiedCells.set(id + '_' + priceCol, oldPrice);
+                        actionHistory.push({ id: parseInt(id), col: priceCol, oldVal: oldPrice, newVal: r.amount, time: new Date() });
+                        r[priceCol] = r.amount;
+                    }
+                }
+                if (shouldClearStatusDetails) {
                     clearFieldIfNeeded(r, id, 'السعر بعد التعديل');
                     clearFieldIfNeeded(r, id, 'سبب الحالة');
                 }
@@ -2378,6 +2723,7 @@
             applyFilters();
             refreshSidebar();
             saveToLocalStorage();
+            renderTable();
         }
     }
 
@@ -2516,8 +2862,8 @@
         });
     }
 
-    async function handleSave(skipConfirm) {
-        if(!modifiedCells.size) return Swal.fire('تنبيه','لا توجد تعديلات لحفظها','info');
+    async function handleSave(skipConfirm, silent) {
+        if(!modifiedCells.size) { if (!silent) Swal.fire('تنبيه','لا توجد تعديلات لحفظها','info'); return; }
 
         const modifiedRowIds = Array.from(new Set(Array.from(modifiedCells.keys()).map(k => String(k).split('_')[0])));
         const rowsToSave = modifiedRowIds.map(id => fullDataset.find(r => String(r._id) === String(id))).filter(Boolean);
@@ -2558,7 +2904,14 @@
                     if (!String(key).startsWith(prefix)) return;
                     const col = String(key).slice(prefix.length);
                     const dbCol = internalToUpload[col] || Object.keys(colMap).find(k => colMap[k] === col) || col;
-                    if (dbCol && dbCol !== '_id' && canWriteUploadCol(dbCol)) record[dbCol] = row[col] ?? null;
+                    if (dbCol && dbCol !== '_id' && canWriteUploadCol(dbCol)) {
+                        let val = row[col] ?? null;
+                        if (val !== null && ["المبلغ", "السعر بعد التعديل", "الصافي", "الشحن", "عمولة المندوب", "عمولة المندوب الفرعي", "call_attempts"].includes(dbCol)) {
+                            const n = parseFloat(String(val).replace(/[^\d.]/g, ''));
+                            val = isNaN(n) ? null : n;
+                        }
+                        record[dbCol] = val;
+                    }
                 });
                 record['اسم الموظف'] = empName;
                 record['حدث'] = row['حدث'] || 'تعديل من لوحة التسوية';
@@ -2588,17 +2941,21 @@
             }
 
             modifiedCells.clear();
-            clearHistory();
             saveToLocalStorage();
             showLoading(true, 'تم الحفظ بنجاح، جاري تحديث الجدول...', 96);
             updateChangesBadge();
             renderTable();
             showLoading(false);
-            Swal.fire({
-                icon: 'success',
-                title: 'تم الحفظ',
-                text: 'تم حفظ ' + payload.length + ' صفوف معدلة في قاعدة البيانات مباشرة.'
-            });
+            if (silent) {
+                const indicator = document.getElementById('autoSaveIndicator');
+                if (indicator) { indicator.style.display = 'inline-block'; indicator.textContent = '✓ حفظ تلقائي ' + new Date().toLocaleTimeString('ar-EG', {hour:'2-digit',minute:'2-digit'}); setTimeout(() => { if (indicator) indicator.style.display = 'inline-block'; }, 100); }
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم الحفظ',
+                    text: 'تم حفظ ' + payload.length + ' صفوف معدلة في قاعدة البيانات مباشرة.'
+                });
+            }
         } catch(e) {
             showLoading(false);
             if (e.name === 'AbortError') {
@@ -2609,6 +2966,19 @@
         }
     };
         // Logic for Exporting by Representative (Reps Folder)
+    async function exportVisible() {
+        if (!currentDisplayData.length) return Swal.fire('تنبيه', 'لا توجد بيانات ظاهرة لتصديرها', 'info');
+        const ws = XLSX.utils.json_to_sheet(currentDisplayData.map(r => {
+            const out = {};
+            colOrder.forEach(c => out[Object.keys(colMap).find(k => colMap[k] === c) || c] = r[c]);
+            return out;
+        }));
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        XLSX.writeFile(wb, 'شحنات.xlsx');
+        Swal.fire({ icon: 'success', title: 'تم التصدير', text: `تم تصدير ${currentDisplayData.length} شحنة`, timer: 1800, showConfirmButton: false });
+    }
+
     async function exportByRep() {
         if (!currentDisplayData.length) return Swal.fire('تنبيه', 'لا توجد بيانات ظاهرة لتصديرها', 'info');
 
@@ -3106,8 +3476,47 @@
 
     function saveActionHistory() {}
     function restoreActionHistory() {}
-    function saveToLocalStorage() {}
-    function restoreFromLocalStorage() {}
+    function saveToLocalStorage() {
+        if (!modifiedCells.size) return;
+        const modifiedRowIds = Array.from(new Set(Array.from(modifiedCells.keys()).map(k => String(k).split('_')[0])));
+        const saveData = {
+            timestamp: Date.now(),
+            cells: Array.from(modifiedCells.entries()),
+            rows: modifiedRowIds.map(id => fullDataset.find(r => String(r._id) === String(id))).filter(Boolean)
+        };
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(saveData)); } catch(e) {}
+    }
+    function restoreFromLocalStorage() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            if (!data.cells || !data.cells.length) { localStorage.removeItem(STORAGE_KEY); return; }
+            const elapsed = Date.now() - (data.timestamp || 0);
+            const minutes = Math.floor(elapsed / 60000);
+            Swal.fire({
+                title: 'تم العثور على تعديلات غير محفوظة',
+                text: `منذ ${minutes} دقيقة (${data.cells.length} تعديل). هل تريد استرجاعها؟`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، استرجاع',
+                cancelButtonText: 'تجاهل',
+                reverseButtons: true
+            }).then(result => {
+                if (!result.isConfirmed) { localStorage.removeItem(STORAGE_KEY); return; }
+                data.cells.forEach(([key, oldVal]) => {
+                    const [id, col] = key.split('_');
+                    const row = fullDataset.find(r => String(r._id) === String(id));
+                    if (row && !modifiedCells.has(key)) {
+                        modifiedCells.set(key, oldVal);
+                    }
+                });
+                updateChangesBadge();
+                renderTable();
+                Swal.fire({ icon: 'success', title: 'تم الاسترجاع', text: `تم استرجاع ${data.cells.length} تعديل`, toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+            });
+        } catch(e) { localStorage.removeItem(STORAGE_KEY); }
+    }
     function clearLocalStorage() { localStorage.removeItem(STORAGE_KEY); }
     function clearHistory() {
         actionHistory = [];
@@ -3322,7 +3731,6 @@
             saveSettlementUiState();
             return;
         }
-        saveSettlementUiState();
         const ac = new AbortController();
         showLoading(true, 'جاري تحميل بيانات اليومية من قاعدة البيانات...', 20, () => ac.abort());
         try {
@@ -3343,9 +3751,13 @@
             _headerBuilt = false;
             updateChangesBadge();
             if (restoreSavedFilters) restoreSettlementFiltersFromState();
-            if (select) select.value = daily;
             saveSettlementUiState();
+            if (select) select.value = daily;
             applyFilters();
+            const state = getSettlementUiState();
+            if (state.page && state.page > 0) { currentTablePage = state.page; renderTable(); }
+            saveSettlementUiState();
+            restoreFromLocalStorage();
             rebuildSidebarTabs();
             refreshSidebar();
             Swal.fire({ icon: 'success', title: 'تم التحميل', text: `تم عرض ${fullDataset.length} شحنة من اليومية ${daily}`, timer: 1800, showConfirmButton: false });
@@ -3520,7 +3932,7 @@
         }).then(result => {
             if (result.isDenied) {
                 colOrder = [...allPossibleColumns];
-                visibleCols = new Set(allPossibleColumns);
+                visibleCols = new Set(defaultVisibleCols);
                 colWidths = {};
                 localStorage.removeItem('columns_order');
                 localStorage.removeItem('columns_visible');
@@ -3618,6 +4030,9 @@
     document.getElementById('sidebarSaveBtn').onclick = handleSave;
     document.getElementById('uploadShipmentsBtn').onclick = uploadShipments;
     document.getElementById('databaseDailyFilter').onchange = loadSelectedDailyFromDatabase;
+    const debouncedSaveState = debounce(saveSettlementUiState, 500);
+    const viewportEl = document.querySelector('.table-scroll-viewport');
+    if (viewportEl) viewportEl.addEventListener('scroll', debouncedSaveState, { passive: true });
     document.getElementById('refreshDailyFilterBtn').onclick = async () => {
         if (modifiedCells && modifiedCells.size > 0) {
             const result = await Swal.fire({
@@ -3636,8 +4051,26 @@
     document.getElementById('exportSavedBtn').onclick = () => { document.getElementById('exportDialogOverlay').hidden = false; };
     document.getElementById('exportRepOption').onclick = () => { document.getElementById('exportDialogOverlay').hidden = true; exportByRep(); };
     document.getElementById('exportSenderOption').onclick = () => { document.getElementById('exportDialogOverlay').hidden = true; exportBySender(); };
+    document.getElementById('exportVisibleOption').onclick = () => { document.getElementById('exportDialogOverlay').hidden = true; exportVisible(); };
     document.getElementById('exportCacheOption').onclick = () => { document.getElementById('exportDialogOverlay').hidden = true; exportSavedCopy(); };
     document.getElementById('exportDialogOverlay').addEventListener('click', function(e) { if (e.target === e.currentTarget) this.hidden = true; });
+    // Auto-save every 2 minutes
+    const AUTO_SAVE_INTERVAL = 120000;
+    let autoSaveTimer = null;
+    function startAutoSave() {
+        if (autoSaveTimer) clearInterval(autoSaveTimer);
+        autoSaveTimer = setInterval(() => {
+            if (modifiedCells && modifiedCells.size > 0 && getEmployeeName()) {
+                handleSave(true, true).catch(() => {});
+            }
+        }, AUTO_SAVE_INTERVAL);
+    }
+    startAutoSave();
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden && autoSaveTimer) { clearInterval(autoSaveTimer); autoSaveTimer = null; }
+        else if (!document.hidden && !autoSaveTimer) startAutoSave();
+    });
+
     window.addEventListener('beforeunload', function(e) {
         if (!modifiedCells || modifiedCells.size === 0) return;
         e.preventDefault();
@@ -3650,7 +4083,10 @@
     document.getElementById('clearFiltersBtn').onclick = () => {
         document.getElementById('globalSearchInput').value = "";
         activeSenderFilter = []; activeRepFilter = []; activeStatusFilter = [];
+        activeArchiveFilter = '';
         activeStatsFilter = "visible"; activeColumnFilters = {};
+        const archiveSelect = document.getElementById('archiveFilterSelect');
+        if (archiveSelect) archiveSelect.value = '';
         saveSettlementUiState();
         applyFilters(); refreshSidebar();
     };
@@ -3942,5 +4378,6 @@
     });
 
 </script>
+
 </body>
 </html>

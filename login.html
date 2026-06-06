@@ -126,6 +126,7 @@
                 linear-gradient(160deg, rgba(15,23,42,0.96), rgba(2,6,23,0.96));
             box-shadow: 0 36px 80px rgba(2, 6, 23, 0.52);
         }
+        body.no-transitions, body.no-transitions * { transition: none !important; }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-screen flex items-center justify-center p-4 transition-colors duration-300">
@@ -146,7 +147,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                     </svg>
                 </div>
-                <h1 class="text-3xl font-extrabold text-slate-800 dark:text-white mb-2">لايت شبينج</h1>
+                <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-2">لايت شبينج</h1>
                 <p class="text-slate-500 dark:text-slate-400 font-semibold">سجل دخولك لمتابعة شحناتك</p>
             </div>
 
@@ -256,10 +257,12 @@
         const closeRepSignupBtn = document.getElementById('closeRepSignup');
 
         function toggleTheme() {
+            document.body.classList.add('no-transitions');
             const isDark = document.body.classList.toggle('dark');
             const icon = document.getElementById('themeIcon');
             if (icon) icon.className = isDark ? 'fas fa-sun text-xl' : 'fas fa-moon text-xl';
             localStorage.setItem('rep-theme', isDark ? 'dark' : 'light');
+            requestAnimationFrame(() => document.body.classList.remove('no-transitions'));
         }
 
         if (localStorage.getItem('rep-theme') === 'dark') {

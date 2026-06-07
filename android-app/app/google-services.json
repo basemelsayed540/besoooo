@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1065497931788",
+    "project_id": "lite-8adab",
+    "storage_bucket": "lite-8adab.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1065497931788:android:5149b0c2371dc50fb03e29",
+        "android_client_info": {
+          "package_name": "com.besoooo.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJ74vwlnqQkX8UaoNF-N0vRlkmilpg0TA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

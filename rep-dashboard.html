@@ -52,6 +52,8 @@
         .action-btn.whatsapp { color: #25d366; background: #ecfdf5; border-color: #a7f3d0; }
         .dark .action-btn.whatsapp { background: rgba(37,211,102,0.12); border-color: rgba(37,211,102,0.25); }
         .action-btn.whatsapp:hover { background: #25d366; color: white; border-color: #25d366; }
+        .action-btn { position: relative; }
+        .badge-num { position: absolute; top: -6px; right: -6px; background: #ef4444; color: #fff; font-size: 0.6rem; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; line-height: 1; }
         .phone-row { margin-top: 6px; display: flex; gap: 6px; justify-content: flex-end; }
         .phone-icon-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: #e8f5e9; color: #059669; cursor: pointer; transition: all 0.2s; font-size: 0.8rem; }
         .dark .phone-icon-wrap { background: rgba(5,150,105,0.15); color: #34d399; }
@@ -737,8 +739,8 @@
                         <button class="action-btn reject" onclick="event.stopPropagation();showRejectDialog(${idx})">❌ إلغاء</button>
                     </div>
                     <div class="row">
-                        <button class="action-btn call" onclick="event.stopPropagation();showPhonesDialog('${enNum(s['الهاتف'] || '')}','${enNum(s['هاتف بديل'] || '')}')"><i class="fas fa-phone ml-1"></i> اتصال</button>
-                        <button class="action-btn whatsapp" onclick="event.stopPropagation();showWhatsAppDialog(${idx})"><i class="fab fa-whatsapp ml-1"></i> واتساب</button>
+                        <button class="action-btn call" onclick="event.stopPropagation();showPhonesDialog('${enNum(s['الهاتف'] || '')}','${enNum(s['هاتف بديل'] || '')}')"><i class="fas fa-phone ml-1"></i> اتصال${s['الهاتف'] && s['هاتف بديل'] ? `<span class="badge-num">2</span>` : ''}</button>
+                        <button class="action-btn whatsapp" onclick="event.stopPropagation();showWhatsAppDialog(${idx})"><i class="fab fa-whatsapp ml-1"></i> واتساب${s['الهاتف'] && s['هاتف بديل'] ? `<span class="badge-num">2</span>` : ''}</button>
                     </div>
                 </div>
                 `}
@@ -902,6 +904,7 @@
     function showPhonesDialog(phone1, phone2) {
         const phones = [phone1, phone2].filter(Boolean);
         if (!phones.length) return;
+        if (phones.length === 1) { window.location.href = 'tel:' + phones[0]; return; }
         Swal.fire({
             title: 'اختر رقم للاتصال',
             html: `<div class="grid grid-cols-1 gap-2">${phones.map((p, i) => `

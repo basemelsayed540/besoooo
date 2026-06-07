@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://evrqxgnqwngokukqerps.supabase.co https://*.supabase.co wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self';">
     <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="expires" content="0">
     <title>لوحة المندوب | نظام الشحن</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -321,6 +323,7 @@
         }
     });
 
+    if (localStorage.getItem('rep-version') !== '3') { localStorage.setItem('rep-version', '3'); window.location.href = window.location.href.split('?')[0] + '?v=' + Date.now(); }
     if (!currentUser || !['rep', 'مندوب فرعي', 'admin', 'housing'].includes(currentUser.role)) {
         window.location.href = 'login.html';
     }
@@ -751,10 +754,10 @@
             title: 'تحديث الحالة',
             html: `
                 <div class="flex gap-2 mb-3">
-                    <div class="flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm transition-all ${isPrice ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300' : 'border-slate-200 dark:border-slate-600 text-slate-500'}" id="peOptPrice" onclick="window._peStatus='تعديل سعر';document.getElementById('peOptPrice').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300';document.getElementById('peOptShip').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-slate-200 dark:border-slate-600 text-slate-500';tryAutoUpdatePrice(${idx})">
+                    <div class="flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${isPrice ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300' : 'border-slate-200 dark:border-slate-600 text-slate-500'}" id="peOptPrice" onclick="window._peStatus='تعديل سعر';document.getElementById('peOptPrice').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300';document.getElementById('peOptShip').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-slate-200 dark:border-slate-600 text-slate-500';tryAutoUpdatePrice(${idx})">
                         💰 تعديل سعر
                     </div>
-                    <div class="flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm transition-all ${!isPrice ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300' : 'border-slate-200 dark:border-slate-600 text-slate-500'}" id="peOptShip" onclick="window._peStatus='شحن';document.getElementById('peOptShip').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300';document.getElementById('peOptPrice').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-slate-200 dark:border-slate-600 text-slate-500';tryAutoUpdatePrice(${idx})">
+                    <div class="flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${!isPrice ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300' : 'border-slate-200 dark:border-slate-600 text-slate-500'}" id="peOptShip" onclick="window._peStatus='شحن';document.getElementById('peOptShip').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300';document.getElementById('peOptPrice').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-slate-200 dark:border-slate-600 text-slate-500';tryAutoUpdatePrice(${idx})">
                         🚚 شحن
                     </div>
                 </div>
@@ -827,7 +830,7 @@
         Swal.fire({
             title: 'اختر رقم للاتصال',
             html: `<div class="grid grid-cols-1 gap-2">${phones.map(p => `
-                <a href="tel:${p}" class="block p-4 rounded-xl border-2 border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-center font-bold text-lg text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-all no-underline">
+                <a href="tel:${p}" class="block p-4 rounded-xl border-2 border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-center font-bold text-lg text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 no-underline">
                     <i class="fas fa-phone ml-2"></i>${p}
                 </a>`).join('')}</div>`,
             showCancelButton: true,
@@ -838,8 +841,29 @@
 
     function formatPhoneForWA(phone) {
         const digits = phone.replace(/[^0-9]/g,'');
-        if (digits.startsWith('0')) return '2' + digits.slice(1);
-        return '2' + digits;
+        if (digits.startsWith('0')) return '20' + digits.slice(1);
+        return '20' + digits;
+    }
+    function openWA(phone, msg) {
+        const num = formatPhoneForWA(phone);
+        const url = `https://api.whatsapp.com/send?phone=${num}&text=${msg}`;
+        const isAndroid = /android/i.test(navigator.userAgent);
+        const waIntent = isAndroid ? `intent://send/${num}?text=${msg}#Intent;scheme=smsto;package=com.whatsapp;end` : url;
+        const wbIntent = isAndroid ? `intent://send/${num}?text=${msg}#Intent;scheme=smsto;package=com.whatsapp.w4b;end` : url;
+        Swal.fire({
+            title: 'اختر نوع الواتساب',
+            html: `<div class="grid grid-cols-2 gap-2">
+                <a href="${waIntent}" target="_blank" class="block p-4 rounded-xl border-2 border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-center font-bold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 no-underline" onclick="Swal.close()">
+                    <i class="fab fa-whatsapp text-2xl mb-1"></i><br>واتساب عادي
+                </a>
+                <a href="${wbIntent}" target="_blank" class="block p-4 rounded-xl border-2 border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-900/20 text-center font-bold text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/30 no-underline" onclick="Swal.close()">
+                    <i class="fab fa-whatsapp text-2xl mb-1"></i><br>واتساب أعمال
+                </a>
+            </div>`,
+            showCancelButton: true,
+            cancelButtonText: 'إلغاء',
+            showConfirmButton: false
+        });
     }
     function showWhatsAppDialog(idx) {
         const s = filteredShipments[idx];
@@ -857,15 +881,15 @@
         const phones = [s['الهاتف'] || '', s['هاتف بديل'] || ''].filter(Boolean);
         if (!phones.length) return;
         if (phones.length === 1) {
-            window.open(`https://api.whatsapp.com/send?phone=${formatPhoneForWA(phones[0])}&text=${msg}`, '_blank');
+            openWA(phones[0], msg);
             return;
         }
         Swal.fire({
             title: 'اختر رقم لإرسال الواتساب',
             html: `<div class="grid grid-cols-1 gap-2">${phones.map(p => `
-                <a href="https://api.whatsapp.com/send?phone=${formatPhoneForWA(p)}&text=${msg}" target="_blank" class="block p-4 rounded-xl border-2 border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-center font-bold text-lg text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-all no-underline">
+                <div onclick="Swal.close();openWA('${p}','${msg}')" class="block p-4 rounded-xl border-2 border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-center font-bold text-lg text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 no-underline cursor-pointer">
                     <i class="fab fa-whatsapp ml-2"></i>${p}
-                </a>`).join('')}</div>`,
+                </div>`).join('')}</div>`,
             showCancelButton: true,
             cancelButtonText: 'إلغاء',
             showConfirmButton: false
@@ -879,7 +903,7 @@
         Swal.fire({
             title: 'اختر سبب التأجيل',
             html: `<div class="grid grid-cols-1 gap-2">${opts.map((o, i) => `
-                <div class="p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm transition-all bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-amber-400" onclick="Swal.close();doUpdateShipment(${idx},{'الحالة':'مؤجل','سبب الحالة':'${o}'})">
+                <div class="p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300" onclick="Swal.close();doUpdateShipment(${idx},{'الحالة':'مؤجل','سبب الحالة':'${o}'})">
                     ⏰ ${o}
                 </div>`).join('')}</div>`,
             showCancelButton: true,
@@ -901,7 +925,7 @@
             html: `
                 <div class="grid grid-cols-1 gap-1.5 max-h-64 overflow-y-auto mb-3">
                     ${opts.map((o) => `
-                        <div class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm transition-all bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-red-400" onclick="var _r='${o}';var _e=document.getElementById('rejectExtra').value.trim();Swal.close();doUpdateShipment(${idx},{'الحالة':'إلغاء','سبب الحالة':_e?_r+' - '+_e:_r})">
+                        <div class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300" onclick="var _r='${o}';var _e=document.getElementById('rejectExtra').value.trim();Swal.close();doUpdateShipment(${idx},{'الحالة':'إلغاء','سبب الحالة':_e?_r+' - '+_e:_r})">
                             ❌ ${o}
                         </div>`).join('')}
                 </div>

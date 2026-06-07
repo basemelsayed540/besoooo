@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +13,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .login-stage {
@@ -128,7 +128,7 @@
                 linear-gradient(160deg, rgba(15,23,42,0.96), rgba(2,6,23,0.96));
             box-shadow: 0 36px 80px rgba(2, 6, 23, 0.52);
         }
-        body.no-transitions, body.no-transitions * { transition: none !important; }
+        .swal2-show,.swal2-hide{animation:none!important}.swal2-popup{transition:none!important}body.no-transitions,body.no-transitions*{transition:none!important}
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-screen flex items-center justify-center p-4 transition-colors duration-300">
@@ -236,7 +236,6 @@
 
     <script src="assets/js/shipment-config.js"></script>
     <script>
-        Swal.setDefaults({ animation: false });
         const { createClient } = supabase;
         const supabaseClient = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
 

@@ -3335,6 +3335,7 @@
     <script src="assets/js/shipment-config.js"></script>
     <script>
         const { createClient } = supabase;
+        Swal.setDefaults({ animation: false });
         const supabaseClient = getSharedSupabaseClient();
         const SHIPMENT_PRICE_FIELD = 'السعر بعد التعديل';
         const SHIPMENT_PRICE_FIELD_LEGACY = 'السعر_بعد_التعديل';

@@ -271,7 +271,7 @@
     function isFavorite(id) { return !!getFavorites()[id]; }
     function toggleFavorite(id) {
         const fav = getFavorites();
-        if (fav[id]) { delete fav[id]; } else { fav[id] = true; }
+        if (fav[id]) { delete fav[id]; } else { fav[id] = Date.now(); }
         saveFavorites(fav);
         applyFilters();
     }
@@ -518,9 +518,22 @@
         const icons = ['📅', '📋', '📍', '🏢'];
         const ti = { daily: 0, status: 1, zone: 2, sender: 3 };
         const title = icons[ti[type]] + ' ' + labels[ti[type]];
+        const chipColors = [
+            'border-indigo-200 dark:border-indigo-800/40 bg-indigo-50/50 dark:bg-indigo-900/10 text-indigo-600 dark:text-indigo-400',
+            'border-emerald-200 dark:border-emerald-800/40 bg-emerald-50/50 dark:bg-emerald-900/10 text-emerald-600 dark:text-emerald-400',
+            'border-amber-200 dark:border-amber-800/40 bg-amber-50/50 dark:bg-amber-900/10 text-amber-600 dark:text-amber-400',
+            'border-sky-200 dark:border-sky-800/40 bg-sky-50/50 dark:bg-sky-900/10 text-sky-600 dark:text-sky-400'
+        ];
+        const activeColors = [
+            'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300',
+            'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300',
+            'border-amber-500 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300',
+            'border-sky-500 bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-300'
+        ];
+        const ci = ti[type];
         const optsHtml = ['<div class="grid grid-cols-1 gap-1.5">',
-            `<div data-type="${type}" data-value="" onclick="selectFilterChip(this)" class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${!current ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400'}">الكل (${items.length})</div>`,
-            ...items.map(v => `<div data-type="${type}" data-value="${v.replace(/"/g,'&quot;')}" onclick="selectFilterChip(this)" class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${current === v ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400'}">${v} (${counts[v] || 0})</div>`),
+            `<div data-type="${type}" data-value="" onclick="selectFilterChip(this)" class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${!current ? activeColors[ci] : chipColors[ci]}">الكل (${items.length})</div>`,
+            ...items.map(v => `<div data-type="${type}" data-value="${v.replace(/"/g,'&quot;')}" onclick="selectFilterChip(this)" class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${current === v ? activeColors[ci] : chipColors[ci]}">${v} (${counts[v] || 0})</div>`),
         '</div>'].join('');
         Swal.fire({ title, html: optsHtml, showCancelButton: true, cancelButtonText: 'إلغاء', showConfirmButton: false });
     }
@@ -637,6 +650,11 @@
             return true;
         });
 
+        if (status === 'المفضلة') {
+            const fav = getFavorites();
+            filteredShipments.sort((a, b) => (fav[String(a.id)] || 0) - (fav[String(b.id)] || 0));
+        }
+
         updateStats();
         renderShipments();
     }
@@ -695,17 +713,18 @@
             <div class="shipment-row ${statusClass}">
                 <div class="flex items-center justify-between">
                     <div>
-                        <div class="main">${canFav ? `<button class="fav-btn ${isFav ? 'active' : ''}" onclick="event.stopPropagation();toggleFavorite('${sid}')"><i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i></button>` : ''}${needsFollowup ? (followupSent ? `<button class="followup-sent-card" onclick="event.stopPropagation();dismissFollowup('${sid}')"><i class="fas fa-check-circle"></i> تم ارسال المتابعة</button>` : `<button class="followup-btn" onclick="event.stopPropagation();doFollowup(${idx},'${sid}')"><i class="fab fa-whatsapp"></i></button>`) : ''}<i class="fas fa-ellipsis-v ml-1 text-slate-400 cursor-pointer" onclick="event.stopPropagation();copyShipmentDetails(${idx})"></i></div>
+                        <div class="main"><i class="fas fa-ellipsis-v ml-1 text-slate-400 cursor-pointer" onclick="event.stopPropagation();copyShipmentDetails(${idx})"></i>${canFav ? `<button class="fav-btn ${isFav ? 'active' : ''}" onclick="event.stopPropagation();toggleFavorite('${sid}')"><i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i></button>` : ''}${needsFollowup ? (followupSent ? `<button class="followup-sent-card" onclick="event.stopPropagation();dismissFollowup('${sid}')"><i class="fas fa-check-circle"></i> تم ارسال المتابعة</button>` : `<button class="followup-btn" onclick="event.stopPropagation();doFollowup(${idx},'${sid}')"><i class="fab fa-whatsapp"></i></button>`) : ''}</div>
                         <div class="main mt-1">${enNum(s['اسم العميل'] || '-')}</div>
                     </div>
                     <div class="text-left">
-                        <div class="main ${(s['الحالة'] || '') === 'تم التسليم' ? 'text-emerald-600' : 'text-amber-600'}">${enNum(s['المبلغ'] || '0')} ج</div>
-                        <div class="sub">${s['الحالة'] || '-'}</div>
+                        <div class="main text-indigo-600 dark:text-indigo-400">${enNum(s['كود الشحنة'] || '-')}</div>
+                        <div class="sub ${s['الحالة'] === 'تم' || s['الحالة'] === 'تم التسليم' ? 'text-green-500' : s['الحالة'] === 'قيد التوصيل' ? 'text-amber-500' : s['الحالة'] === 'مؤجل' ? 'text-orange-500' : s['الحالة'] === 'إلغاء' ? 'text-red-500' : s['الحالة'] === 'تعديل سعر' || s['الحالة'] === 'شحن' ? 'text-blue-500' : ''}" style="color: ${s['الحالة'] === 'تم' || s['الحالة'] === 'تم التسليم' ? '#22c55e' : s['الحالة'] === 'قيد التوصيل' ? '#f59e0b' : s['الحالة'] === 'مؤجل' ? '#f97316' : s['الحالة'] === 'إلغاء' ? '#ef4444' : s['الحالة'] === 'تعديل سعر' || s['الحالة'] === 'شحن' ? '#3b82f6' : ''} !important">${s['الحالة'] || '-'}</div>
                     </div>
                 </div>
                 <div class="mt-1 text-[0.95rem] text-slate-500 space-y-0.5">
                     <div><i class="fas fa-box ml-1.5"></i>${enNum(s['المنتج'] || '-')}</div>
-                    <div><i class="fas fa-map-pin ml-1.5"></i>${enNum(s['العنوان'] || '-')} <span class="mr-2"><i class="fas fa-layer-group ml-0.5"></i>${enNum(s['الزون'] || '-')}</span></div>
+                    <div><i class="fas fa-map-pin ml-1.5"></i>${enNum(s['العنوان'] || '-')}</div>
+                    <div><i class="fas fa-layer-group ml-1.5"></i>${enNum(s['الزون'] || '-')} <span class="mr-3"><i class="fas fa-building ml-0.5"></i>${enNum(s['الراسل'] || '-')}</span> <span class="mr-3"><i class="fas fa-money-bill ml-0.5"></i>${enNum(s['المبلغ'] || '0')} ج</span></div>
                 </div>
                 ${hideActions ? '' : `
                 <div class="action-btns">
@@ -810,10 +829,10 @@
             title: 'تحديث الحالة',
             html: `
                 <div class="flex gap-2 mb-3">
-                    <div class="flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${isPrice ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300' : 'border-slate-200 dark:border-slate-600 text-slate-500'}" id="peOptPrice" onclick="window._peStatus='تعديل سعر';document.getElementById('peOptPrice').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300';document.getElementById('peOptShip').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-slate-200 dark:border-slate-600 text-slate-500';tryAutoUpdatePrice(${idx})">
+                    <div class="flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${isPrice ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300' : 'border-purple-200 bg-purple-50/50 dark:border-purple-800/40 dark:bg-purple-900/10 text-purple-600 dark:text-purple-400'}" id="peOptPrice" onclick="window._peStatus='تعديل سعر';document.getElementById('peOptPrice').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300';document.getElementById('peOptShip').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-sky-200 dark:border-sky-800/40 bg-sky-50/50 dark:bg-sky-900/10 text-sky-600 dark:text-sky-400';tryAutoUpdatePrice(${idx})">
                         💰 تعديل سعر
                     </div>
-                    <div class="flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${!isPrice ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300' : 'border-slate-200 dark:border-slate-600 text-slate-500'}" id="peOptShip" onclick="window._peStatus='شحن';document.getElementById('peOptShip').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300';document.getElementById('peOptPrice').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-slate-200 dark:border-slate-600 text-slate-500';tryAutoUpdatePrice(${idx})">
+                    <div class="flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${!isPrice ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-300' : 'border-sky-200 dark:border-sky-800/40 bg-sky-50/50 dark:bg-sky-900/10 text-sky-600 dark:text-sky-400'}" id="peOptShip" onclick="window._peStatus='شحن';document.getElementById('peOptShip').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-sky-500 bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-300';document.getElementById('peOptPrice').className='flex-1 p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-purple-200 dark:border-purple-800/40 bg-purple-50/50 dark:bg-purple-900/10 text-purple-600 dark:text-purple-400';tryAutoUpdatePrice(${idx})">
                         🚚 شحن
                     </div>
                 </div>
@@ -885,8 +904,8 @@
         if (!phones.length) return;
         Swal.fire({
             title: 'اختر رقم للاتصال',
-            html: `<div class="grid grid-cols-1 gap-2">${phones.map(p => `
-                <a href="tel:${p}" class="block p-4 rounded-xl border-2 border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-center font-bold text-lg text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 no-underline">
+            html: `<div class="grid grid-cols-1 gap-2">${phones.map((p, i) => `
+                <a href="tel:${p}" class="block p-4 rounded-xl border-2 ${i === 0 ? 'border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300' : 'border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-300'} text-center font-bold text-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/30 no-underline">
                     <i class="fas fa-phone ml-2"></i>${p}
                 </a>`).join('')}</div>`,
             showCancelButton: true,
@@ -903,18 +922,15 @@
     function openWA(phone, msg) {
         const num = formatPhoneForWA(phone);
         const url = `https://api.whatsapp.com/send?phone=${num}&text=${msg}`;
-        const isAndroid = /android/i.test(navigator.userAgent);
-        const waIntent = isAndroid ? `intent://send/${num}?text=${msg}#Intent;scheme=smsto;package=com.whatsapp;end` : url;
-        const wbIntent = isAndroid ? `intent://send/${num}?text=${msg}#Intent;scheme=smsto;package=com.whatsapp.w4b;end` : url;
         Swal.fire({
             title: 'اختر نوع الواتساب',
             html: `<div class="grid grid-cols-2 gap-2">
-                <a href="${waIntent}" target="_blank" class="block p-4 rounded-xl border-2 border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-center font-bold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 no-underline" onclick="Swal.close()">
+                <div onclick="Swal.close();window.open('${url}','_blank')" class="block p-4 rounded-xl border-2 border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-center font-bold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 no-underline cursor-pointer">
                     <i class="fab fa-whatsapp text-2xl mb-1"></i><br>واتساب عادي
-                </a>
-                <a href="${wbIntent}" target="_blank" class="block p-4 rounded-xl border-2 border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-900/20 text-center font-bold text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/30 no-underline" onclick="Swal.close()">
+                </div>
+                <div onclick="Swal.close();window.open('${url}','_blank')" class="block p-4 rounded-xl border-2 border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-900/20 text-center font-bold text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/30 no-underline cursor-pointer">
                     <i class="fab fa-whatsapp text-2xl mb-1"></i><br>واتساب أعمال
-                </a>
+                </div>
             </div>`,
             showCancelButton: true,
             cancelButtonText: 'إلغاء',
@@ -942,8 +958,8 @@
         }
         Swal.fire({
             title: 'اختر رقم لإرسال الواتساب',
-            html: `<div class="grid grid-cols-1 gap-2">${phones.map(p => `
-                <div onclick="Swal.close();openWA('${p}','${msg}')" class="block p-4 rounded-xl border-2 border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-center font-bold text-lg text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 no-underline cursor-pointer">
+            html: `<div class="grid grid-cols-1 gap-2">${phones.map((p, i) => `
+                <div onclick="Swal.close();openWA('${p}','${msg}')" class="block p-4 rounded-xl border-2 ${i === 0 ? 'border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300' : 'border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'} text-center font-bold text-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/30 no-underline cursor-pointer">
                     <i class="fab fa-whatsapp ml-2"></i>${p}
                 </div>`).join('')}</div>`,
             showCancelButton: true,
@@ -956,10 +972,11 @@
         const shipment = filteredShipments[idx];
         if (!shipment) return;
         const opts = ['مؤجل غداً', 'مؤجل الأحد أو الاثنين', 'مؤجل الاربع أو الخميس أو الجمعه'];
+        const postponeColors = ['bg-amber-50 dark:bg-amber-900/15 border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-300', 'bg-orange-50 dark:bg-orange-900/15 border-orange-200 dark:border-orange-800/40 text-orange-700 dark:text-orange-300', 'bg-yellow-50 dark:bg-yellow-900/15 border-yellow-200 dark:border-yellow-800/40 text-yellow-700 dark:text-yellow-300'];
         Swal.fire({
             title: 'اختر سبب التأجيل',
             html: `<div class="grid grid-cols-1 gap-2">${opts.map((o, i) => `
-                <div class="p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300" onclick="Swal.close();doUpdateShipment(${idx},{'الحالة':'مؤجل','سبب الحالة':'${o}'})">
+                <div class="p-3 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${postponeColors[i]}" onclick="Swal.close();doUpdateShipment(${idx},{'الحالة':'مؤجل','سبب الحالة':'${o}'})">
                     ⏰ ${o}
                 </div>`).join('')}</div>`,
             showCancelButton: true,
@@ -976,12 +993,24 @@
             'رقم الهاتف غلط','العنوان غير صحيح','المنتج تالف','المنتج غير مطابق',
             'تهرب','المنطقة خارج نطاق التوصيل','الطلب مكرر','العميل لم يستجيب للاتصال'
         ];
+        const rejectColors = [
+            'bg-red-50 dark:bg-red-900/15 border-red-200 dark:border-red-800/40 text-red-700 dark:text-red-300',
+            'bg-rose-50 dark:bg-rose-900/15 border-rose-200 dark:border-rose-800/40 text-rose-700 dark:text-rose-300',
+            'bg-orange-50 dark:bg-orange-900/15 border-orange-200 dark:border-orange-800/40 text-orange-700 dark:text-orange-300',
+            'bg-amber-50 dark:bg-amber-900/15 border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-300',
+            'bg-purple-50 dark:bg-purple-900/15 border-purple-200 dark:border-purple-800/40 text-purple-700 dark:text-purple-300',
+            'bg-pink-50 dark:bg-pink-900/15 border-pink-200 dark:border-pink-800/40 text-pink-700 dark:text-pink-300',
+            'bg-red-100 dark:bg-red-900/25 border-red-300 dark:border-red-800/50 text-red-800 dark:text-red-200',
+            'bg-slate-50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300',
+            'bg-indigo-50 dark:bg-indigo-900/15 border-indigo-200 dark:border-indigo-800/40 text-indigo-700 dark:text-indigo-300',
+            'bg-yellow-50 dark:bg-yellow-900/15 border-yellow-200 dark:border-yellow-800/40 text-yellow-700 dark:text-yellow-300'
+        ];
         Swal.fire({
             title: 'اختر سبب الرفض',
             html: `
                 <div class="grid grid-cols-1 gap-1.5 max-h-64 overflow-y-auto mb-3">
-                    ${opts.map((o) => `
-                        <div class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300" onclick="var _r='${o}';var _e=document.getElementById('rejectExtra').value.trim();Swal.close();doUpdateShipment(${idx},{'الحالة':'إلغاء','سبب الحالة':_e?_r+' - '+_e:_r})">
+                    ${opts.map((o, i) => `
+                        <div class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${rejectColors[i]}" onclick="var _r='${o}';var _e=document.getElementById('rejectExtra').value.trim();Swal.close();doUpdateShipment(${idx},{'الحالة':'إلغاء','سبب الحالة':_e?_r+' - '+_e:_r})">
                             ❌ ${o}
                         </div>`).join('')}
                 </div>

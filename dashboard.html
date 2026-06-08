@@ -3342,6 +3342,8 @@
 
     <script src="assets/js/shipment-config.js"></script>
     <script>
+        const BUILD = '4'; if (!window.location.href.includes('_t=')) { localStorage.setItem('rep-version', BUILD); window.location.href = window.location.href.split('?')[0] + '?_t=' + BUILD; return; }
+
         const { createClient } = supabase;
         
         const supabaseClient = getSharedSupabaseClient();

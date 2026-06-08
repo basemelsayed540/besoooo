@@ -240,6 +240,7 @@
 
     <script src="assets/js/shipment-config.js"></script>
     <script>
+        const BUILD = '4'; if (!window.location.href.includes('_t=')) { localStorage.setItem('rep-version', BUILD); window.location.href = window.location.href.split('?')[0] + '?_t=' + BUILD; return; }
         const { createClient } = supabase;
         const supabaseClient = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
 
@@ -271,7 +272,6 @@
             requestAnimationFrame(() => document.body.classList.remove('no-transitions'));
         }
 
-        if (localStorage.getItem('rep-version') !== '3') { localStorage.setItem('rep-version', '3'); window.location.href = window.location.href.split('?')[0] + '?v=' + Date.now(); }
         if (localStorage.getItem('rep-theme') === 'dark') {
             document.body.classList.add('dark');
             const icon = document.getElementById('themeIcon');

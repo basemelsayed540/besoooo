@@ -66,6 +66,8 @@
             margin-bottom: 20px;
         }
 
+        #section-users { width: 100%; }
+
         .stats-card-mini {
             background: var(--card-bg);
             border-radius: 18px;
@@ -2579,7 +2581,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="flex-grow-1 p-3 p-md-4 w-100" style="overflow-x: hidden;">
+        <div class="flex-grow-1 p-3 p-md-4" style="min-width: 0; overflow-x: hidden;">
             <div id="section-stats" style="display: none;">
                 <div class="order-card shadow-sm border-0" style="overflow:hidden;">
                     <div class="p-4">
@@ -2668,11 +2670,7 @@
 
                 <div class="stats-collapsible-body">
                         <div class="rep-leaderboards-grid">
-                            <div class="col-12 p-0">
-                                <div class="small text-secondary fw-bold px-1">
-                                    تم نقل العرض المختصر للأعلى، وهذا القسم مخصص للتفاصيل الكاملة والفرز.
-                                </div>
-                            </div>
+
                         </div>
                         <div class="row g-4 mt-1">
                     <!-- أداء المناديب -->
@@ -2707,7 +2705,7 @@
 
             <div id="section-users" style="display: none;">
                 <!-- إدارة الحسابات -->
-                <div class="col-12">
+                <div>
                     <div class="order-card p-4 shadow-sm border-0">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h5 class="fw-bold m-0 text-primary">
@@ -2733,6 +2731,7 @@
                                                     <th>الاسم</th>
                                                     <th>الرقم</th>
                                                     <th>النوع</th>
+                                                    <th>الحالة</th>
                                                     <th class="text-center">الإجراءات</th>
                                                 </tr>
                                             </thead>
@@ -2785,6 +2784,7 @@
                                                     <th>الاسم</th>
                                                     <th>الرقم</th>
                                                     <th>النوع</th>
+                                                    <th>الحالة</th>
                                                     <th class="text-center">الإجراءات</th>
                                                 </tr>
                                             </thead>
@@ -2811,6 +2811,7 @@
                                                     <th>الاسم</th>
                                                     <th>الرقم</th>
                                                     <th>النوع</th>
+                                                    <th>الحالة</th>
                                                     <th class="text-center">الإجراءات</th>
                                                 </tr>
                                             </thead>
@@ -4947,22 +4948,6 @@
             });
         }
 
-        function renderUsers() {
-            document.getElementById('usersTable').innerHTML = allUsers.map(u => `
-                    <tr>
-                    <td><strong>${u.username || u.full_name || '---'}</strong></td>
-                    <td>${u.phone}</td>
-                    <td><span class="badge bg-light text-dark">${u.role === 'rep' ? 'مندوب' : (u.role === 'sender' ? 'راسل' : (u.role === 'follower' ? 'متابعة' : (u.role === 'housing' ? 'تسكين الشحنات' : 'مدير')))}</span></td>
-                    <td class="text-center">
-                        <div class="d-flex justify-content-center gap-2">
-                            <button onclick="editUser(${JSON.stringify(u).replace(/"/g, '&quot;')})" class="btn-action bg-primary-subtle text-primary"><i class="fas fa-edit"></i></button>
-                            <button onclick="deleteUser('${u.id}', '${u.username}')" class="btn-action bg-danger-subtle text-danger"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
-                    `).join('');
-        }
-
         function getUserRoleLabel(role) {
             if (role === 'rep') return 'مندوب';
             if (role === 'sender') return 'راسل';
@@ -5051,7 +5036,7 @@
             count.innerText = users.length;
             table.innerHTML = users.length
                 ? users.map(getUsersTableRow).join('')
-                : `<tr><td colspan="4" class="text-center py-4 text-secondary fw-bold">${emptyMessage}</td></tr>`;
+                : `<tr><td colspan="5" class="text-center py-4 text-secondary fw-bold">${emptyMessage}</td></tr>`;
         }
 
         function renderUsers() {
@@ -8241,6 +8226,11 @@
             });
         }
 
+        function shouldClearResolvedFieldsOnPending(previousStatus, newStatus) {
+            const resolvedStatuses = ['تم', 'تعديل سعر', 'شحن', 'إلغاء', 'الغاء', 'رفض', 'مؤجل'];
+            return newStatus === 'قيد التوصيل' && resolvedStatuses.includes(previousStatus);
+        }
+
         function housingOnStatusChange(id) {
             // منع تعديل الشحنات المؤرشفة لغير المدير
             if (currentUser.role !== 'admin') {
@@ -8302,10 +8292,8 @@
                 }
             }
 
-            const clearSourceStatuses = ['تم', 'تعديل سعر', 'شحن'];
-            const clearTargetStatuses = ['قيد التوصيل', 'إلغاء', 'مؤجل', ''];
-
-            if (clearSourceStatuses.includes(prevStatus) && clearTargetStatuses.includes(newStatus)) {
+            if (shouldClearResolvedFieldsOnPending(prevStatus, newStatus) ||
+                (['تم', 'تعديل سعر', 'شحن'].includes(prevStatus) && ['إلغاء', 'مؤجل', ''].includes(newStatus))) {
                 const reasonInput = document.getElementById(`housing-reason-${id}`);
                 const adjustedInput = document.getElementById(`housing-adjusted-${id}`);
                 if (reasonInput) reasonInput.value = '';
@@ -8367,9 +8355,8 @@
                     }
                 }
 
-                const clearSourceStatuses = ['تم', 'تعديل سعر', 'شحن'];
-                const clearTargetStatuses = ['قيد التوصيل', 'إلغاء', 'مؤجل', ''];
-                if (clearSourceStatuses.includes(currentStatus) && clearTargetStatuses.includes(status)) {
+                if (shouldClearResolvedFieldsOnPending(currentStatus, status) ||
+                    (['تم', 'تعديل سعر', 'شحن'].includes(currentStatus) && ['إلغاء', 'مؤجل', ''].includes(status))) {
                     const reasonInput = document.getElementById(`housing-reason-${id}`);
                     const adjustedInput = document.getElementById(`housing-adjusted-${id}`);
                     if (reasonInput) reasonInput.value = '';
@@ -9093,7 +9080,14 @@
             // --- Undo Snapshot ---
             const snapshots = selectedIds.map(id => {
                 const s = allShipments.find(sh => getShipmentDatabaseId(sh) === String(id));
-                return { id, fields: { الحالة: s ? (s.الحالة ?? null) : null } };
+                return {
+                    id,
+                    fields: {
+                        الحالة: s ? (s.الحالة ?? null) : null,
+                        'السعر بعد التعديل': s ? (s['السعر بعد التعديل'] ?? null) : null,
+                        'سبب الحالة': s ? (s['سبب الحالة'] ?? null) : null
+                    }
+                };
             });
             housingUndoStack.push({ label: `تغيير الحالة لـ قيد التوصيل لـ ${selectedIds.length} شحنة`, snapshots });
             updateHousingUndoButtonState();
@@ -9102,7 +9096,7 @@
             try {
                 const { error } = await supabaseClient
                     .from(CONFIG.TABLES.SHIPMENTS)
-                    .update({ الحالة: 'قيد التوصيل' })
+                    .update({ الحالة: 'قيد التوصيل', 'السعر بعد التعديل': null, 'سبب الحالة': null })
                     .in('id', selectedIds);
 
                 if (error) throw error;
@@ -9118,7 +9112,7 @@
                 // Update local data
                 allShipments = allShipments.map(s => {
                     if (selectedIds.includes(getShipmentDatabaseId(s))) {
-                        return { ...s, الحالة: 'قيد التوصيل' };
+                        return { ...s, الحالة: 'قيد التوصيل', 'السعر بعد التعديل': null, 'سبب الحالة': null };
                     }
                     return s;
                 });
@@ -10112,6 +10106,10 @@
                 const payload = {};
                 if (newStatus) payload.الحالة = newStatus;
                 if (newRep) payload.المندوب = newRep;
+                if (newStatus === 'قيد التوصيل') {
+                    payload['السعر بعد التعديل'] = null;
+                    payload['سبب الحالة'] = null;
+                }
                 const currentU = currentUser.full_name || currentUser.username || 'المدير';
                 const changedPayload = pickHousingChangedPayload(allShipments.find(s => String(s.id) === id) || {}, payload);
                 const finalPayload = toServerShipmentPayload({ ...changedPayload, ['اسم الموظف']: currentU });

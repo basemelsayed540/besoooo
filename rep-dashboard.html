@@ -244,16 +244,17 @@
     <div class="grid grid-cols-4 gap-2 mb-4" id="statsRow">
         <div class="stat-card text-center">
             <div class="num text-indigo-600 dark:text-indigo-400" id="statTotal">0</div>
-            <div class="label">الإجمالي</div>
-                    <div class="text-xs font-medium opacity-70 mt-1" id="statTotalCount"></div>
+            <div class="label">المدفوع</div>
         </div>
         <div class="stat-card text-center">
             <div class="num text-emerald-600 dark:text-emerald-400" id="statCommission">0</div>
             <div class="label">العمولة</div>
+            <div class="text-xs font-medium opacity-70 mt-1" id="statTotalCount"></div>
         </div>
         <div class="stat-card text-center">
             <div class="num text-amber-600 dark:text-amber-400" id="statDelivery">0</div>
             <div class="label">التوريد</div>
+            <div id="statDeliveryBreakdown" class="text-[0.6rem] font-medium opacity-70 mt-1 leading-tight"></div>
         </div>
         <div class="stat-card text-center">
             <div class="num text-rose-600 dark:text-rose-400" id="statShipments">0</div>
@@ -302,7 +303,7 @@
 
 <script src="assets/js/shipment-config.js"></script>
 <script>
-    const BUILD = '4'; if (!window.location.href.includes('_t=')) { localStorage.setItem('rep-version', BUILD); window.location.href = window.location.href.split('?')[0] + '?_t=' + BUILD; }
+    const BUILD = '6'; if (!window.location.href.includes('_t=')) { localStorage.setItem('rep-version', BUILD); window.location.href = window.location.href.split('?')[0] + '?_t=' + BUILD; }
     const supabaseClient = getSharedSupabaseClient();
     let actionsHidden = localStorage.getItem('rep-actions-hidden') === 'true';
     function toggleRepActions() {
@@ -460,7 +461,7 @@
             html: `
                 <div class="text-right">
                     <label class="text-sm font-bold ${isDark ? 'text-slate-300' : 'text-slate-600'}">الاسم</label>
-                    <input type="text" id="editName" class="w-full p-2.5 rounded-xl border ${isDark ? 'border-slate-600 bg-slate-800 text-white' : 'border-slate-300 bg-white'} text-sm mt-1 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-400" value="${user.full_name || user.username || ''}">
+                    <input type="text" id="editName" readonly class="w-full p-2.5 rounded-xl border ${isDark ? 'border-slate-600 bg-slate-800 text-white' : 'border-slate-300 bg-white'} text-sm mt-1 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 opacity-75" value="${user.full_name || user.username || ''}">
                     <label class="text-sm font-bold ${isDark ? 'text-slate-300' : 'text-slate-600'}">رقم الهاتف</label>
                     <input type="text" id="editPhone" class="w-full p-2.5 rounded-xl border ${isDark ? 'border-slate-600 bg-slate-800 text-white' : 'border-slate-300 bg-white'} text-sm mt-1 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-400" value="${user.phone || ''}">
                     <label class="text-sm font-bold ${isDark ? 'text-slate-300' : 'text-slate-600'}">كلمة المرور الجديدة (اترك فارغاً إذا لا تريد التغيير)</label>
@@ -469,7 +470,7 @@
             `,
             showCancelButton: true,
             confirmButtonText: 'حفظ',
-            cancelButtonText: 'إلغاء',
+            cancelButtonText: 'الغاء',
             confirmButtonColor: '#6366f1',
             customClass: {
                 popup: isDark ? 'swal-dark' : '',
@@ -558,7 +559,7 @@
             if (sr) senderCounts[sr] = (senderCounts[sr] || 0) + 1;
         });
         statusCounts['المفضلة'] = Object.keys(getFavorites()).length;
-        const followupStatuses = ['إلغاء', 'مؤجل', 'تعديل سعر', 'شحن'];
+        const followupStatuses = ['الغاء', 'مؤجل', 'تعديل سعر', 'شحن'];
         const dismissed = getFollowupsDismissed();
         statusCounts['بحاجة لمتابعة'] = base.filter(s => followupStatuses.includes(s['الحالة'] || '') && !dismissed[String(s.id)]).length;
 
@@ -597,7 +598,7 @@
             `<div data-type="${type}" data-value="" onclick="selectFilterChip(this)" class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${!current ? activeColors[ci] : chipColors[ci]}">الكل (${items.length})</div>`,
             ...items.map(v => `<div data-type="${type}" data-value="${v.replace(/"/g,'&quot;')}" onclick="selectFilterChip(this)" class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${current === v ? activeColors[ci] : chipColors[ci]}">${v}${type === 'daily' && archivedDailies.has(v) ? ' 📦' : ''} (${counts[v] || 0})</div>`),
         '</div>'].join('');
-        Swal.fire({ title, html: optsHtml, showCancelButton: true, cancelButtonText: 'إلغاء', showConfirmButton: false });
+        Swal.fire({ title, html: optsHtml, showCancelButton: true, cancelButtonText: 'الغاء', showConfirmButton: false });
     }
     window.selectFilterChip = function(el) {
         const type = el.dataset.type;
@@ -689,7 +690,7 @@
                 const fav = getFavorites();
                 if (!fav[sid]) return false;
             } else if (status === 'بحاجة لمتابعة') {
-                const followupStatuses = ['إلغاء', 'مؤجل', 'تعديل سعر', 'شحن'];
+                const followupStatuses = ['الغاء', 'مؤجل', 'تعديل سعر', 'شحن'];
                 if (!followupStatuses.includes(sStatus)) return false;
                 const dismissed = getFollowupsDismissed();
                 if (dismissed[sid]) return false;
@@ -726,6 +727,7 @@
         document.getElementById('statTotalCount').textContent = '';
         document.getElementById('statCommission').textContent = enNum('0');
         document.getElementById('statDelivery').textContent = enNum('0');
+        document.getElementById('statDeliveryBreakdown').textContent = '';
         document.getElementById('statShipments').textContent = enNum('0');
         document.getElementById('progressPercent').textContent = enNum('0') + '%';
         document.getElementById('progressFill').style.width = '0%';
@@ -737,7 +739,7 @@
         const dailyShipments = getDailyShipments();
         const doneStatuses = ['تم', 'تم التسليم', 'شحن', 'تعديل سعر', 'استلم جزئي'];
         const doneShipments = dailyShipments.filter(s => doneStatuses.includes(s['الحالة'] || ''));
-        const total = doneShipments.reduce((sum, s) => sum + (parseFloat(s['السعر بعد التعديل']) || 0), 0);
+        const total = doneShipments.reduce((sum, s) => sum + (parseFloat(s['المدفوع']) || 0), 0);
         const commission = doneShipments.reduce((sum, s) => sum + (parseFloat(s['عمولة المندوب']) || 0), 0);
         const delivered = doneShipments.length;
         const deliveryTotal = total - commission;
@@ -747,6 +749,14 @@
         document.getElementById('statCommission').textContent = enNum(Math.round(commission));
         document.getElementById('statDelivery').textContent = enNum(Math.round(deliveryTotal));
         document.getElementById('statShipments').textContent = enNum(dailyShipments.length);
+
+        const statusBreakdown = { 'تعديل سعر': 0, 'شحن': 0, 'مؤجل': 0, 'الغاء': 0, 'قيد التوصيل': 0 };
+        dailyShipments.forEach(s => {
+            const st = s['الحالة'] || '';
+            if (statusBreakdown.hasOwnProperty(st)) statusBreakdown[st]++;
+        });
+        document.getElementById('statDeliveryBreakdown').textContent =
+            Object.entries(statusBreakdown).filter(([, c]) => c > 0).map(([k, c]) => `${k}:${c}`).join(' | ');
 
         const pct = dailyShipments.length ? Math.round((delivered / dailyShipments.length) * 100) : 0;
         document.getElementById('progressPercent').textContent = enNum(pct) + '%';
@@ -762,16 +772,16 @@
             return;
         }
         container.innerHTML = filteredShipments.map((s, idx) => {
-            const hideActions = ['تم', 'تعديل سعر', 'شحن', 'إلغاء'].includes(s['الحالة'] || '');
+            const hideActions = ['تم', 'تعديل سعر', 'شحن', 'الغاء'].includes(s['الحالة'] || '');
             const isArchived = !!(s['ارشيف'] || '').trim();
             const canFav = !isArchived && ['قيد التوصيل', 'مؤجل'].includes(s['الحالة'] || '');
             const sid = String(s.id);
             const isFav = isFavorite(sid);
             const isFollowupFilter = document.getElementById('filterStatus').value === 'بحاجة لمتابعة';
-            const followupStatuses = ['إلغاء', 'مؤجل', 'تعديل سعر', 'شحن'];
+            const followupStatuses = ['الغاء', 'مؤجل', 'تعديل سعر', 'شحن'];
             const needsFollowup = isFollowupFilter && followupStatuses.includes(s['الحالة'] || '');
             const followupSent = needsFollowup && !!getFollowupsSent()[sid];
-            const statusClass = ['تم','تعديل سعر','شحن'].includes(s['الحالة']||'') ? 'border-green' : s['الحالة'] === 'قيد التوصيل' ? 'border-yellow' : s['الحالة'] === 'مؤجل' ? 'border-orange' : s['الحالة'] === 'إلغاء' ? 'border-red' : '';
+            const statusClass = ['تم','تعديل سعر','شحن'].includes(s['الحالة']||'') ? 'border-green' : s['الحالة'] === 'قيد التوصيل' ? 'border-yellow' : s['الحالة'] === 'مؤجل' ? 'border-orange' : s['الحالة'] === 'الغاء' ? 'border-red' : '';
             const finalHideActions = hideActions || isArchived;
             const rowClass = isArchived ? (statusClass ? statusClass + ' archived-row' : 'archived-row') : statusClass;
             return `
@@ -783,13 +793,13 @@
                     </div>
                     <div class="text-left">
                         <div class="main text-indigo-600 dark:text-indigo-400">${enNum(s['كود الشحنة'] || '-')}${isArchived ? ' <span class="text-xs text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded-full">📦 مؤرشفة</span>' : ''}</div>
-                        <div class="sub ${s['الحالة'] === 'تم' || s['الحالة'] === 'تم التسليم' ? 'text-green-500' : s['الحالة'] === 'قيد التوصيل' ? 'text-amber-500' : s['الحالة'] === 'مؤجل' ? 'text-orange-500' : s['الحالة'] === 'إلغاء' ? 'text-red-500' : s['الحالة'] === 'تعديل سعر' || s['الحالة'] === 'شحن' ? 'text-blue-500' : ''}" style="color: ${s['الحالة'] === 'تم' || s['الحالة'] === 'تم التسليم' ? '#22c55e' : s['الحالة'] === 'قيد التوصيل' ? '#f59e0b' : s['الحالة'] === 'مؤجل' ? '#f97316' : s['الحالة'] === 'إلغاء' ? '#ef4444' : s['الحالة'] === 'تعديل سعر' || s['الحالة'] === 'شحن' ? '#3b82f6' : ''} !important">${s['الحالة'] || '-'}</div>
+                        <div class="sub ${s['الحالة'] === 'تم' || s['الحالة'] === 'تم التسليم' ? 'text-green-500' : s['الحالة'] === 'قيد التوصيل' ? 'text-amber-500' : s['الحالة'] === 'مؤجل' ? 'text-orange-500' : s['الحالة'] === 'الغاء' ? 'text-red-500' : s['الحالة'] === 'تعديل سعر' || s['الحالة'] === 'شحن' ? 'text-blue-500' : ''}" style="color: ${s['الحالة'] === 'تم' || s['الحالة'] === 'تم التسليم' ? '#22c55e' : s['الحالة'] === 'قيد التوصيل' ? '#f59e0b' : s['الحالة'] === 'مؤجل' ? '#f97316' : s['الحالة'] === 'الغاء' ? '#ef4444' : s['الحالة'] === 'تعديل سعر' || s['الحالة'] === 'شحن' ? '#3b82f6' : ''} !important">${s['الحالة'] || '-'}</div>
                     </div>
                 </div>
                 <div class="mt-2 text-sm text-slate-500 space-y-1.5">
                     <div><i class="fas fa-box ml-1.5"></i><span class="field-label">المنتج:</span>${enNum(s['المنتج'] || '-')}</div>
                     <div><i class="fas fa-map-pin ml-1.5"></i><span class="field-label">العنوان:</span><span class="detail-address">${enNum(s['العنوان'] || '-')}</span></div>
-                    <div><i class="fas fa-layer-group ml-1.5"></i><span class="field-label">الزون:</span>${enNum(s['الزون'] || '-')} <span class="mr-4"><i class="fas fa-building ml-0.5"></i><span class="field-label">الراسل:</span>${enNum(s['الراسل'] || '-')}</span> <span class="mr-4"><i class="fas fa-money-bill ml-0.5"></i><span class="field-label">المبلغ:</span><span class="shipment-amount">${(['تم','تم التسليم','تعديل سعر','شحن'].includes(s['الحالة']||'') && s['السعر بعد التعديل'] != null && s['السعر بعد التعديل'] !== '') ? enNum(s['السعر بعد التعديل']) : enNum(s['المبلغ'] || '0')}</span></span></div>
+                    <div><i class="fas fa-layer-group ml-1.5"></i><span class="field-label">الزون:</span>${enNum(s['الزون'] || '-')} <span class="mr-4"><i class="fas fa-building ml-0.5"></i><span class="field-label">الراسل:</span>${enNum(s['الراسل'] || '-')}</span> <span class="mr-4"><i class="fas fa-money-bill ml-0.5"></i><span class="field-label">المبلغ:</span><span class="shipment-amount">${(['تم','تم التسليم','تعديل سعر','شحن'].includes(s['الحالة']||'') && s['المدفوع'] != null && s['المدفوع'] !== '') ? enNum(s['المدفوع']) : enNum(s['المبلغ'] || '0')}</span></span></div>
                 </div>
                 ${finalHideActions ? '' : `
                 <div class="action-btns${actionsHidden ? ' hidden-actions' : ''}">
@@ -799,7 +809,7 @@
                     </div>
                     <div class="row">
                         <button class="action-btn postpone" onclick="event.stopPropagation();showPostponeDialog(${idx})">⏰ مؤجل</button>
-                        <button class="action-btn reject" onclick="event.stopPropagation();showRejectDialog(${idx})">❌ إلغاء</button>
+                        <button class="action-btn reject" onclick="event.stopPropagation();showRejectDialog(${idx})">❌ الغاء</button>
                     </div>
                     <div class="row">
                         <button class="action-btn call" onclick="event.stopPropagation();showPhonesDialog('${enNum(s['الهاتف'] || '')}','${enNum(s['هاتف بديل'] || '')}')"><i class="fas fa-phone ml-1"></i> اتصال${s['الهاتف'] && s['هاتف بديل'] ? `<span class="badge-num">2</span>` : ''}</button>
@@ -822,7 +832,7 @@
             `📍 العنوان: ${s['العنوان'] || '-'}\n` +
             `📦 الزون: ${s['الزون'] || '-'}\n` +
             `💰 المبلغ: ${s['المبلغ'] || '0'} ج\n` +
-            `💵 السعر بعد التعديل: ${s['السعر بعد التعديل'] || '-'}\n` +
+            `💵 المدفوع: ${s['المدفوع'] || '-'}\n` +
             `📋 الحالة: ${s['الحالة'] || '-'}\n` +
             `🏢 الراسل: ${s['الراسل'] || '-'}\n` +
             `👤 المندوب: ${s['المندوب'] || '-'}`;
@@ -843,7 +853,7 @@
             `📍 العنوان: ${s['العنوان'] || '-'}\n` +
             `📦 الزون: ${s['الزون'] || '-'}\n` +
             `💰 المبلغ: ${s['المبلغ'] || '0'} ج\n` +
-            `💵 السعر بعد التعديل: ${s['السعر بعد التعديل'] || '-'}\n` +
+            `💵 المدفوع: ${s['المدفوع'] || '-'}\n` +
             `📋 الحالة: ${s['الحالة'] || '-'}\n` +
             `🏢 الراسل: ${s['الراسل'] || '-'}\n` +
             `👤 المندوب: ${s['المندوب'] || '-'}`;
@@ -870,7 +880,7 @@
         try {
             const payload = { الحالة: status };
             if (status === 'تم') {
-                payload['السعر بعد التعديل'] = shipment['المبلغ'] || '0';
+                payload['المدفوع'] = shipment['المبلغ'] || '0';
             }
             const { error } = await supabaseClient
                 .from(CONFIG.TABLES.SHIPMENTS)
@@ -910,7 +920,7 @@
             `,
             showCancelButton: true,
             confirmButtonText: 'تحديث',
-            cancelButtonText: 'إلغاء',
+            cancelButtonText: 'الغاء',
             confirmButtonColor: '#7c3aed',
             didOpen: () => { window._peStatus = defaultStatus; },
             preConfirm: () => {
@@ -925,7 +935,7 @@
             if (!result.isConfirmed) return;
             const { status, price } = result.value;
             try {
-                const payload = { الحالة: status, 'السعر بعد التعديل': price };
+                const payload = { الحالة: status, 'المدفوع': price };
                 const { error } = await supabaseClient
                     .from(CONFIG.TABLES.SHIPMENTS)
                     .update(payload)
@@ -976,7 +986,7 @@
                     <i class="fas fa-phone ml-2"></i>${p}
                 </a>`).join('')}</div>`,
             showCancelButton: true,
-            cancelButtonText: 'إلغاء',
+            cancelButtonText: 'الغاء',
             showConfirmButton: false
         });
     }
@@ -1001,7 +1011,7 @@
                 </a>
             </div>`,
             showCancelButton: true,
-            cancelButtonText: 'إلغاء',
+            cancelButtonText: 'الغاء',
             showConfirmButton: false
         });
     }
@@ -1034,7 +1044,7 @@
                 </a>`;
             }).join('')}</div>`,
             showCancelButton: true,
-            cancelButtonText: 'إلغاء',
+            cancelButtonText: 'الغاء',
             showConfirmButton: false
         });
     }
@@ -1052,7 +1062,7 @@
                     ⏰ ${o}
                 </div>`).join('')}</div>`,
             showCancelButton: true,
-            cancelButtonText: 'إلغاء',
+            cancelButtonText: 'الغاء',
             showConfirmButton: false
         });
     }
@@ -1076,13 +1086,13 @@
             html: `
                 <div class="grid grid-cols-1 gap-1.5">
                     ${opts.map((o, i) => `
-                        <div class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${rejectColors[i]}" onclick="Swal.close();doUpdateShipment(${idx},{'الحالة':'إلغاء','سبب الحالة':'${o}'})">
+                        <div class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${rejectColors[i]}" onclick="Swal.close();doUpdateShipment(${idx},{'الحالة':'الغاء','سبب الحالة':'${o}'})">
                             ❌ ${o}
                         </div>`).join('')}
                 </div>
             `,
             showCancelButton: true,
-            cancelButtonText: 'إلغاء',
+            cancelButtonText: 'الغاء',
             showConfirmButton: false
         });
     }

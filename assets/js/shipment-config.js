@@ -76,7 +76,7 @@ CONFIG.SHIPMENT_SERVER_FIELDS = [
     'المندوب',
     'الحالة',
     'سبب الحالة',
-    'السعر بعد التعديل',
+    'المدفوع',
     'ملاحظات',
     'تاريخ التحديث',
     'الصافي',
@@ -123,7 +123,6 @@ function normalizeShipmentRecordHeaders(record) {
     assignShipmentAliases(normalized, 'هاتف بديل', ['هاتف_بديل', 'هات_بديل', 'هات بديل']);
     assignShipmentAliases(normalized, 'كود الشحنة', ['order_id', 'كود_الشحنة', 'الكود', 'كود']);
     assignShipmentAliases(normalized, 'سبب الحالة', ['سبب_الحالة']);
-    assignShipmentAliases(normalized, 'السعر بعد التعديل', ['السعر_بعد_التعديل']);
     assignShipmentAliases(normalized, 'تاريخ التحديث', ['الابيديت', 'التاريخ', 'تاريخ_التحديث']);
     assignShipmentAliases(normalized, 'اليومية', ['اليوميه']);
     assignShipmentAliases(normalized, 'عدد', ['كود اضافي', 'كود_اضافي']);

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html dir="rtl">
 
 <head>
@@ -2730,6 +2730,25 @@
             grid-column: span 2;
         }
         .swal2-show,.swal2-hide{animation:none!important}
+        #bulkUpdateModal.maximized .modal-dialog {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            height: 100vh !important;
+            margin: 0 !important;
+        }
+        #bulkUpdateModal.maximized .modal-content {
+            height: 100vh !important;
+            border-radius: 0 !important;
+        }
+        #bulkUpdateModal.maximized .modal-header {
+            border-radius: 0 !important;
+        }
+        #bulkUpdateModal.maximized .modal-body {
+            max-height: calc(100vh - 120px) !important;
+        }
+        #bulkUpdateModal.maximized .table-responsive {
+            max-height: calc(100vh - 280px) !important;
+        }
     </style>
 </head>
 
@@ -2853,8 +2872,8 @@
                         <div class="col-md-2">
                             <label class="form-label small fw-bold">📅 اليومية</label>
                             <select id="filterDate" class="form-select filter-select rep-date-filter-glow"
-                                onchange="refreshDashboard()">
-                                <option value="">كل اليوميات</option>
+                                onchange="onStatsDailyFilterChange()">
+                                <option value="">--- اختر اليومية ---</option>
                             </select>
                         </div>
                         <div class="col-md-2" style="display: none;">
@@ -2947,7 +2966,7 @@
                                         <option value="success_desc">الترتيب: نسبة النجاح الأعلى</option>
                                         <option value="success_asc">الترتيب: نسبة النجاح الأقل</option>
                                         <option value="total_desc">الترتيب: إجمالي الشحنات الأعلى</option>
-                                        <option value="amount_desc">الترتيب: إجمالي المبلغ الأعلى</option>
+                                        <option value="amount_desc">الترتيب: المبلغ الأعلى</option>
                                         <option value="name_asc">الترتيب: الاسم أ-ي</option>
                                     </select>
                                 </div>
@@ -3145,12 +3164,18 @@
                                     <span class="badge bg-white text-primary housing-save-count ms-1"
                                         id="housingChangesBadge">0</span>
                                 </button>
+                                <button type="button"
+                                    class="btn btn-outline-secondary rounded-pill fw-bold shadow-sm flex-shrink-0 px-3"
+                                    onclick="refreshHousingData()" title="تحديث البيانات">
+                                    <i class="fas fa-sync-alt me-1"></i> تحديث
+                                </button>
                                 <input id="housingSearch" type="text"
                                     class="form-control rounded-pill border-secondary"
                                     style="min-width:140px;max-width:200px;font-size:0.8rem;">
+
                                 <select id="housingEditDateFilterSelect"
                                     class="form-select rounded-pill border-secondary flex-shrink-0"
-                                    style="width:auto;min-width:90px;font-size:0.8rem;"
+                                    style="width:auto;min-width:120px;font-size:0.8rem;"
                                     onchange="handleHousingEditDateFilterChange()">
                                     <option value="">📅 اليومية</option>
                                 </select>
@@ -3158,7 +3183,6 @@
                                     class="form-select rounded-pill border-secondary flex-shrink-0"
                                     style="width:auto;min-width:90px;font-size:0.8rem;"
                                     onchange="handleHousingArchiveFilterChange()">
-                                    <option value="">الكل</option>
                                     <option value="active">النشطة</option>
                                     <option value="archived">المؤرشفة</option>
                                 </select>
@@ -3250,7 +3274,7 @@
                                     </th>
                                     <th class="py-1 px-2 text-center small fw-bold text-secondary" style="display: none;" data-col-idx="16">id</th>
                                     <th class="py-1 px-2 text-center small fw-bold text-secondary" style="display: none;" data-col-idx="18">ملاحظات</th>
-                                    <th class="py-1 px-2 text-center small fw-bold text-secondary" style="display: none;" data-col-idx="19">تاريخ التحديث</th>
+                                    <th class="py-1 px-2 text-center small fw-bold text-secondary" style="display: none;" data-col-idx="19">التاريخ</th>
                                     <th class="py-1 px-2 text-center small fw-bold text-secondary" style="display: none;" data-col-idx="20">الصافي</th>
                                     <th class="py-1 px-2 text-center small fw-bold text-secondary" style="display: none;" data-col-idx="21">الشحن</th>
                                     <th class="py-1 px-2 text-center small fw-bold text-secondary" style="display: none;" data-col-idx="22">تقفيل</th>
@@ -3525,53 +3549,70 @@
             <div class="modal-content border-0 shadow-lg rounded-4">
                 <div class="modal-header bg-info text-white rounded-top-4">
                     <h5 class="modal-title fw-bold"><i class="fas fa-pen-alt me-2"></i>تحديث جماعي للشحنات</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <div class="d-flex align-items-center gap-1">
+                        <button type="button" class="btn btn-sm text-white" id="bulkMaximizeBtn" onclick="toggleBulkMaximize()" title="تكبير">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
                 </div>
                 <div class="modal-body p-4">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">📅 اختر اليومية <span class="text-danger">*</span></label>
-                        <select id="bulkDailyFilter" class="form-select rounded-3" onchange="onBulkDailyChange()">
-                            <option value="">--- اختر اليومية أولاً ---</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <div class="d-flex align-items-center gap-3 mb-2">
-                            <label class="form-label fw-bold mb-0">البحث بواسطة:</label>
-                            <div class="form-check form-check-inline mb-0">
-                                <input class="form-check-input" type="radio" name="bulkSearchMode" id="bulkModeM" value="m" checked onchange="onBulkSearchModeChange()">
-                                <label class="form-check-label fw-bold" for="bulkModeM">M</label>
-                            </div>
-                            <div class="form-check form-check-inline mb-0">
-                                <input class="form-check-input" type="radio" name="bulkSearchMode" id="bulkModeCode" value="code" onchange="onBulkSearchModeChange()">
-                                <label class="form-check-label fw-bold" for="bulkModeCode">كود الشحنة</label>
-                            </div>
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        <div style="min-width:160px;">
+                            <label class="form-label fw-bold mb-1 small">📅 اليومية <span class="text-danger">*</span></label>
+                            <select id="bulkDailyFilter" class="form-select rounded-3" onchange="onBulkDailyChange()">
+                                <option value="">--- اختر ---</option>
+                            </select>
                         </div>
-                        <textarea id="bulkCodesInput" class="form-control rounded-3" rows="5" placeholder="اكتب أو ألصق قيم M هنا&#10;يفصل كل قيمة بسطر جديد أو فاصلة أو مسافة" oninput="searchBulkShipments()" disabled></textarea>
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-3 mb-1">
+                                <label class="form-label fw-bold mb-0 small">البحث:</label>
+                                <div class="form-check form-check-inline mb-0">
+                                    <input class="form-check-input" type="radio" name="bulkSearchMode" id="bulkModeM" value="m" checked onchange="onBulkSearchModeChange()">
+                                    <label class="form-check-label small fw-bold" for="bulkModeM">M</label>
+                                </div>
+                                <div class="form-check form-check-inline mb-0">
+                                    <input class="form-check-input" type="radio" name="bulkSearchMode" id="bulkModeCode" value="code" onchange="onBulkSearchModeChange()">
+                                    <label class="form-check-label small fw-bold" for="bulkModeCode">كود الشحنة</label>
+                                </div>
+                            </div>
+                            <textarea id="bulkCodesInput" class="form-control rounded-3" rows="3" placeholder="اكتب أو ألصق القيم هنا&#10;يفصل كل قيمة بسطر جديد أو فاصلة أو مسافة" oninput="searchBulkShipments()" disabled></textarea>
+                        </div>
                     </div>
                     <div id="bulkResultsContainer" style="display: none;">
-                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
                             <span class="fw-bold text-secondary" id="bulkResultsCount">0 شحنة</span>
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <div>
-                                    <label class="small fw-bold text-secondary ms-1">تحديث الحالة:</label>
-                                    <select id="bulkStatusSelect" class="form-select form-select-sm rounded-3 d-inline-block" style="width:auto;">
-                                        <option value="">--- لا تغيير ---</option>
-                                        <option value="تم">تم</option>
-                                        <option value="قيد التوصيل">قيد التوصيل</option>
-                                        <option value="تعديل سعر">تعديل سعر</option>
-                                        <option value="شحن">شحن</option>
-                                        <option value="الغاء">الغاء</option>
-                                        <option value="مؤجل">مؤجل</option>
-                                        <option value="مجاش">مجاش</option>
-                                    </select>
+                        </div>
+                        <div id="bulkActionBar" class="d-flex align-items-center justify-content-between gap-2 flex-wrap mb-2 rounded-4 shadow-sm p-2 border" style="display:none!important;background:var(--card-bg,#fff);border-color:var(--primary,#0dcaf0)!important;">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-primary rounded-pill px-3 py-2 fw-bold shadow-sm" id="bulkSelectedCount">0</span>
+                                <span class="small fw-bold text-secondary d-none d-md-inline">شحنة محددة</span>
+                                <button class="btn btn-sm btn-link text-decoration-none fw-bold px-1" style="color:var(--text-secondary,#94a3b8);" onclick="clearBulkSelection()">الغاء الكل</button>
+                            </div>
+                            <div class="d-flex gap-2 align-items-center" style="flex-shrink:0;">
+                                <input type="hidden" id="bulkStatusPreview" value="">
+                                <div class="input-group input-group-sm rounded-pill overflow-hidden shadow-sm" style="max-width:180px;flex-shrink:0;">
+                                    <span class="input-group-text border-0" style="background:var(--bg-color);color:var(--text-color);font-size:0.75rem;"><i class="fas fa-user-tag"></i></span>
+                                    <input type="text" id="bulkRepInput" class="form-control border-0" style="background:var(--bg-color);font-size:0.75rem;" placeholder="مندوب..." list="bulkRepsList">
+                                    <datalist id="bulkRepsList"></datalist>
+                                    <button class="btn btn-primary px-2 border-0" style="font-size:0.75rem;" onclick="bulkAssignRep()">تعيين</button>
                                 </div>
-                                <div>
-                                    <label class="small fw-bold text-secondary ms-1">تحديث المندوب:</label>
-                                    <select id="bulkRepSelect" class="form-select form-select-sm rounded-3 d-inline-block" style="width:auto;min-width:140px;">
-                                        <option value="">--- لا تغيير ---</option>
-                                    </select>
+                                <div class="dropdown" style="flex-shrink:0;">
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-2 dropdown-toggle shadow-sm" style="font-size:0.75rem;" type="button" onclick="toggleBulkStatusMenu(event)">
+                                        <i class="fas fa-sync-alt"></i> حالة
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4" id="bulkStatusMenu" style="max-height:200px;overflow-y:auto;font-size:0.8rem;"></ul>
                                 </div>
-                                <button class="btn btn-success btn-sm rounded-pill fw-bold px-3" onclick="saveBulkUpdates()">
+                                <button class="btn btn-sm btn-outline-info rounded-circle shadow-sm" style="flex-shrink:0;width:32px;height:32px;padding:0;font-size:0.75rem;" onclick="bulkCopySelected()" title="نسخ">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary rounded-circle shadow-sm" style="flex-shrink:0;width:32px;height:32px;padding:0;font-size:0.75rem;" onclick="bulkArchiveSelected()" title="أرشفة">
+                                    <i class="fas fa-box-archive"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger rounded-circle shadow-sm" style="flex-shrink:0;width:32px;height:32px;padding:0;font-size:0.75rem;" onclick="bulkDeleteSelected()" title="حذف">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                                <button class="btn btn-success btn-sm rounded-pill fw-bold px-3 shadow-sm" onclick="saveBulkUpdates()">
                                     <i class="fas fa-save me-1"></i> حفظ
                                 </button>
                             </div>
@@ -3581,7 +3622,7 @@
                                 <thead class="table-info text-white sticky-top">
                                     <tr>
                                         <th>#</th>
-                                        <th id="bulkResultColHeader">M</th>
+                                        <th><input class="form-check-input m-0" type="checkbox" id="bulkSelectAll" onchange="toggleBulkSelectAll()"></th>
                                         <th>اسم العميل</th>
                                         <th>الزون</th>
                                         <th>المنتج</th>
@@ -3651,6 +3692,7 @@
         });
 
         let allShipments = [];
+        let currentDailyFilter = '';
         let allUsers = [];
         let originalShipments = new Map();
         let housingDashStatFilter = ''; // Dashboard stat filter
@@ -3729,6 +3771,22 @@
             });
             if (!confirmation.isConfirmed) return;
 
+            if (!AudioContextClass) return;
+
+            const audioContext = new AudioContextClass();
+            const oscillator = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+            gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.12, audioContext.currentTime + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.2);
+            oscillator.connect(gain);
+            gain.connect(audioContext.destination);
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.22);
+            oscillator.onended = () => audioContext.close().catch(() => { });
+
             showLoading(true);
             try {
                 const existing = allUsers.find(user =>
@@ -3788,11 +3846,29 @@
         async function init() {
             showLoading(true);
             try {
-                await Promise.all([fetchShipments(), fetchUsers()]);
+                await Promise.all([fetchAvailableDailyValues(), fetchUsers()]);
                 await syncGpsEnforcementStateFromUsers();
                 applyRoleAccess();
-                populateFilters();
-                populateQrRepList(); // Add this
+                // ملء قائمة اليوميات في كلا التبويبين بالقيم المتاحة دون جلب الشحنات
+                const statsSelect = document.getElementById('filterDate');
+                const housingSelect = document.getElementById('housingEditDateFilterSelect');
+                if (statsSelect) {
+                    statsSelect.innerHTML = '<option value="">--- اختر اليومية ---</option>' +
+                        availableDailyValues.map(d => `<option value="${escapeAttr(d)}">${escapeHtml(d)}</option>`).join('');
+                    statsSelect.value = '';
+                }
+                if (housingSelect) {
+                    housingSelect.innerHTML = '<option value="">--- اختر اليومية ---</option>' +
+                        availableDailyValues.map(d => `<option value="${escapeAttr(d)}">${escapeHtml(d)}</option>`).join('');
+                    housingSelect.value = '';
+                }
+                restoreHousingUiState();
+                populateQrRepList();
+                const savedDaily = getHousingEditDateFilters()[0] || '';
+                if (savedDaily) {
+                    await fetchShipments(savedDaily);
+                    document.getElementById('filterDate').value = savedDaily;
+                }
                 refreshDashboard();
                 initHousingScannerUi();
                 setupRealtimeUpdates();
@@ -3813,16 +3889,18 @@
             clearRefreshNeeded();
             showLoading(true);
             try {
-                await Promise.all([fetchShipments(), fetchUsers()]);
+                await fetchUsers();
                 await syncGpsEnforcementStateFromUsers();
-                populateFilters();
                 populateQrRepList();
+                if (currentDailyFilter) {
+                    await fetchShipments(currentDailyFilter);
+                }
                 refreshDashboard();
                 if (localStorage.getItem('adminActiveSection') === 'housing') {
-            renderHousingSection();
-            populateHousingFilterSidebar();
-            updateHousingClearFiltersButton();
-        }
+                    renderHousingSection();
+                    populateHousingFilterSidebar();
+                    updateHousingClearFiltersButton();
+                }
                 Swal.fire({
                     icon: 'success',
                     title: 'تم التحديث',
@@ -3845,9 +3923,15 @@
             shipmentsChannel = supabaseClient
                 .channel('global-shipment-changes')
                 .on('postgres_changes', { event: '*', schema: 'public', table: CONFIG.TABLES.SHIPMENTS }, async (payload) => {
-                    // تحديث تلقائي صامت للبيانات
-                    await fetchShipments();
-                    refreshDashboard();
+                    if (currentDailyFilter) {
+                        await fetchShipments(currentDailyFilter);
+                        const activeSection = localStorage.getItem('adminActiveSection') || 'stats';
+                        if (activeSection === 'stats') {
+                            refreshDashboard();
+                        } else if (activeSection === 'housing') {
+                            renderHousingSection();
+                        }
+                    }
                     console.log('تم تحديث البيانات لحظياً:', payload.new?.id || 'تغيير في الجدول');
                 })
                 .subscribe();
@@ -3916,7 +4000,13 @@
             }
         }
 
-        async function fetchShipments() {
+        async function fetchShipments(dailyFilter) {
+            if (!dailyFilter) {
+                allShipments = [];
+                currentDailyFilter = '';
+                markHousingDataChanged();
+                return;
+            }
             const pageSize = 1000;
             let from = 0;
             let fetchedAll = [];
@@ -3925,6 +4015,7 @@
                 const { data, error } = await supabaseClient
                     .from(CONFIG.TABLES.SHIPMENTS)
                     .select('*')
+                    .eq('اليومية', dailyFilter)
                     .order('كود الشحنة', { ascending: false })
                     .range(from, from + pageSize - 1);
 
@@ -3938,10 +4029,124 @@
             }
 
             allShipments = fetchedAll;
+            currentDailyFilter = dailyFilter;
             markHousingDataChanged();
-            if (!originalShipments.size) {
-                originalShipments = new Map(allShipments.map(s => [String(s.id), { ...s }]));
+            originalShipments = new Map(allShipments.map(s => [String(s.id), { ...s }]));
+        }
+
+        async function refreshHousingData() {
+            const dailyVal = currentDailyFilter || document.getElementById('housingEditDateFilterSelect')?.value;
+            if (dailyVal) {
+                showLoading(true);
+                try {
+                    await fetchShipments(dailyVal);
+                    renderHousingSection();
+                } catch (error) {
+                    console.error('Error refreshing housing data:', error);
+                    Swal.fire('خطأ', 'فشل في تحديث البيانات', 'error');
+                }
+                showLoading(false);
+            } else {
+                renderHousingSection();
             }
+        }
+
+        function syncDailyFilterDropdowns(dailyVal) {
+            const statsSelect = document.getElementById('filterDate');
+            if (statsSelect) statsSelect.value = dailyVal || '';
+            const housingSelect = document.getElementById('housingEditDateFilterSelect');
+            if (housingSelect) housingSelect.value = dailyVal || '';
+        }
+
+        /**
+         * يستخرج تاريخ اليومية من النص العربي بتنسيق مثل: الاحد5-7، الاربع1-7، السبت10-12
+         * الرقم قبل - = يوم الشهر، الرقم بعد - = رقم الشهر
+         * يُرجع قيمة رقمية = month * 100 + day (للترتيب من الأحدث للأقدم)
+         */
+        function parseDailyStringToSortKey(str) {
+            // يبحث عن نمط: رقم واحد أو أكثر ثم شرطة ثم رقم واحد أو أكثر
+            const match = String(str || '').match(/(\d+)-(\d+)/);
+            if (match) {
+                const day = parseInt(match[1], 10);
+                const month = parseInt(match[2], 10);
+                // الترتيب: أكبر شهر أولاً، ثم أكبر يوم أولاً داخل نفس الشهر
+                return (month * 100) + day;
+            }
+            return -1;
+        }
+
+        /**
+         * يرتب قائمة اليوميات من الأحدث (أكبر شهر ويوم) إلى الأقدم
+         */
+        function sortDailyValuesList(list) {
+            return [...list].sort((a, b) => {
+                const keyA = parseDailyStringToSortKey(a);
+                const keyB = parseDailyStringToSortKey(b);
+                // من الأحدث للأقدم (أكبر قيمة أولاً)
+                if (keyB !== keyA) return keyB - keyA;
+                // إذا تساوت القيمة، نرتب أبجدياً
+                return b.localeCompare(a, 'ar');
+            });
+        }
+
+        /**
+         * يرتب اليوميات مع الأخذ بعين الاعتبار حالة الأرشفة:
+         * النشطة أولاً (مرتبة من الأحدث)، ثم المؤرشفة (مرتبة من الأحدث)
+         */
+        function sortDailyValuesWithArchive(list, archivedSet) {
+            const active = [];
+            const archived = [];
+            list.forEach(v => {
+                if (archivedSet && archivedSet.has(v)) archived.push(v);
+                else active.push(v);
+            });
+            return [...sortDailyValuesList(active), ...sortDailyValuesList(archived)];
+        }
+
+        let availableDailyValues = [];
+        let globalDailyCountsCache = {};
+        let archivedDailySet = new Set();
+        async function fetchAvailableDailyValues() {
+            const { data, error } = await supabaseClient
+                .from(CONFIG.TABLES.SHIPMENTS)
+                .select('اليومية, ارشيف')
+                .not('اليومية', 'is', null)
+                .neq('اليومية', '');
+
+            if (error) {
+                console.error('Failed to fetch daily values:', error);
+                availableDailyValues = [];
+                globalDailyCountsCache = {};
+                archivedDailySet = new Set();
+                return;
+            }
+            const counts = {};
+            const activeDailies = new Set();
+            const archivedDailies = new Set();
+            const seen = new Set();
+            
+            data.forEach(row => {
+                const val = String(row['اليومية'] || row.اليومية || '').trim();
+                const archiveVal = String(row['ارشيف'] || '').trim();
+                if (val) {
+                    seen.add(val);
+                    counts[val] = (counts[val] || 0) + 1;
+                    if (archiveVal) {
+                        archivedDailies.add(val);
+                    } else {
+                        activeDailies.add(val);
+                    }
+                }
+            });
+            availableDailyValues = sortDailyValuesList([...seen]);
+            globalDailyCountsCache = counts;
+
+            archivedDailySet = new Set();
+            archivedDailies.forEach(d => {
+                if (!activeDailies.has(d)) {
+                    archivedDailySet.add(d);
+                }
+            });
         }
 
         async function fetchUsers() {
@@ -3997,7 +4202,20 @@
                 return counts;
             };
 
-            fillSelect('filterDate', getCounts('اليومية', filters), filters.date, true);
+            const dateCounts = getCounts('اليومية', filters);
+            const select = document.getElementById('filterDate');
+            if (select) {
+                const selectedVal = select.value || getSavedDateFilter();
+                let html = '<option value="">--- اختر اليومية ---</option>';
+                const dates = filteredData.length ? sortDailyValuesList(Object.keys(dateCounts)) : availableDailyValues;
+                dates.forEach(date => {
+                    const countVal = dateCounts[date] || globalDailyCountsCache[date] || 0;
+                    const countStr = countVal ? ` (${countVal})` : '';
+                    html += `<option value="${escapeAttr(date)}" ${selectedVal === date ? 'selected' : ''}>${escapeHtml(date)}${escapeHtml(countStr)}</option>`;
+                });
+                select.innerHTML = html;
+                if (selectedVal && dates.includes(selectedVal)) select.value = selectedVal;
+            }
             fillMultiSelectZone(getCounts('الزون', filters), filters.zone);
             fillMultiSelectRep(getCounts('المندوب', filters), filters.rep);
             fillMultiSelectOffice(getCounts('الراسل', filters), filters.office);
@@ -4306,6 +4524,465 @@
             return normalizedStatus === 'الغاء' || normalizedStatus === 'الغاء';
         }
 
+        let dailyBarChart = null;
+
+        let _dailyListCache = null;
+        let _dailyListVersion = 0;
+        let _dailyListAllShipmentsLen = 0;
+        function getDailyList() {
+            if (_dailyListCache && _dailyListAllShipmentsLen === allShipments.length && _dailyListVersion === housingDataVersion) return _dailyListCache;
+            const set = new Set();
+            for (let i = 0, len = allShipments.length; i < len; i++) {
+                const v = getShipmentDailyValue(allShipments[i]);
+                if (v) set.add(v);
+            }
+            _dailyListCache = [...set].sort((a, b) => a.localeCompare(b, 'ar'));
+            _dailyListAllShipmentsLen = allShipments.length;
+            _dailyListVersion = housingDataVersion;
+            return _dailyListCache;
+        }
+
+        let dailyCountsCache = { key: null, result: null };
+        function getDailyShipmentCounts(shipments) {
+            if (dailyCountsCache.key === shipments && dailyCountsCache.result) return dailyCountsCache.result;
+            const profitStatuses = {'تم':1,'تعديل سعر':1,'شحن':1};
+            const map = new Map();
+            shipments.forEach(s => {
+                const d = getShipmentDailyValue(s);
+                if (!d) return;
+                if (!map.has(d)) map.set(d, { count: 0, totalGross: 0, totalPaid: 0, totalCommission: 0, safi: 0, totalProfit: 0 });
+                const entry = map.get(d);
+                entry.count++;
+                const gross = parseFloat(s.المبلغ || 0);
+                entry.totalGross += gross;
+                const paid = parseFloat(s.المدفوع || 0);
+                entry.totalPaid += paid;
+                const comm = parseFloat(s[SHIPMENT_COMMISSION_FIELD] || s[SHIPMENT_COMMISSION_FIELD_LEGACY] || 0);
+                entry.totalCommission += comm;
+                entry.safi += (paid - comm);
+                const st = String(s.الحالة || '').trim();
+                if (profitStatuses[st]) {
+                    const shipping = parseFloat(s.الشحن || 0);
+                    entry.totalProfit += (shipping - comm);
+                }
+            });
+            dailyCountsCache = { key: shipments, result: map };
+            return map;
+        }
+
+        function renderFinancialCards(shipments) {
+            const container = document.getElementById('financialStatsContainer');
+            if (!container) return;
+            const counts = getCachedDashboardCounts(shipments);
+            const totalPaid = counts.totalPaid, totalCommission = counts.totalCommission;
+            const netAmount = totalPaid - totalCommission;
+            container.innerHTML = [
+                { label: 'إجمالي المدفوع', value: Math.round(totalPaid).toLocaleString(), sub: 'مجموع المبالغ المدفوعة', cls: 'finance-grad-green', icon: 'fas-wallet' },
+                { label: 'إجمالي عمولة المندوب', value: Math.round(totalCommission).toLocaleString(), sub: 'إجمالي عمولات المناديب', cls: 'finance-grad-blue', icon: 'fas-hand-holding-usd' },
+                { label: 'صافي المبلغ بعد العمولة', value: Math.round(netAmount).toLocaleString(), sub: 'إجمالي المدفوع مطروحاً منه العمولات', cls: 'finance-grad-purple', icon: 'fas-coins' }
+            ].map(c => `
+                <div class="finance-card ${c.cls} dash-animate">
+                    <div class="finance-card-label"><i class="fas ${c.icon} me-1"></i> ${c.label}</div>
+                    <div class="finance-card-value">${c.value}</div>
+                    <div class="finance-card-sub">${c.sub}</div>
+                </div>
+            `).join('');
+        }
+
+        function populateDailySelect() {
+            const sel = document.getElementById('filterDate');
+            if (!sel) return;
+            const list = getDailyList();
+            const currentVal = sel.value;
+            sel.innerHTML = '<option value="">كل اليوميات</option>' + list.map(d => `<option value="${d.replace(/'/g, "\\'")}">${d}</option>`).join('');
+            sel.value = currentVal || '';
+        }
+
+        /* ===== PROFIT / KPI HELPERS ===== */
+        function computeProfitForShipments(shipments) {
+            let revenue = 0, commission = 0, countDelivered = 0, countPostponed = 0, countCancelled = 0;
+            const successStatuses = {'تم':1,'شحن':1,'تعديل سعر':1};
+            const postponedStatuses = {'تأجيل':1,'مؤجل':1};
+            const cancelStatuses = {'الغاء':1,'رفض':1};
+            for (let i = 0, len = shipments.length; i < len; i++) {
+                const s = shipments[i];
+                const st = String(s.الحالة || '').trim();
+                if (successStatuses[st]) {
+                    revenue += parseFloat(s.الشحن || 0);
+                    commission += parseFloat(s[SHIPMENT_COMMISSION_FIELD] || s[SHIPMENT_COMMISSION_FIELD_LEGACY] || 0);
+                    countDelivered++;
+                } else if (postponedStatuses[st]) countPostponed++;
+                else if (cancelStatuses[st]) countCancelled++;
+            }
+            return { revenue, commission, profit: revenue - commission, countDelivered, countPostponed, countCancelled, total: shipments.length };
+        }
+
+        function getProfitTrend(shipments) {
+            const dailyMap = new Map();
+            const statuses = {'تم':1,'شحن':1,'تعديل سعر':1};
+            for (let i = 0, len = shipments.length; i < len; i++) {
+                const s = shipments[i];
+                const d = getShipmentDailyValue(s);
+                if (!d) continue;
+                const st = String(s.الحالة || '').trim();
+                if (!statuses[st]) continue;
+                if (!dailyMap.has(d)) dailyMap.set(d, { revenue: 0, commission: 0 });
+                const entry = dailyMap.get(d);
+                entry.revenue += parseFloat(s.الشحن || 0);
+                entry.commission += parseFloat(s[SHIPMENT_COMMISSION_FIELD] || s[SHIPMENT_COMMISSION_FIELD_LEGACY] || 0);
+            }
+            const dailies = getDailyList();
+            const values = dailies.map(d => {
+                const e = dailyMap.get(d);
+                return e ? e.revenue - e.commission : 0;
+            });
+            return values;
+        }
+
+        function getDailyComparison(baseFiltered) {
+            const fd = document.getElementById('filterDate');
+            const currentDaily = fd ? fd.value : '';
+            const dailies = getDailyList();
+            const currentIdx = currentDaily ? dailies.indexOf(currentDaily) : -1;
+
+            let prevDaily;
+            if (currentIdx < 0) {
+                if (dailies.length < 2) return null;
+                prevDaily = dailies[dailies.length - 2];
+                const last = dailies[dailies.length - 1];
+                const curShipments = [], prevShipments = [];
+                for (let i = 0, len = baseFiltered.length; i < len; i++) {
+                    const s = baseFiltered[i];
+                    const d = getShipmentDailyValue(s);
+                    if (d === last) curShipments.push(s);
+                    else if (d === prevDaily) prevShipments.push(s);
+                }
+                return { cur: computeProfitForShipments(curShipments), prev: computeProfitForShipments(prevShipments), currentDaily: last, previousDaily: prevDaily };
+            }
+            if (currentIdx === 0) return null;
+            prevDaily = dailies[currentIdx - 1];
+            const prevShipments = [];
+            for (let i = 0, len = allShipments.length; i < len; i++) {
+                const s = allShipments[i];
+                if (!String(s.المندوب || '').startsWith('PRIVATE:') && getShipmentDailyValue(s) === prevDaily) prevShipments.push(s);
+            }
+            const cur = computeProfitForShipments(baseFiltered);
+            const prev = computeProfitForShipments(prevShipments);
+            return { cur, prev, currentDaily, previousDaily: prevDaily };
+        }
+
+        function buildSparkline(values, color, height) {
+            if (!values || values.length < 2) return '';
+            const h = height || 28;
+            const w = values.length * 16;
+            const max = Math.max(...values, 1), min = Math.min(...values, 0);
+            const range = max - min || 1;
+            const pts = values.map((v, i) => `${i * 16},${h - ((v - min) / range) * (h - 4) - 2}`).join(' ');
+            const fillPts = pts + ` ${(values.length - 1) * 16},${h} 0,${h}`;
+            return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${color}" stop-opacity="0.25"/><stop offset="100%" stop-color="${color}" stop-opacity="0.01"/></linearGradient></defs><polyline points="${fillPts}" fill="url(#sg)"/><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        }
+
+        function renderProfitCard(baseFiltered) {
+            const container = document.getElementById('profitCardContainer');
+            const numberEl = document.getElementById('profitCardNumber');
+            const changeEl = document.getElementById('profitCardChange');
+            const metaEl = document.getElementById('profitCardMeta');
+            const sparkEl = document.getElementById('profitCardSparkline');
+            if (!container) return;
+
+            const cmp = getDailyComparison(baseFiltered);
+            const allStats = computeProfitForShipments(baseFiltered);
+
+            if (numberEl) numberEl.innerHTML = `${Math.round(allStats.profit).toLocaleString()} <span class="currency"></span>`;
+
+            if (changeEl && cmp) {
+                const diff = cmp.cur.profit - cmp.prev.profit;
+                const pct = cmp.prev.profit ? ((diff / cmp.prev.profit) * 100) : 0;
+                const isUp = diff >= 0;
+                const arrow = isUp ? '<i class="fas fa-arrow-up"></i>' : '<i class="fas fa-arrow-down"></i>';
+                changeEl.className = 'profit-card-change ' + (diff === 0 ? 'neutral' : isUp ? 'up' : 'down');
+                changeEl.innerHTML = `${arrow} ${Math.abs(diff).toLocaleString()}  (${pct >= 0 ? '+' : ''}${Number(pct).toFixed(1)}%) مقارنة باليومية السابقة`;
+            } else if (changeEl) {
+                changeEl.className = 'profit-card-change neutral';
+                changeEl.innerHTML = '<i class="fas fa-minus"></i> يتطلب يوميتين للمقارنة';
+            }
+
+            if (metaEl) {
+                metaEl.innerHTML = `
+                    <span class="profit-card-meta-item">الإيرادات: <strong>${Math.round(allStats.revenue).toLocaleString()}</strong></span>
+                    <span class="profit-card-meta-item">العمولات: <strong>${Math.round(allStats.commission).toLocaleString()}</strong></span>
+                    <span class="profit-card-meta-item">الشحنات الناجحة: <strong>${allStats.countDelivered.toLocaleString()}</strong></span>
+                `;
+            }
+
+            if (sparkEl) {
+                const trend = getProfitTrend(baseFiltered);
+                const isUp = trend.length >= 2 && trend[trend.length - 1] >= (trend.length >= 2 ? trend[trend.length - 2] : 0);
+                sparkEl.innerHTML = buildSparkline(trend, isUp ? '#34d399' : '#f87171', 64);
+            }
+        }
+
+        function renderComparisonCards(baseFiltered) {
+            const cmp = getDailyComparison(baseFiltered);
+            if (!cmp) {
+                ['profitCompCurrent','deliveryCompCurrent'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '---'; });
+                ['profitCompData','deliveryCompData'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = '<span class="comparison-stat" style="color:#94a3b8;">يحتاج يوميتين للمقارنة</span>'; });
+                return;
+            }
+
+            // Profit comparison
+            const profitCurEl = document.getElementById('profitCompCurrent');
+            const profitDataEl = document.getElementById('profitCompData');
+            if (profitCurEl) profitCurEl.textContent = Math.round(cmp.cur.profit).toLocaleString() + ' ';
+            if (profitDataEl) {
+                const diff = cmp.cur.profit - cmp.prev.profit;
+                const pct = cmp.prev.profit ? ((diff / cmp.prev.profit) * 100) : 0;
+                const cls = diff === 0 ? 'neutral' : diff > 0 ? 'up' : 'down';
+                profitDataEl.innerHTML = `
+                    <span class="comparison-stat">السابقة: <strong>${Math.round(cmp.prev.profit).toLocaleString()}</strong></span>
+                    <span class="comparison-stat">الفرق: <strong class="${cls}">${diff >= 0 ? '+' : ''}${Math.round(diff).toLocaleString()}</strong></span>
+                    <span class="comparison-stat">التغير: <strong class="${cls}">${pct >= 0 ? '+' : ''}${Number(pct).toFixed(1)}%</strong></span>
+                `;
+            }
+
+            // Delivery comparison
+            const delCurEl = document.getElementById('deliveryCompCurrent');
+            const delDataEl = document.getElementById('deliveryCompData');
+            if (delCurEl) delCurEl.textContent = cmp.cur.countDelivered.toLocaleString() + ' شحنة';
+            if (delDataEl) {
+                const diff = cmp.cur.countDelivered - cmp.prev.countDelivered;
+                const pct = cmp.prev.countDelivered ? ((diff / cmp.prev.countDelivered) * 100) : 0;
+                const cls = diff === 0 ? 'neutral' : diff > 0 ? 'up' : 'down';
+                delDataEl.innerHTML = `
+                    <span class="comparison-stat">السابقة: <strong>${cmp.prev.countDelivered.toLocaleString()}</strong></span>
+                    <span class="comparison-stat">الفرق: <strong class="${cls}">${diff >= 0 ? '+' : ''}${diff.toLocaleString()}</strong></span>
+                    <span class="comparison-stat">التغير: <strong class="${cls}">${pct >= 0 ? '+' : ''}${Number(pct).toFixed(1)}%</strong></span>
+                `;
+            }
+        }
+
+        function renderKpiModern(shipments) {
+            const container = document.getElementById('kpiModernContainer');
+            if (!container) return;
+            const total = shipments.length;
+            const counts = getCachedDashboardCounts(shipments);
+            const cmp = getDailyComparison(shipments);
+            const kpiProfitData = computeProfitForShipments(shipments);
+
+            const cards = [
+                { key: 'تم', label: 'تم', count: counts.done, icon: 'fas fa-circle-check', cls: 'kpi-done', color: '#10b981' },
+                { key: 'شحن', label: 'شحن', count: counts.shipping, icon: 'fas fa-truck-fast', cls: 'kpi-shipping', color: '#06b6d4' },
+                { key: 'تعديل سعر', label: 'تعديل سعر', count: counts.amended, icon: 'fas fa-pen-to-square', cls: 'kpi-amended', color: '#f59e0b' },
+                { key: 'مؤجل', label: 'مؤجل', count: kpiProfitData.countPostponed, icon: 'fas fa-clock', cls: 'kpi-postponed', color: '#f97316' },
+                { key: 'الغاء', label: 'إلغاء', count: counts.cancel, icon: 'fas fa-ban', cls: 'kpi-cancel', color: '#ef4444' }
+            ];
+
+            // Build daily trend for each KPI type (single pass)
+            const dailies = getDailyList();
+            const trendData = {};
+            cards.forEach(c => trendData[c.key] = []);
+            if (dailies.length > 1) {
+                // Group shipments by daily in one pass
+                const dailyBuckets = new Map();
+                for (let i = 0, len = allShipments.length; i < len; i++) {
+                    const s = allShipments[i];
+                    if (String(s.المندوب || '').startsWith('PRIVATE:')) continue;
+                    const d = getShipmentDailyValue(s);
+                    if (!d) continue;
+                    if (!dailyBuckets.has(d)) dailyBuckets.set(d, []);
+                    dailyBuckets.get(d).push(s);
+                }
+                dailies.forEach(d => {
+                    const bucket = dailyBuckets.get(d) || [];
+                    const dTotal = bucket.length;
+                    let done = 0, shipping = 0, amended = 0, postponed = 0, cancelled = 0;
+                    for (let j = 0; j < dTotal; j++) {
+                        const st = String(bucket[j].الحالة || '').trim();
+                        if (st === 'تم' || st === 'تم التسليم' || st === 'استلم جزئي') done++;
+                        else if (st === 'شحن') shipping++;
+                        else if (st === 'تعديل سعر') amended++;
+                        else if (st === 'تأجيل' || st === 'مؤجل') postponed++;
+                        else if (st === 'الغاء') cancelled++;
+                    }
+                    trendData['تم'].push(dTotal ? done : 0);
+                    trendData['شحن'].push(dTotal ? shipping : 0);
+                    trendData['تعديل سعر'].push(dTotal ? amended : 0);
+                    trendData['مؤجل'].push(dTotal ? postponed : 0);
+                    trendData['الغاء'].push(dTotal ? cancelled : 0);
+                });
+            }
+
+            // Compute per-status comparison data once
+            let kpiComp = null;
+            if (cmp && cmp.currentDaily && cmp.previousDaily) {
+                kpiComp = { 'تم': { cur: 0, prev: 0 }, 'شحن': { cur: 0, prev: 0 }, 'تعديل سعر': { cur: 0, prev: 0 }, 'مؤجل': { cur: 0, prev: 0 }, 'الغاء': { cur: 0, prev: 0 } };
+                const curD = cmp.currentDaily, prevD = cmp.previousDaily;
+                for (let i = 0, len = allShipments.length; i < len; i++) {
+                    const s = allShipments[i];
+                    if (String(s.المندوب || '').startsWith('PRIVATE:')) continue;
+                    const d = getShipmentDailyValue(s);
+                    const st = String(s.الحالة || '').trim();
+                    if (d === curD) {
+                        if (st === 'تم' || st === 'تم التسليم' || st === 'استلم جزئي') kpiComp['تم'].cur++;
+                        else if (st === 'شحن') kpiComp['شحن'].cur++;
+                        else if (st === 'تعديل سعر') kpiComp['تعديل سعر'].cur++;
+                        else if (st === 'تأجيل' || st === 'مؤجل') kpiComp['مؤجل'].cur++;
+                        else if (st === 'الغاء') kpiComp['الغاء'].cur++;
+                    } else if (d === prevD) {
+                        if (st === 'تم' || st === 'تم التسليم' || st === 'استلم جزئي') kpiComp['تم'].prev++;
+                        else if (st === 'شحن') kpiComp['شحن'].prev++;
+                        else if (st === 'تعديل سعر') kpiComp['تعديل سعر'].prev++;
+                        else if (st === 'تأجيل' || st === 'مؤجل') kpiComp['مؤجل'].prev++;
+                        else if (st === 'الغاء') kpiComp['الغاء'].prev++;
+                    }
+                }
+            }
+
+            container.innerHTML = cards.map(c => {
+                const pct = total ? Number(((c.count / total) * 100).toFixed(1)) : 0;
+                let vsHtml = '';
+                if (kpiComp && kpiComp[c.key]) {
+                    const curC = kpiComp[c.key].cur, prevC = kpiComp[c.key].prev;
+                    const dDiff = curC - prevC;
+                    const dPct = prevC ? ((dDiff / prevC) * 100) : 0;
+                    const dCls = dDiff === 0 ? 'neutral' : dDiff > 0 ? 'up' : 'down';
+                    vsHtml = `<span class="kpi-vs ${dCls}">${dDiff > 0 ? '+' : ''}${dDiff} (${dPct >= 0 ? '+' : ''}${Number(dPct).toFixed(1)}%)</span>`;
+                }
+
+                const sparkVals = trendData[c.key];
+                const sparkSvg = sparkVals && sparkVals.length > 1 ? buildSparkline(sparkVals, c.color, 24) : '';
+
+                return `
+                    <div class="kpi-card-modern ${c.cls}" onclick="toggleAdminDashStatFilter('${c.key}')">
+                        <div class="kpi-top">
+                            <span class="kpi-badge" style="background:${c.color}18;color:${c.color};">${pct}%</span>
+                            <i class="${c.icon}" style="color:${c.color};font-size:1rem;"></i>
+                        </div>
+                        <div class="kpi-number">${c.count.toLocaleString()}</div>
+                        <div class="kpi-label">${c.label}</div>
+                        <div class="kpi-sub">
+                            <span class="kpi-pct">${pct}% من الإجمالي</span>
+                            ${vsHtml}
+                        </div>
+                        ${sparkSvg ? `<div class="kpi-spark">${sparkSvg}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderPerfIndicators(shipments) {
+            const container = document.getElementById('perfIndicatorsContainer');
+            if (!container) return;
+            const stats = computeProfitForShipments(shipments);
+            const total = stats.total;
+            const successRate = total ? Number(((stats.countDelivered / total) * 100).toFixed(1)) : 0;
+            const cancelRate = total ? Number(((stats.countCancelled / total) * 100).toFixed(1)) : 0;
+            const postponeRate = total ? Number(((stats.countPostponed / total) * 100).toFixed(1)) : 0;
+            const avgProfit = stats.countDelivered ? Math.round(stats.profit / stats.countDelivered) : 0;
+
+            const items = [
+                { value: `${successRate}%`, label: 'معدل نجاح التسليم', bar: successRate, color: '#10b981' },
+                { value: `${cancelRate}%`, label: 'نسبة الإلغاء', bar: cancelRate, color: '#ef4444' },
+                { value: `${postponeRate}%`, label: 'نسبة التأجيل', bar: postponeRate, color: '#f97316' },
+                { value: avgProfit.toLocaleString() + ' ', label: 'متوسط الربح لكل شحنة ناجحة', bar: 100, color: '#3b82f6' }
+            ];
+
+            container.innerHTML = items.map(item => `
+                <div class="perf-item">
+                    <div class="perf-item-value">${item.value}</div>
+                    <div class="perf-item-label">${item.label}</div>
+                    <div class="perf-item-bar"><div class="perf-item-bar-fill" style="width:${Math.min(item.bar, 100)}%;background:${item.color};"></div></div>
+                </div>
+            `).join('');
+        }
+
+        function renderDashboardCharts(shipments) {
+            // Bar chart - daily amounts
+            const barCanvas = document.getElementById('dailyBarChartCanvas');
+            if (!barCanvas || typeof Chart === 'undefined') return;
+            const counts = getDailyShipmentCounts(shipments);
+            const entries = [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0], 'ar'));
+            const labels = entries.map(e => e[0]);
+            const values = entries.map(e => Math.round(e[1].totalProfit));
+            if (dailyBarChart) dailyBarChart.destroy();
+            if (!labels.length) { dailyBarChart = null; return; }
+            dailyBarChart = new Chart(barCanvas, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: 'rgba(16,185,129,0.75)',
+                        borderColor: 'rgba(16,185,129,1)',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        maxBarThickness: 40
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { family: 'Cairo' }, maxRotation: 35 } },
+                        y: { beginAtZero: true, ticks: { font: { family: 'Cairo' }, callback: v => v.toLocaleString() } }
+                    }
+                }
+            });
+        }
+
+        function renderDailySummaryTable(shipments) {
+            const tbody = document.getElementById('dailySummaryTableBody');
+            if (!tbody) return;
+            const counts = getDailyShipmentCounts(shipments);
+            const entries = [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0], 'ar'));
+            if (!entries.length) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-secondary fw-bold py-3">لا توجد بيانات للعرض</td></tr>';
+                return;
+            }
+            tbody.innerHTML = entries.map(([name, data]) => `
+                <tr>
+                    <td class="fw-bold">${name}</td>
+                    <td>${data.count}</td>
+                    <td class="amount-cell">${Math.round(data.totalGross).toLocaleString()}</td>
+                    <td class="amount-cell">${Math.round(data.totalPaid).toLocaleString()}</td>
+                    <td class="amount-cell">${Math.round(data.totalCommission).toLocaleString()}</td>
+                    <td class="amount-cell fw-bold" style="color:#059669;">${Math.round(data.safi).toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        window.filterDashboardSearch = function(value) {
+            const container = document.getElementById('adminDashboardStatsContainer');
+            if (!container) return;
+            const cards = container.querySelectorAll('.kpi-card');
+            if (!value) { cards.forEach(c => c.style.display = ''); return; }
+            const q = value.toLowerCase();
+            cards.forEach(c => {
+                const label = c.querySelector('.kpi-label')?.textContent?.toLowerCase() || '';
+                c.style.display = label.includes(q) ? '' : 'none';
+            });
+        };
+
+        async function onStatsDailyFilterChange() {
+            const dailyVal = document.getElementById('filterDate').value;
+            syncDailyFilterDropdowns(dailyVal);
+            if (!dailyVal) {
+                allShipments = [];
+                currentDailyFilter = '';
+                refreshDashboard();
+                return;
+            }
+            showLoading(true);
+            try {
+                await fetchShipments(dailyVal);
+                refreshDashboard();
+            } catch (error) {
+                console.error('Error fetching data for daily filter:', error);
+                Swal.fire('خطأ', 'فشل في جلب بيانات اليومية', 'error');
+            }
+            showLoading(false);
+        }
+
         function refreshDashboard() {
             const filters = {
                 date: document.getElementById('filterDate').value,
@@ -4314,6 +4991,56 @@
                 office: [],
                 status: []
             };
+
+            const statsPlaceholder = document.getElementById('statsPlaceholder');
+            const analyticsShell = document.querySelector('.admin-analytics-shell');
+            const statsCollapsible = document.querySelector('.stats-collapsible-body');
+
+            if (!filters.date) {
+                if (analyticsShell) analyticsShell.style.display = 'none';
+                if (statsCollapsible) statsCollapsible.style.display = 'none';
+                if (statsPlaceholder) {
+                    statsPlaceholder.style.display = 'block';
+                } else {
+                    const placeholder = document.createElement('div');
+                    placeholder.id = 'statsPlaceholder';
+                    placeholder.className = 'order-card p-5 text-center my-4 shadow-sm border-0';
+                    placeholder.style.background = 'linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(6, 182, 212, 0.05))';
+                    placeholder.style.borderRadius = '24px';
+                    placeholder.style.border = '1px dashed rgba(59, 130, 246, 0.25)';
+                    placeholder.innerHTML = `
+                        <style>
+                            @keyframes statsPlaceholderPulse {
+                                0% { transform: scale(1); opacity: 0.9; }
+                                50% { transform: scale(1.08); opacity: 1; }
+                                100% { transform: scale(1); opacity: 0.9; }
+                            }
+                            .stats-placeholder-icon {
+                                display: inline-block;
+                                animation: statsPlaceholderPulse 2.5s ease-in-out infinite;
+                            }
+                        </style>
+                        <div class="py-4">
+                            <div class="stats-placeholder-icon text-primary mb-3" style="font-size: 3.5rem;">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h4 class="fw-bold text-dark mb-2">إحصائيات المناديب</h4>
+                            <p class="text-secondary mx-auto" style="max-width: 480px; font-size: 0.95rem;">يرجى اختيار اليومية من القائمة المنسدلة في الأعلى لعرض وتصفية تحليلات الأداء والنسب الخاصة بالمناديب.</p>
+                        </div>
+                    `;
+                    if (analyticsShell && analyticsShell.parentNode) {
+                        analyticsShell.parentNode.insertBefore(placeholder, analyticsShell);
+                    }
+                }
+                updateFilterDropdowns([]);
+                updateAdminDashboardStats([]);
+                renderRepsStats([]);
+                return;
+            } else {
+                if (analyticsShell) analyticsShell.style.display = '';
+                if (statsCollapsible) statsCollapsible.style.display = '';
+                if (statsPlaceholder) statsPlaceholder.style.display = 'none';
+            }
 
             // الخطوة الأولى: الفلترة حسب الفلاتر العادية (دروب داون)
             let baseFiltered = allShipments.filter(s => {
@@ -4371,6 +5098,34 @@
             renderUsers();
             renderHousingSection();
             updateAdminFiltersVisualState();
+        }
+
+        function computeDashboardCounts(shipments) {
+            let done = 0, shipping = 0, amended = 0, reject = 0, cancel = 0, pending = 0, totalPaid = 0, totalCommission = 0;
+            const paidStatuses = {'تم':1,'تم التسليم':1,'استلم جزئي':1,'شحن':1,'تعديل سعر':1};
+            for (let i = 0, len = shipments.length; i < len; i++) {
+                const s = shipments[i];
+                if (isAdminPureDeliveredShipment(s)) done++;
+                else if (isAdminShippingOnlyShipment(s)) shipping++;
+                else if (isAdminPriceEditOnlyShipment(s)) amended++;
+                else if (isAdminExplicitRejectShipment(s)) reject++;
+                else if (isAdminCancelShipment(s)) cancel++;
+                else pending++;
+                const paid = parseFloat(s.المدفوع || 0);
+                if (!paid) { const amt = parseFloat(s.المبلغ || 0); if (paidStatuses[String(s.الحالة || '').trim()]) totalPaid += amt; }
+                else totalPaid += paid;
+                totalCommission += parseFloat(s[SHIPMENT_COMMISSION_FIELD] || s[SHIPMENT_COMMISSION_FIELD_LEGACY] || 0);
+            }
+            return { total: shipments.length, done, shipping, amended, reject, cancel, pending, totalPaid, totalCommission };
+        }
+
+        let dashboardCountsCache = { key: null, result: null };
+
+        function getCachedDashboardCounts(shipments) {
+            if (dashboardCountsCache.key === shipments && dashboardCountsCache.result) return dashboardCountsCache.result;
+            const result = computeDashboardCounts(shipments);
+            dashboardCountsCache = { key: shipments, result };
+            return result;
         }
 
         function updateAdminDashboardStats(shipments) {
@@ -4772,14 +5527,9 @@
                 ? Number((sortedEntries.reduce((sum, [, stats]) => sum + getSuccessRate(stats), 0) / sortedEntries.length).toFixed(1))
                 : 0;
 
-            const totalCount = shipments.length;
-            const doneCount = shipments.filter(isAdminPureDeliveredShipment).length;
-            const rejectCount = shipments.filter(isAdminExplicitRejectShipment).length;
-            const cancelCount = shipments.filter(isAdminCancelShipment).length;
-            const shippingCount = shipments.filter(isAdminShippingOnlyShipment).length;
-            const amendedCount = shipments.filter(isAdminPriceEditOnlyShipment).length;
-            const pendingCount = Math.max(totalCount - (doneCount + rejectCount + cancelCount + shippingCount + amendedCount), 0);
-            const resolvedCount = doneCount + rejectCount + cancelCount + shippingCount + amendedCount;
+            const c = getCachedDashboardCounts(shipments);
+            const pendingCount = Math.max(c.total - (c.done + c.reject + c.cancel + c.shipping + c.amended), 0);
+            const resolvedCount = c.total - pendingCount;
             const resolutionRate = totalCount ? Number(((resolvedCount / totalCount) * 100).toFixed(1)) : 0;
 
             const performanceBands = [
@@ -5081,7 +5831,7 @@
                         </div>
                     </div>
                     <div class="rep-card-total">
-                        <div class="rep-card-total-label">إجمالي المبلغ</div>
+                        <div class="rep-card-total-label">المبلغ</div>
                         <div class="rep-card-total-value">${Math.round(stats.collected).toLocaleString('en-US')} ج</div>
                     </div>
                 </article>
@@ -5126,7 +5876,7 @@
                         <div class="rep-stat-row-metric-value">${stats.pending}</div>
                     </div>
                     <div class="rep-stat-row-total">
-                        <div class="rep-stat-row-total-label">إجمالي المبلغ</div>
+                        <div class="rep-stat-row-total-label">المبلغ</div>
                         <div class="rep-stat-row-total-value">${Math.round(stats.collected).toLocaleString('en-US')} ج</div>
                     </div>
                 </article>
@@ -5499,7 +6249,7 @@
                     <td class="fw-bold text-primary">${escapeHtml(entry.shipment.كود_الشحنة || entry.shipment.order_id || entry.rawCode || '---')}</td>
                     <td>${escapeHtml(entry.shipment.المندوب || 'بدون مندوب')}</td>
                     <td><span class="badge-status ${getStatusClass(entry.shipment)}">${escapeHtml(getAdminDisplayStatus(entry.shipment))}</span></td>
-                    <td>${escapeHtml(entry.shipment['تاريخ التحديث'] || entry.shipment.الابيديت || '---')}</td>
+                    <td>${escapeHtml(entry.shipment['التاريخ'] || entry.shipment.الابيديت || '---')}</td>
                 </tr>
             `).join('');
             updateQrSaveButtonState();
@@ -5567,7 +6317,7 @@
             const payload = {};
             if (newRep) payload.المندوب = newRep;
             if (newStatus) payload.الحالة = newStatus;
-            payload['اسم الموظف'] = currentU;
+            payload['الموظف'] = currentU;
 
             for (let i = 0; i < housingScannerResults.length; i += 20) {
                 const batch = housingScannerResults.slice(i, i + 20);
@@ -5765,8 +6515,8 @@
         const EXACT_EXPORT_COLUMNS = [
             'm', 'اسم العميل', 'العنوان', 'الزون', 'المنتج', 'الهاتف', 'هاتف بديل', 'المبلغ',
             'الراسل', 'كود الشحنة', 'المندوب', 'الحالة', 'سبب الحالة', 'المدفوع',
-            'ملاحظات', 'تاريخ التحديث', 'الصافي', 'الشحن', 'عدد', 'تقفيل', 'عمولة المندوب',
-            'اسم الموظف', 'نوع المندوب', 'حدث', 'اليومية'
+            'ملاحظات', 'التاريخ', 'الصافي', 'الشحن', 'عدد', 'تقفيل', 'عمولة المندوب',
+            'الموظف', 'نوع المندوب', 'حدث', 'اليومية'
         ];
 
         function showExportOptions() {
@@ -5976,16 +6726,14 @@
                         { key: 'المندوب', labels: ['المندوب'] },
                         { key: 'الحالة', labels: ['الحالة'] },
                         { key: 'سبب الحالة', labels: ['سبب الحالة', 'سبب_الحالة'] },
-                        { key: 'المدفوع', labels: ['المدفوع', 'المدفوع'] },
                         { key: 'ملاحظات', labels: ['ملاحظات'] },
-                        { key: 'تاريخ التحديث', labels: ['تاريخ التحديث', 'تاريخ_التحديث', 'الابيديت'] },
+                        { key: 'التاريخ', labels: ['التاريخ', 'تاريخ_التحديث', 'الابيديت'] },
                         { key: 'الصافي', labels: ['الصافي'] },
                         { key: 'الشحن', labels: ['الشحن'] },
                         { key: 'عدد', labels: ['عدد', 'كود اضافي', 'كود_اضافي'] },
                         { key: 'تقفيل', labels: ['تقفيل'] },
                         { key: 'عمولة المندوب', labels: ['عمولة المندوب', 'عمولة_المندوب'] },
-                        { key: 'اسم الموظف', labels: ['اسم الموظف', 'اسم الموظ', 'اسم_الموظف'] },
-                        { key: 'نوع المندوب', labels: ['نوع المندوب'] },
+                        { key: 'الموظف', labels: ['الموظف', 'اسم الموظ', 'اسم_الموظف'] },
                         { key: 'حدث', labels: ['حدث'] },
                         { key: 'اليومية', labels: ['اليومية', 'اليوميه'] },
                     ];
@@ -6034,7 +6782,7 @@
                     let generatedCount = 0;
                     const CODE_PREFIX = 'COD';
                     const CODE_TS = Date.now().toString(36).toUpperCase();
-                    const NUMERIC_FIELDS = new Set(['المبلغ', 'المدفوع', 'الصافي', 'الشحن', 'تقفيل', 'عمولة المندوب']);
+                    const NUMERIC_FIELDS = new Set(['المبلغ', 'المدفوع', 'الصافي', 'الشحن', 'عمولة المندوب']);
                     const skipUnsupported = unsupportedShipmentSchemaFields.size > 0;
 
                     for (let rowIndex = 1; rowIndex < rows.length; rowIndex++) {
@@ -6058,7 +6806,7 @@
                         }
 
                         payload['كود الشحنة'] = orderId;
-                        payload['اسم الموظف'] = currentU;
+                        payload['الموظف'] = currentU;
 
                         // Clean payload inline
                         const pKeys = Object.keys(payload);
@@ -6075,7 +6823,7 @@
                                 else delete payload[k];
                                 continue;
                             }
-                            if (k === 'تاريخ التحديث') {
+                            if (k === 'التاريخ') {
                                 const normalizedDate = normalizeExcelDateValue(val);
                                 if (normalizedDate) payload[k] = normalizedDate;
                                 else delete payload[k];
@@ -6252,7 +7000,7 @@
                         Swal.fire('خطأ في المعالجة', 'حدث خطأ غير متوقع أثناء تحديث البيانات: ' + bulkErr.message, 'error');
                     } finally {
                         showLoading(false);
-                        await fetchShipments();
+                        if (currentDailyFilter) await fetchShipments(currentDailyFilter);
                         refreshDashboard();
                     }
                 };
@@ -6507,7 +7255,8 @@
 
             const editDateSelect = document.getElementById('housingEditDateFilterSelect');
             if (editDateSelect) {
-                editDateSelect.value = (Array.isArray(state.editDates) && state.editDates.length > 0) ? state.editDates[0] : '';
+                // Force empty on load to prevent auto-fetching before explicit daily selection
+                editDateSelect.value = '';
             }
 
             const archiveSelect = document.getElementById('housingArchiveFilterSelect');
@@ -6538,6 +7287,9 @@
             if (select && select.value) {
                 return [String(select.value).trim()];
             }
+            if (typeof currentDailyFilter !== 'undefined' && currentDailyFilter) {
+                return [currentDailyFilter];
+            }
             return [];
         }
 
@@ -6546,9 +7298,32 @@
             return select && select.value ? String(select.value).trim() : '';
         }
 
-        function handleHousingEditDateFilterChange() {
-            renderHousingSection();
-            saveHousingUiState();
+        async function handleHousingEditDateFilterChange(forcedValue) {
+            const select = document.getElementById('housingEditDateFilterSelect');
+            const dailyVal = forcedValue !== undefined ? forcedValue : (select ? select.value : (currentDailyFilter || ''));
+            syncDailyFilterDropdowns(dailyVal);
+            if (!dailyVal) {
+                allShipments = [];
+                currentDailyFilter = '';
+                renderHousingSection();
+                saveHousingUiState();
+                return;
+            }
+            if (dailyVal === currentDailyFilter) {
+                renderHousingSection();
+                saveHousingUiState();
+                return;
+            }
+            showLoading(true);
+            try {
+                await fetchShipments(dailyVal);
+                renderHousingSection();
+                saveHousingUiState();
+            } catch (error) {
+                console.error('Error fetching data for housing daily filter:', error);
+                Swal.fire('خطأ', 'فشل في جلب بيانات اليومية', 'error');
+            }
+            showLoading(false);
         }
 
         function handleHousingArchiveFilterChange() {
@@ -6674,6 +7449,14 @@
                         if (!filterArr.includes(val)) return false;
                     }
                 }
+                // تقفيل sidebar filter
+                if (!excludeFields.includes('daily')) {
+                    const dailyArr = housingSidebarExtraFilters['daily'];
+                    if (dailyArr && dailyArr.length) {
+                        const val = getHousingSidebarShipmentValue(d, 'daily');
+                        if (!dailyArr.includes(val)) return false;
+                    }
+                }
                 return true;
             });
         }
@@ -6690,50 +7473,60 @@
             if (!select) return;
 
             const selectedVal = getHousingEditDateFilters()[0] || select.value || '';
-            const allData = allShipments.map(s => getHousingDisplayShipmentData(s));
-            const activeDates = [...new Set(allData.filter(d => !String(d.ارشيف || d['أرشيف'] || '').trim()).map(d => getShipmentDailyValue(d)).filter(Boolean))]
-                .sort((a, b) => b.localeCompare(a));
-            const archiveDates = [...new Set(allData.filter(d => String(d.ارشيف || d['أرشيف'] || '').trim()).map(d => String(d.ارشيف || d['أرشيف'] || '').trim()).filter(Boolean))]
-                .sort((a, b) => b.localeCompare(a));
-            const hasEmptyUpdateDate = allData.some(d => !String(d.ارشيف || d['أرشيف'] || '').trim() && !getShipmentDailyValue(d));
 
-            const showCounts = getHousingEditDateFilters().length > 0 || !!getHousingArchiveFilterValue();
-            const counts = {};
-            if (showCounts) {
-                const baseShipments = getHousingShipmentsFilteredBy(['editDate', 'archive']);
-                baseShipments.forEach(s => {
-                    const currentData = getHousingDisplayShipmentData(s);
-                    const isArchived = !!String(currentData.ارشيف || currentData['أرشيف'] || '').trim();
-                    const val = isArchived ? String(currentData.ارشيف || currentData['أرشيف'] || '').trim() : getShipmentDailyValue(currentData);
-                    if (val) {
-                        counts[val] = (counts[val] || 0) + 1;
-                    } else if (!isArchived) {
-                        counts[HOUSING_EMPTY_UPDATE_DATE_FILTER] = (counts[HOUSING_EMPTY_UPDATE_DATE_FILTER] || 0) + 1;
-                    }
-                });
+            // بناء قائمة موحدة: اليوميات النشطة + المؤرشفة معاً تحت خيار واحد
+            let allDates = [];
+
+            if (!allShipments.length) {
+                // قبل جلب الشحنات: عرض اليوميات المتاحة من الـ cache
+                allDates = availableDailyValues.map(d => ({ val: d, archived: false, count: 0 }));
+            } else {
+                const allData = allShipments.map(s => getHousingDisplayShipmentData(s));
+
+                const showCounts = getHousingEditDateFilters().length > 0 || !!getHousingArchiveFilterValue();
+                const counts = {};
+                if (showCounts) {
+                    const baseShipments = getHousingShipmentsFilteredBy(['editDate', 'archive']);
+                    baseShipments.forEach(s => {
+                        const currentData = getHousingDisplayShipmentData(s);
+                        const isArchived = !!String(currentData.ارشيف || currentData['أرشيف'] || '').trim();
+                        const val = isArchived
+                            ? String(currentData.ارشيف || currentData['أرشيف'] || '').trim()
+                            : getShipmentDailyValue(currentData);
+                        if (val) counts[val] = (counts[val] || 0) + 1;
+                        else if (!isArchived) counts[HOUSING_EMPTY_UPDATE_DATE_FILTER] = (counts[HOUSING_EMPTY_UPDATE_DATE_FILTER] || 0) + 1;
+                    });
+                }
+
+                // اليوميات النشطة
+                const activeDates = [...new Set(
+                    allData.filter(d => !String(d.ارشيف || d['أرشيف'] || '').trim())
+                         .map(d => getShipmentDailyValue(d)).filter(Boolean)
+                )].sort((a, b) => b.localeCompare(a));
+
+                // اليوميات المؤرشفة
+                const archiveDates = [...new Set(
+                    allData.filter(d => String(d.ارشيف || d['أرشيف'] || '').trim())
+                         .map(d => String(d.ارشيف || d['أرشيف'] || '').trim()).filter(Boolean)
+                )].sort((a, b) => b.localeCompare(a));
+
+                // بدون تاريخ تحديث
+                const hasEmpty = allData.some(d => !String(d.ارشيف || d['أرشيف'] || '').trim() && !getShipmentDailyValue(d));
+                if (hasEmpty) allDates.push({ val: HOUSING_EMPTY_UPDATE_DATE_FILTER, archived: false, count: counts[HOUSING_EMPTY_UPDATE_DATE_FILTER] || 0 });
+
+                activeDates.forEach(d => allDates.push({ val: d, archived: false, count: counts[d] || 0 }));
+                archiveDates.forEach(d => allDates.push({ val: d, archived: true, count: counts[d] || 0 }));
             }
 
-            let html = '<option value="">📅 كل اليوميات</option>';
-            if (hasEmptyUpdateDate) {
-                const emptyCountStr = (showCounts && counts[HOUSING_EMPTY_UPDATE_DATE_FILTER]) ? ` (${counts[HOUSING_EMPTY_UPDATE_DATE_FILTER]})` : '';
-                html += `<option value="${HOUSING_EMPTY_UPDATE_DATE_FILTER}" ${selectedVal === HOUSING_EMPTY_UPDATE_DATE_FILTER ? 'selected' : ''}>بدون تاريخ تحديث${escapeHtml(emptyCountStr)}</option>`;
-            }
-            activeDates.forEach(date => {
-                const countStr = (showCounts && counts[date]) ? ` (${counts[date]})` : '';
-                html += `<option value="${escapeAttr(date)}" ${selectedVal === date ? 'selected' : ''}>${escapeHtml(date)}${escapeHtml(countStr)}</option>`;
+            let html = '<option value="">--- اختر اليومية ---</option>';
+            allDates.forEach(({ val, archived, count }) => {
+                const countStr = count ? ` (${count})` : '';
+                const colorStyle = archived ? ' style="color:#dc2626;"' : '';
+                html += `<option value="${escapeAttr(val)}" ${selectedVal === val ? 'selected' : ''}${colorStyle}>${escapeHtml(val)}${escapeHtml(countStr)}</option>`;
             });
-            if (archiveDates.length) {
-                html += '<option disabled>── المؤرشفة ──</option>';
-                archiveDates.forEach(date => {
-                    const countStr = (showCounts && counts[date]) ? ` (${counts[date]})` : '';
-                    html += `<option value="${escapeAttr(date)}" ${selectedVal === date ? 'selected' : ''} style="color:#6b7280;">📦 ${escapeHtml(date)}${escapeHtml(countStr)}</option>`;
-                });
-            }
 
             select.innerHTML = html;
-            if (selectedVal) {
-                select.value = selectedVal;
-            }
+            if (selectedVal) select.value = selectedVal;
         }
 
         function populateHousingStatusFilter() {
@@ -7005,6 +7798,12 @@
                         if (!filterArr.includes(val)) return false;
                     }
                 }
+                // تقفيل sidebar filter
+                const dailyArr = housingSidebarExtraFilters['daily'];
+                if (dailyArr && dailyArr.length) {
+                    const val = getHousingSidebarShipmentValue(currentData, 'daily');
+                    if (!dailyArr.includes(val)) return false;
+                }
 
                 if (housingDashStatFilter) {
                     const disp = getHousingDashboardDisplayStatus(currentData);
@@ -7156,7 +7955,7 @@
                     return 0;
                 })
                 .map(({ shipment, data }) => {
-                    const updateDate = data['تاريخ التحديث'] || data.الابيديت || data.updated_at || data.updatedAt || '---';
+                    const updateDate = data['التاريخ'] || data.الابيديت || data.updated_at || data.updatedAt || '---';
                     return `
                 <tr>
                     <td>${String(shipment.id) === String(shipmentId) ? '<span class="badge bg-primary">الحالية</span>' : '<span class="badge bg-success">مكررة</span>'}</td>
@@ -7192,7 +7991,7 @@
                                     <th>المبلغ</th>
                                     <th>الراسل</th>
                                     <th>المندوب</th>
-                                    <th>تاريخ التحديث</th>
+                                    <th>التاريخ</th>
                                 </tr>
                             </thead>
                             <tbody>${rowsHtml}</tbody>
@@ -7666,7 +8465,7 @@
                 const results = await Promise.all(batch.map(async (entry) => {
                     const currentU = currentUser.full_name || currentUser.username || 'المدير';
                     const changedPayload = pickHousingChangedPayload(entry.shipment, entry.payload);
-                    const finalPayload = toServerShipmentPayload({ ...changedPayload, ['اسم الموظف']: currentU });
+                    const finalPayload = toServerShipmentPayload({ ...changedPayload, ['الموظف']: currentU });
                     const mergedShipmentData = { ...entry.shipment, ...entry.payload };
                     const effectiveStatus = String(mergedShipmentData.الحالة || '').trim();
 
@@ -7877,7 +8676,7 @@
                         <!-- إجمالي المبلغ -->
                         <div data-stat-key="grossAmount" class="housing-finance-card housing-finance-card--green ${_vis('grossAmount')}" style="cursor:default;">
                             <div class="housing-finance-card__body">
-                                <div class="housing-finance-card__label">إجمالي المبلغ</div>
+                                <div class="housing-finance-card__label">المبلغ</div>
                                 <div class="housing-finance-card__value" dir="ltr">${showCounts ? grossAmount.toLocaleString() : '0'}</div>
                             </div>
                         </div>
@@ -7938,7 +8737,7 @@
             { key: 'shipping', label: 'شحن' },
             { key: 'rejected', label: 'الغاء' },
             { key: 'postponed', label: 'مؤجل' },
-            { key: 'grossAmount', label: 'إجمالي المبلغ' },
+            { key: 'grossAmount', label: 'المبلغ' },
             { key: 'safi', label: 'الصافي' },
             { key: 'shippingCost', label: 'الشحن' },
             { key: 'totalAmount', label: 'المدفوع' },
@@ -8328,7 +9127,7 @@
                         </td>
                         <td data-col-idx="13"><input type="text" class="form-control form-control-sm rounded-3" id="housing-reason-${s.id}" value="${escapeAttr(currentData['سبب الحالة'] || currentData.سبب_الحالة || '')}" oninput="syncHousingDraft('${s.id}')" ${archivedAttr}></td>
                         <td data-col-idx="14"><input type="text" inputmode="numeric" dir="ltr" class="form-control form-control-sm rounded-3 text-end" id="housing-adjusted-${s.id}" value="${escapeAttr(currentData.المدفوع || '')}" oninput="syncHousingDraft('${s.id}')" ${archivedAttr}></td>
-                        <td class="text-center small fw-bold text-secondary" data-col-idx="15">${escapeHtml(currentData['اسم الموظف'] || currentData.اسم_الموظف || '---')}</td>
+                        <td class="text-center small fw-bold text-secondary" data-col-idx="15">${escapeHtml(currentData['الموظف'] || currentData.اسم_الموظف || '---')}</td>
                         ${renderHousingExtraCells(s, currentData)}
                     </tr>
                 `;
@@ -8425,6 +9224,9 @@
         }
         document.addEventListener('click', function(e) {
             document.querySelectorAll('#housingBulkStatusMenu.show').forEach(menu => {
+                if (!menu.closest('.dropdown').contains(e.target)) menu.classList.remove('show');
+            });
+            document.querySelectorAll('#bulkStatusMenu.show').forEach(menu => {
                 if (!menu.closest('.dropdown').contains(e.target)) menu.classList.remove('show');
             });
         });
@@ -8657,7 +9459,7 @@
             { idx: 15, key: 'employee', label: 'الموظف', default: false },
             { idx: 16, key: 'id', label: 'id', default: false },
             { idx: 18, key: 'notes', label: 'ملاحظات', default: false },
-            { idx: 19, key: 'date', label: 'تاريخ التحديث', default: false },
+            { idx: 19, key: 'date', label: 'التاريخ', default: false },
             { idx: 20, key: 'safi', label: 'الصافي', default: false },
             { idx: 21, key: 'shipping', label: 'الشحن', default: false },
             { idx: 22, key: 'closing', label: 'تقفيل', default: false },
@@ -8675,7 +9477,7 @@
                     case 16: val = getShipmentDatabaseId(s) || String(s.id); break;
                     case 17: val = d.العنوان || d['العنوان'] || ''; break;
                     case 18: val = d.ملاحظات || d['ملاحظات'] || ''; break;
-                    case 19: val = d['تاريخ التحديث'] || d.تاريخ_التحديث || ''; break;
+                    case 19: val = d['التاريخ'] || d.تاريخ_التحديث || ''; break;
                     case 20: val = d.الصافي || d['الصافي'] || ''; break;
                     case 21: val = d.الشحن || d['الشحن'] || ''; break;
                     case 22: val = d.تقفيل || d['تقفيل'] || ''; break;
@@ -8955,7 +9757,7 @@
             });
 
             const currentUserLabel = currentUser.full_name || currentUser.username || 'المدير';
-            const updatePayload = { المندوب: rep, ['اسم الموظف']: currentUserLabel };
+            const updatePayload = { المندوب: rep, ['الموظف']: currentUserLabel };
 
             const { error } = await supabaseClient
                 .from(CONFIG.TABLES.SHIPMENTS)
@@ -8971,7 +9773,7 @@
 
             allShipments = allShipments.map(s => {
                 if (targetIds.includes(s.id)) {
-                    const up = { ...s, المندوب: rep, ['اسم الموظف']: currentUserLabel };
+                    const up = { ...s, المندوب: rep, ['الموظف']: currentUserLabel };
                     return up;
                 }
                 return s;
@@ -9747,7 +10549,10 @@
             if (getHousingStatusFilters().length > 0) names.push('الحالة');
             if (getHousingRepFilters().length > 0) names.push('المندوب');
             if (getHousingSenderFilters().length > 0) names.push('الراسل');
-            Object.keys(housingSidebarExtraFilters).forEach(k => { if (!names.includes(k)) names.push(k); });
+            Object.keys(housingSidebarExtraFilters).forEach(k => {
+                const label = getHousingSidebarColLabel(k) || k;
+                if (!names.includes(label)) names.push(label);
+            });
             if ((document.getElementById('housingSearch')?.value || '').trim() !== '') names.push('بحث');
             const hasSideStatus = names.includes('الحالة');
             const hasSideRep = names.includes('المندوب');
@@ -9776,6 +10581,7 @@
             clearHousingStatusFilters(true);
             clearHousingRepFilters(true);
             clearHousingSenderFilters(true);
+            housingSidebarExtraFilters = {};
             const search = document.getElementById('housingSearch');
             if (search) search.value = '';
             document.getElementById('housingSidebarSearch') ? document.getElementById('housingSidebarSearch').value = '' : null;
@@ -9787,8 +10593,12 @@
         function clearHousingEditDateFilters(silent = false) {
             const select = document.getElementById('housingEditDateFilterSelect');
             if (select) select.value = '';
-            if (!silent) renderHousingSection();
-            saveHousingUiState();
+            currentDailyFilter = '';
+            if (!silent) {
+                handleHousingEditDateFilterChange('');
+            } else {
+                saveHousingUiState();
+            }
         }
 
         function selectAllHousingEditDateFilters(silent = false) {
@@ -9859,7 +10669,7 @@
                 zone: 'الزون', product: 'المنتج',
                 phone: 'الهاتف', altPhone: 'هاتف بديل',
                 name: 'العميل', amount: 'المبلغ', code: 'الكود',
-                daily: 'اليومية'
+                daily: 'تقفيل'
             };
             return labels[col] || col;
         }
@@ -9871,8 +10681,7 @@
             if (col === 'zone') return String(s.الزون || '').trim();
             if (col === 'product') return String(s.المنتج || s.الصنف || '').trim();
             if (col === 'daily') {
-                const data = getHousingDisplayShipmentData(s);
-                return getShipmentDailyValue(data);
+                return String(s['تقفيل'] || '').trim();
             }
             if (col === 'archive') {
                 const data = getHousingDisplayShipmentData(s);
@@ -9891,7 +10700,11 @@
 
         function getHousingSidebarBaseShipments() {
             if (housingSidebarTab === 'daily') {
-                return getHousingShipmentsFilteredBy(['editDate']);
+                const filters = getHousingColumnFilters();
+                if (filters.editDates.length === 0 && !filters.archive) {
+                    return [];
+                }
+                return getHousingShipmentsFilteredBy(['daily']);
             }
             if (housingSidebarTab === 'archive') {
                 return getHousingShipmentsFilteredBy(['archive']);
@@ -9913,8 +10726,7 @@
 
         function getHousingSidebarSelected() {
             if (housingSidebarTab === 'daily') {
-                const filters = getHousingEditDateFilters();
-                return new Set(filters.length ? [filters[0]] : []);
+                return new Set(housingSidebarExtraFilters['daily'] || []);
             }
             if (housingSidebarTab === 'archive') {
                 const val = getHousingArchiveFilterValue();
@@ -9928,12 +10740,11 @@
 
         function toggleHousingSidebarFilter(value) {
             if (housingSidebarTab === 'daily') {
-                const select = document.getElementById('housingEditDateFilterSelect');
-                if (select) {
-                    const currentVal = select.value;
-                    select.value = currentVal === value ? '' : value;
-                    handleHousingEditDateFilterChange();
-                }
+                const arr = housingSidebarExtraFilters['daily'] || [];
+                const idx = arr.indexOf(value);
+                if (idx > -1) arr.splice(idx, 1); else arr.push(value);
+                if (arr.length) housingSidebarExtraFilters['daily'] = arr;
+                else delete housingSidebarExtraFilters['daily'];
                 renderHousingSection();
                 return;
             }
@@ -10073,16 +10884,17 @@
             const list = document.getElementById('housingSidebarList');
             if (!list) return;
 
-            const baseShipments = getHousingSidebarBaseShipments();
             const selected = getHousingSidebarSelected();
             const search = housingSidebarSearch.toLowerCase();
-
             const prop = housingSidebarTab;
-            let values = [...new Set(baseShipments.map(s => getHousingSidebarShipmentValue(s, prop)).filter(Boolean))];
+
+            let values;
+            const counts = {};
+
+            const baseShipments = getHousingSidebarBaseShipments();
+            values = [...new Set(baseShipments.map(s => getHousingSidebarShipmentValue(s, prop)).filter(Boolean))];
             values.sort((a, b) => a.localeCompare(b));
             if (search) values = values.filter(v => v.toLowerCase().includes(search));
-
-            const counts = {};
             baseShipments.forEach(s => {
                 const val = getHousingSidebarShipmentValue(s, prop);
                 if (val) counts[val] = (counts[val] || 0) + 1;
@@ -10094,17 +10906,20 @@
             }
 
             const allActive = selected.size === 0;
+            const totalCount = Object.values(counts).reduce((a, b) => a + b, 0);
             const allHtml = HOUSING_SIDEBAR_DEFAULT_COLS.includes(prop) ? `
                 <div class="housing-filter-sidebar-item ${allActive ? 'active' : ''}" style="border-bottom:1px solid var(--border,#dee2e6);margin-bottom:4px;">
                     <span><i class="fas fa-layer-group ms-1" style="font-size:0.75rem;"></i>الكل</span>
-                    <span class="count">${baseShipments.length}</span>
+                    <span class="count">${totalCount}</span>
                 </div>
             ` : '';
 
             list.innerHTML = allHtml + values.map(v => {
                 const isActive = selected.has(v);
+                const isArchivedDaily = (prop === 'daily') && archivedDailySet && archivedDailySet.has(v);
+                const extraStyle = (isArchivedDaily && !isActive) ? ' style="color: #8b0000 !important; font-weight: bold;"' : (isArchivedDaily && isActive ? ' style="font-weight: bold;"' : '');
                 return `<div class="housing-filter-sidebar-item ${isActive ? 'active' : ''}" data-value="${escapeAttr(v)}">
-                    <span>${escapeHtml(v)}</span>
+                    <span${extraStyle}>${escapeHtml(v)}</span>
                     <span class="count">${counts[v] || 0}</span>
                 </div>`;
             }).join('');
@@ -10115,7 +10930,7 @@
                     if (prop === 'status') clearHousingStatusFilters();
                     else if (prop === 'rep') clearHousingRepFilters();
                     else if (prop === 'sender') clearHousingSenderFilters();
-                    else if (prop === 'daily') { clearHousingEditDateFilters(); renderHousingSection(); }
+                    else if (prop === 'daily') { delete housingSidebarExtraFilters['daily']; renderHousingSection(); }
                 };
             }
 
@@ -10126,8 +10941,10 @@
                         toggleHousingSidebarFilter(value);
                     } else {
                         if (housingSidebarTab === 'daily') {
-                            const select = document.getElementById('housingEditDateFilterSelect');
-                            if (select) { select.value = value; handleHousingEditDateFilterChange(); }
+                            const arr = housingSidebarExtraFilters['daily'] || [];
+                            arr.length = 0;
+                            arr.push(value);
+                            housingSidebarExtraFilters['daily'] = arr;
                         } else if (housingSidebarTab === 'archive') {
                             const select = document.getElementById('housingArchiveFilterSelect');
                             if (select) { select.value = value; handleHousingArchiveFilterChange(); }
@@ -10274,21 +11091,22 @@
             if (dw) dw.textContent = '';
             document.getElementById('bulkResultsContainer').style.display = 'none';
             document.getElementById('bulkResultsBody').innerHTML = '';
-            document.getElementById('bulkStatusSelect').value = '';
+            document.getElementById('bulkActionBar').style.display = 'none';
+            document.getElementById('bulkRepInput').value = '';
             // populate daily filter
             const dailySelect = document.getElementById('bulkDailyFilter');
-            const dailies = [...new Set((allShipments || []).map(s => getShipmentDailyValue(s)).filter(Boolean))].sort();
-            dailySelect.innerHTML = '<option value="">--- اختر اليومية أولاً ---</option>' + dailies.map(d => `<option value="${escapeAttr(d)}">${escapeHtml(d)}</option>`).join('');
+            dailySelect.innerHTML = '<option value="">--- اختر اليومية أولاً ---</option>' + availableDailyValues.map(d => `<option value="${escapeAttr(d)}">${escapeHtml(d)}</option>`).join('');
             dailySelect.value = '';
-            // populate rep dropdown
-            const repSelect = document.getElementById('bulkRepSelect');
-            const currentVal = repSelect.value;
-            const repOptions = (allUsers || []).filter(u => u.role === 'rep' && u.approved).map(u => {
-                const name = String(u.username || u.full_name || '').trim();
-                return name ? `<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>` : '';
-            }).join('');
-            repSelect.innerHTML = '<option value="">--- لا تغيير ---</option>' + repOptions;
-            repSelect.value = currentVal || '';
+            // populate rep datalist
+            const bulkRepDatalist = document.getElementById('bulkRepsList');
+            const wasPopulated = bulkRepDatalist.dataset.populated;
+            if (bulkRepDatalist && Array.isArray(allUsers)) {
+                bulkRepDatalist.innerHTML = allUsers
+                    .filter(u => u.role === 'rep' && u.approved)
+                    .map(u => { const n = String(u.username || u.full_name || '').trim(); return n ? `<option value="${escapeAttr(n)}">` : ''; })
+                    .filter(Boolean).join('');
+                bulkRepDatalist.dataset.populated = '1';
+            }
             modal.show();
         }
 
@@ -10309,13 +11127,10 @@
         function onBulkSearchModeChange() {
             const mode = document.querySelector('input[name="bulkSearchMode"]:checked')?.value;
             const input = document.getElementById('bulkCodesInput');
-            const header = document.getElementById('bulkResultColHeader');
             if (mode === 'code') {
                 input.placeholder = 'اكتب أو ألصق أكواد الشحنات هنا&#10;يفصل كل كود بسطر جديد أو فاصلة أو مسافة';
-                if (header) header.textContent = 'كود الشحنة';
             } else {
                 input.placeholder = 'اكتب أو ألصق قيم M هنا&#10;يفصل كل قيمة بسطر جديد أو فاصلة أو مسافة';
-                if (header) header.textContent = 'M';
             }
             searchBulkShipments();
         }
@@ -10382,10 +11197,7 @@
             matched.reverse();
             tbody.innerHTML = matched.map((s, i) => {
                 const d = s;
-                const mode = document.querySelector('input[name="bulkSearchMode"]:checked')?.value;
-                const code = mode === 'code'
-                    ? String(d['كود الشحنة'] || d.order_id || d.كود_الشحنة || '').trim()
-                    : String(d.m || d.م || '').trim();
+                const id = String(s.id);
                 const name = escapeHtml(d['اسم العميل'] || d.اسم_العميل || '---');
                 const zone = escapeHtml(d.الزون || '---');
                 const product = escapeHtml(d['المنتج'] || d.الصنف || '---');
@@ -10399,7 +11211,7 @@
                 const phones = [phone, altPhone].filter(Boolean).join(' / ') || '---';
                 return `<tr>
                     <td>${i + 1}</td>
-                    <td class="fw-bold">${escapeHtml(code)}</td>
+                    <td><input type="checkbox" class="form-check-input bulk-shipment-cb m-0" data-id="${escapeAttr(id)}" checked onchange="updateBulkSelection()"></td>
                     <td>${name}</td>
                     <td>${zone}</td>
                     <td>${product}</td>
@@ -10411,17 +11223,186 @@
                     <td>${price}</td>
                 </tr>`;
             }).join('');
+            document.getElementById('bulkSelectAll').checked = true;
+            updateBulkSelection();
+            // populate rep datalist and status menu
+            const bulkRepDatalist = document.getElementById('bulkRepsList');
+            if (bulkRepDatalist && Array.isArray(allUsers) && !bulkRepDatalist.dataset.populated) {
+                bulkRepDatalist.innerHTML = allUsers
+                    .filter(u => u.role === 'rep' && u.approved)
+                    .map(u => { const n = String(u.username || u.full_name || '').trim(); return n ? `<option value="${escapeAttr(n)}">` : ''; })
+                    .filter(Boolean).join('');
+                bulkRepDatalist.dataset.populated = '1';
+            }
+            const bulkStatusMenu = document.getElementById('bulkStatusMenu');
+            if (bulkStatusMenu && !bulkStatusMenu.dataset.populated) {
+                const statuses = ['', 'تم', 'تعديل سعر', 'شحن', 'قيد التوصيل', 'مؤجل', 'الغاء', 'مجاش'];
+                const labels = ['بدون', '✅ تم', '💰 تعديل سعر', '🚚 شحن', '⏳ قيد التوصيل', '⏰ مؤجل', '🚫 الغاء', '❌ مجاش'];
+                bulkStatusMenu.innerHTML = statuses.map((val, i) =>
+                    `<li><a class="dropdown-item px-3 py-2 fw-bold small" href="#" onclick="bulkSetStatus('${val}');return false;">${labels[i]}</a></li>`
+                ).join('');
+                bulkStatusMenu.dataset.populated = '1';
+            }
+            // reset status preview
+            const statusPreview = document.getElementById('bulkStatusPreview');
+            if (statusPreview) statusPreview.value = '';
             // store matched IDs for save
             tbody._bulkIds = matched.map(s => String(s.id));
             container.style.display = 'block';
         }
 
+        function toggleBulkSelectAll() {
+            const checked = document.getElementById('bulkSelectAll').checked;
+            document.querySelectorAll('.bulk-shipment-cb').forEach(cb => cb.checked = checked);
+            updateBulkSelection();
+        }
+
+        function updateBulkSelection() {
+            const cbs = document.querySelectorAll('.bulk-shipment-cb');
+            const selected = Array.from(cbs).filter(cb => cb.checked);
+            const bar = document.getElementById('bulkActionBar');
+            const countBadge = document.getElementById('bulkSelectedCount');
+            if (countBadge) countBadge.innerText = selected.length;
+            bar.style.display = selected.length > 0 ? 'flex' : 'none';
+        }
+
+        function clearBulkSelection() {
+            document.querySelectorAll('.bulk-shipment-cb').forEach(cb => cb.checked = false);
+            document.getElementById('bulkSelectAll').checked = false;
+            updateBulkSelection();
+        }
+
+        function getSelectedBulkIds() {
+            return Array.from(document.querySelectorAll('.bulk-shipment-cb:checked')).map(cb => cb.dataset.id).filter(Boolean);
+        }
+
+        function toggleBulkStatusMenu(e) {
+            e.stopPropagation();
+            document.getElementById('bulkStatusMenu')?.classList.toggle('show');
+        }
+
+        function bulkSetStatus(status) {
+            const preview = document.getElementById('bulkStatusPreview');
+            if (preview) preview.value = status;
+            const ids = getSelectedBulkIds();
+            if (!ids.length) { Swal.fire('تنبيه', 'لم يتم تحديد شحنات', 'warning'); return; }
+            Swal.fire({
+                title: 'تأكيد تحديث الحالة',
+                html: `تحديث ${ids.length} شحنة إلى <strong>${status || 'بدون'}</strong>`,
+                icon: 'question', showCancelButton: true, confirmButtonText: 'نعم', cancelButtonText: 'الغاء',
+                confirmButtonColor: '#0dcaf0'
+            }).then(async ({ isConfirmed }) => {
+                if (!isConfirmed) { if (preview) preview.value = ''; return; }
+                let success = 0, fail = 0;
+                for (const id of ids) {
+                    const payload = {};
+                    if (status) payload.الحالة = status;
+                    else payload.الحالة = null;
+                    payload['الموظف'] = currentUser.full_name || currentUser.username || 'المدير';
+                    const { error } = await supabaseClient.from(CONFIG.TABLES.SHIPMENTS).update(payload).eq('id', id);
+                    if (!error) { success++; } else { fail++; }
+                }
+                Swal.fire({ icon: fail ? 'warning' : 'success', title: fail ? 'تم مع بعض الأخطاء' : 'تم التحديث', text: `نجاح: ${success}، فشل: ${fail}` });
+                if (preview) preview.value = '';
+                if (success) renderHousingSection();
+            });
+        }
+
+        function bulkAssignRep() {
+            const rep = (document.getElementById('bulkRepInput')?.value || '').trim();
+            if (!rep) { Swal.fire('تنبيه', 'اكتب اسم المندوب أولاً', 'warning'); return; }
+            const ids = getSelectedBulkIds();
+            if (!ids.length) { Swal.fire('تنبيه', 'لم يتم تحديد شحنات', 'warning'); return; }
+            Swal.fire({
+                title: 'تأكيد تعيين مندوب',
+                html: `تعيين <strong>${rep}</strong> لـ ${ids.length} شحنة`,
+                icon: 'question', showCancelButton: true, confirmButtonText: 'نعم', cancelButtonText: 'الغاء',
+                confirmButtonColor: '#0dcaf0'
+            }).then(async ({ isConfirmed }) => {
+                if (!isConfirmed) return;
+                let success = 0, fail = 0;
+                for (const id of ids) {
+                    const payload = { 'المندوب': rep, 'الموظف': currentUser.full_name || currentUser.username || 'المدير' };
+                    const { error } = await supabaseClient.from(CONFIG.TABLES.SHIPMENTS).update(payload).eq('id', id);
+                    if (!error) { success++; } else { fail++; }
+                }
+                Swal.fire({ icon: fail ? 'warning' : 'success', title: fail ? 'تم مع بعض الأخطاء' : 'تم التعيين', text: `نجاح: ${success}، فشل: ${fail}` });
+                if (success) { renderHousingSection(); document.getElementById('bulkRepInput').value = ''; }
+            });
+        }
+
+        function bulkCopySelected() {
+            const ids = getSelectedBulkIds();
+            if (!ids.length) { Swal.fire('تنبيه', 'لم يتم تحديد شحنات', 'info'); return; }
+            const headers = ['مندوب', 'م', 'العميل', 'الزون', 'الصنف', 'الهاتف', 'هاتف بديل', 'المبلغ', 'الراسل', 'الحالة'];
+            const rows = [headers.join('\t')];
+            ids.forEach(id => {
+                const data = allShipments.find(s => String(s.id) === id);
+                if (!data) return;
+                const d = getHousingDisplayShipmentData(data);
+                rows.push([
+                    d.المندوب || '', d.m || d.م || '', d.اسم_العميل || '', d.الزون || '',
+                    d.المنتج || d.الصنف || '', d.الهاتف || '', d.هاتف_بديل || '',
+                    d.المبلغ || '', d.الراسل || '', d.الحالة || ''
+                ].join('\t'));
+            });
+            navigator.clipboard.writeText(rows.join('\n')).then(() => {
+                Swal.fire({ icon: 'success', title: 'تم نسخ ' + ids.length + ' شحنة', toast: true, timer: 1500, showConfirmButton: false });
+            });
+        }
+
+        function bulkArchiveSelected() {
+            const ids = getSelectedBulkIds();
+            if (!ids.length) { Swal.fire('تنبيه', 'لم يتم تحديد شحنات', 'info'); return; }
+            Swal.fire({
+                title: 'تأكيد الأرشفة',
+                html: `أرشفة ${ids.length} شحنة؟`,
+                icon: 'question', showCancelButton: true, confirmButtonText: 'نعم، أرشفة', cancelButtonText: 'الغاء',
+                confirmButtonColor: '#0dcaf0'
+            }).then(async ({ isConfirmed }) => {
+                if (!isConfirmed) return;
+                let success = 0, fail = 0;
+                for (const id of ids) {
+                    const { error } = await supabaseClient.from(CONFIG.TABLES.SHIPMENTS).update({ 'ارشيف': 'نعم', 'الموظف': currentUser.full_name || currentUser.username || 'المدير' }).eq('id', id);
+                    if (!error) { success++; } else { fail++; }
+                }
+                Swal.fire({ icon: fail ? 'warning' : 'success', title: fail ? 'تم مع بعض الأخطاء' : 'تمت الأرشفة', text: `نجاح: ${success}، فشل: ${fail}` });
+                if (success) renderHousingSection();
+            });
+        }
+
+        function bulkDeleteSelected() {
+            const ids = getSelectedBulkIds();
+            if (!ids.length) { Swal.fire('تنبيه', 'لم يتم تحديد شحنات', 'info'); return; }
+            Swal.fire({
+                title: 'تأكيد الحذف',
+                html: `حذف ${ids.length} شحنة؟<br><span class="text-danger">هذا الإجراء لا يمكن التراجع عنه</span>`,
+                icon: 'warning', showCancelButton: true, confirmButtonText: 'نعم، حذف', cancelButtonText: 'الغاء',
+                confirmButtonColor: '#dc3545'
+            }).then(async ({ isConfirmed }) => {
+                if (!isConfirmed) return;
+                let success = 0, fail = 0;
+                for (const id of ids) {
+                    const { error } = await supabaseClient.from(CONFIG.TABLES.SHIPMENTS).delete().eq('id', id);
+                    if (!error) { success++; } else { fail++; }
+                }
+                Swal.fire({ icon: fail ? 'warning' : 'success', title: fail ? 'تم مع بعض الأخطاء' : 'تم الحذف', text: `نجاح: ${success}، فشل: ${fail}` });
+                if (success) renderHousingSection();
+            });
+        }
+
         async function saveBulkUpdates() {
             const tbody = document.getElementById('bulkResultsBody');
-            const ids = tbody._bulkIds;
-            if (!ids || !ids.length) return;
-            const newStatus = document.getElementById('bulkStatusSelect').value;
-            const newRep = document.getElementById('bulkRepSelect').value;
+            const allIds = tbody._bulkIds;
+            if (!allIds || !allIds.length) return;
+            const selectedCbs = document.querySelectorAll('.bulk-shipment-cb:checked');
+            const ids = Array.from(selectedCbs).map(cb => cb.dataset.id).filter(Boolean);
+            if (!ids.length) {
+                Swal.fire({ icon: 'warning', title: 'لم يتم تحديد شحنات', text: 'اختر شحنة واحدة على الأقل', confirmButtonText: 'حسناً' });
+                return;
+            }
+            const newStatus = document.getElementById('bulkStatusPreview')?.value || '';
+            const newRep = document.getElementById('bulkRepInput')?.value?.trim() || '';
             if (!newStatus && !newRep) {
                 Swal.fire({ icon: 'warning', title: 'اختر تحديثاً', text: 'اختر حالة أو مندوباً للتحديث أولاً', confirmButtonText: 'حسناً' });
                 return;
@@ -10463,7 +11444,7 @@
                     const currentU = currentUser.full_name || currentUser.username || 'المدير';
                     const s = shipmentMap.get(id) || {};
                     const changedPayload = pickHousingChangedPayload(s, payload);
-                    const finalPayload = toServerShipmentPayload({ ...changedPayload, ['اسم الموظف']: currentU });
+                    const finalPayload = toServerShipmentPayload({ ...changedPayload, ['الموظف']: currentU });
                     if (newStatus && ['تم', 'تعديل سعر', 'شحن'].includes(newStatus)) {
                         const d = s ? getHousingDisplayShipmentData(s) : {};
                         const baseCommission = parseHousingNumericValue(d[SHIPMENT_COMMISSION_FIELD] ?? d[SHIPMENT_COMMISSION_FIELD_LEGACY] ?? 0);
@@ -10500,6 +11481,15 @@
             }
         }
         /* ===== نهاية تحديث جماعي ===== */
+
+        function toggleBulkMaximize() {
+            const modal = document.getElementById('bulkUpdateModal');
+            const btn = document.getElementById('bulkMaximizeBtn');
+            modal.classList.toggle('maximized');
+            const isMax = modal.classList.contains('maximized');
+            btn.innerHTML = isMax ? '<i class="fas fa-compress"></i>' : '<i class="fas fa-expand"></i>';
+            btn.title = isMax ? 'تصغير' : 'تكبير';
+        }
 
         function buildRepWhatsAppMessage(repName, items, options = {}) {
             const countLabel = formatShipmentCountLabel(items.length);

@@ -78,14 +78,14 @@ CONFIG.SHIPMENT_SERVER_FIELDS = [
     'سبب الحالة',
     'المدفوع',
     'ملاحظات',
-    'تاريخ التحديث',
+    'التاريخ',
     'الصافي',
     'الشحن',
     'عدد',
     'تقفيل',
     'عمولة المندوب',
     'عمولة المندوب الفرعي',
-    'اسم الموظف',
+    'الموظف',
     'نوع المندوب',
     'المندوب الفرعي',
     'حدث',
@@ -123,12 +123,12 @@ function normalizeShipmentRecordHeaders(record) {
     assignShipmentAliases(normalized, 'هاتف بديل', ['هاتف_بديل', 'هات_بديل', 'هات بديل']);
     assignShipmentAliases(normalized, 'كود الشحنة', ['order_id', 'كود_الشحنة', 'الكود', 'كود']);
     assignShipmentAliases(normalized, 'سبب الحالة', ['سبب_الحالة']);
-    assignShipmentAliases(normalized, 'تاريخ التحديث', ['الابيديت', 'التاريخ', 'تاريخ_التحديث']);
+    assignShipmentAliases(normalized, 'التاريخ', ['الابيديت', 'تاريخ_التحديث']);
     assignShipmentAliases(normalized, 'اليومية', ['اليوميه']);
     assignShipmentAliases(normalized, 'عدد', ['كود اضافي', 'كود_اضافي']);
     assignShipmentAliases(normalized, 'عمولة المندوب', ['عمولة_المندوب']);
     assignShipmentAliases(normalized, 'عمولة المندوب الفرعي', ['عمولة_المندوب_الفرعي']);
-    assignShipmentAliases(normalized, 'اسم الموظف', ['اسم الموظ', 'اسم_الموظف']);
+    assignShipmentAliases(normalized, 'الموظف', ['اسم الموظف', 'اسم الموظ', 'اسم_الموظف']);
     assignShipmentAliases(normalized, 'الصافي', ['الصاي']);
     assignShipmentAliases(normalized, 'المندوب الفرعي', ['المندوب_الفرعي', 'المندوب الفرعي', 'المندوب_الرعي', 'المندوب الرعي']);
     if (!normalized['نوع المندوب'] && normalized['المندوب الفرعي']) {
@@ -201,10 +201,9 @@ function buildShipmentExcelRow(record, overrides = {}) {
 function getShipmentUpdateDate(record) {
     if (!record || typeof record !== 'object') return '';
     return String(
-        record['تاريخ التحديث'] ??
+        record['التاريخ'] ??
         record.الابيديت ??
         record['الابيديت'] ??
-        record.التاريخ ??
         ''
     ).trim();
 }

@@ -23,10 +23,6 @@
             border-color: #3b82f6 !important;
             color: #ffffff !important;
         }
-        .highlight-active small, .highlight-active span, .highlight-active i {
-            color: #ffffff !important;
-            opacity: 1 !important;
-        }
         :root {
             --primary: #3b82f6;
             --success: #10b981;
@@ -780,7 +776,7 @@
         }
 
         @media (max-width: 767.98px) {
-            .admin-inline-stats,
+            .toolbar-stats-cards,
             .rep-analytics-grid,
             .rep-chart-grid {
                 grid-template-columns: 1fr;
@@ -935,10 +931,87 @@
             align-items: center;
             z-index: 9999;
         }
+        .loading-overlay .loading-bar-wrap {
+            width: 260px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .loading-overlay .loading-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
+            border-radius: 10px;
+            transition: width 0.15s linear;
+        }
 
         [data-bs-theme="dark"] .loading-overlay {
             background: rgba(15, 23, 42, 0.8);
         }
+        [data-bs-theme="dark"] .loading-overlay .loading-bar-wrap {
+            background: #334155;
+        }
+
+        [data-bs-theme="dark"] .toolbar-stat-card,
+        .dark .toolbar-stat-card {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        [data-bs-theme="dark"] .card-total { border-right-color: #3b82f6; }
+        [data-bs-theme="dark"] .card-visible { border-right-color: #06b6d4; }
+        [data-bs-theme="dark"] .card-nodelegate { border-right-color: #f59e0b; }
+        [data-bs-theme="dark"] .card-mjash { border-right-color: #ef4444; }
+        [data-bs-theme="dark"] .card-noamount { border-right-color: #f97316; }
+        [data-bs-theme="dark"] .card-duplicate { border-right-color: #64748b; }
+        [data-bs-theme="dark"] .card-warehouse { border-right-color: #d97706; }
+        [data-bs-theme="dark"] .card-indelivery { border-right-color: #0891b2; }
+        [data-bs-theme="dark"] .card-done { border-right-color: #10b981; }
+        [data-bs-theme="dark"] .card-amended { border-right-color: #6366f1; }
+        [data-bs-theme="dark"] .card-shipping { border-right-color: #3b82f6; }
+        [data-bs-theme="dark"] .card-reject { border-right-color: #ef4444; }
+        [data-bs-theme="dark"] .card-cancel { border-right-color: #f59e0b; }
+        [data-bs-theme="dark"] .card-postponed { border-right-color: #f97316; }
+        [data-bs-theme="dark"] .toolbar-stat-icon,
+        .dark .toolbar-stat-icon {
+            background: transparent;
+            color: #64748b;
+        }
+        [data-bs-theme="dark"] .card-total .toolbar-stat-label,
+        [data-bs-theme="dark"] .card-total .toolbar-stat-icon { color: #60a5fa; }
+        [data-bs-theme="dark"] .card-visible .toolbar-stat-label,
+        [data-bs-theme="dark"] .card-visible .toolbar-stat-icon { color: #67e8f9; }
+        [data-bs-theme="dark"] .card-nodelegate .toolbar-stat-label,
+        [data-bs-theme="dark"] .card-nodelegate .toolbar-stat-icon { color: #fde047; }
+        [data-bs-theme="dark"] .card-mjash .toolbar-stat-label,
+        [data-bs-theme="dark"] .card-mjash .toolbar-stat-icon { color: #fca5a5; }
+        [data-bs-theme="dark"] .card-noamount .toolbar-stat-label,
+        [data-bs-theme="dark"] .card-noamount .toolbar-stat-icon { color: #fdba74; }
+        [data-bs-theme="dark"] .card-duplicate .toolbar-stat-label,
+        [data-bs-theme="dark"] .card-duplicate .toolbar-stat-icon { color: #cbd5e1; }
+        [data-bs-theme="dark"] .card-warehouse .toolbar-stat-label,
+        [data-bs-theme="dark"] .card-warehouse .toolbar-stat-icon { color: #fcd34d; }
+        [data-bs-theme="dark"] .card-indelivery .toolbar-stat-label,
+        [data-bs-theme="dark"] .card-indelivery .toolbar-stat-icon { color: #67e8f9; }
+        [data-bs-theme="dark"] .card-done .toolbar-stat-label,
+        [data-bs-theme="dark"] .card-done .toolbar-stat-icon { color: #6ee7b7; }
+        [data-bs-theme="dark"] .card-amended .toolbar-stat-label,
+        [data-bs-theme="dark"] .card-amended .toolbar-stat-icon { color: #a5b4fc; }
+        [data-bs-theme="dark"] .card-shipping .toolbar-stat-label,
+        [data-bs-theme="dark"] .card-shipping .toolbar-stat-icon { color: #60a5fa; }
+        [data-bs-theme="dark"] .card-reject .toolbar-stat-label,
+        [data-bs-theme="dark"] .card-reject .toolbar-stat-icon { color: #fca5a5; }
+        [data-bs-theme="dark"] .card-cancel .toolbar-stat-label,
+        [data-bs-theme="dark"] .card-cancel .toolbar-stat-icon { color: #fde047; }
+        [data-bs-theme="dark"] .card-postponed .toolbar-stat-label,
+        [data-bs-theme="dark"] .card-postponed .toolbar-stat-icon { color: #fdba74; }
+        [data-bs-theme="dark"] .toolbar-stat-filter.active,
+        .dark .toolbar-stat-filter.active { background: #0f172a; border-color: #0f172a; }
+        [data-bs-theme="dark"] .toolbar-stat-filter.active .toolbar-stat-icon,
+        .dark .toolbar-stat-filter.active .toolbar-stat-icon { background: transparent !important; color: #ffffff !important; }
+        [data-bs-theme="dark"] .toolbar-stat-value,
+        .dark .toolbar-stat-value { color: #f8fafc !important; }
 
         .changed-cell {
             background: rgba(251, 191, 36, 0.16);
@@ -1396,6 +1469,7 @@
 
         .housing-table th,
         .housing-table td {
+            font-family: 'Tahoma', sans-serif;
             font-size: 11px;
             width: 10%;
             white-space: nowrap;
@@ -1771,17 +1845,20 @@
             padding-bottom: 0.75rem;
         }
 
-        .housing-stat-card-active {
-            border-width: 2px !important;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2), 0 10px 22px rgba(15, 23, 42, 0.16) !important;
+        /* === بطاقات الإحصائيات — جريئة بدون إطار === */
+        .toolbar-stat-subvalue {
+            display: block;
+            font-size: 0.55rem;
+            font-weight: 700;
+            color: #94a3b8;
+            line-height: 1;
+            margin-top: 1px;
+            z-index: 2;
         }
 
-        .housing-stat-card-active i {
-        }
-
-        [data-bs-theme="dark"] .housing-stat-card-active {
-            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.24), 0 12px 24px rgba(0, 0, 0, 0.35) !important;
-        }
+        /* الوضع الداكن — تعديل التدرجات لتكون أفتح قليلاً */
+        [data-bs-theme="dark"] .toolbar-stat-subvalue,
+        .dark .toolbar-stat-subvalue { color: #64748b; }
 
         [data-bs-theme="dark"] .housing-editdate-item:hover {
             background: rgba(96, 165, 250, 0.14);
@@ -2215,111 +2292,130 @@
             color: white !important;
         }
 
-        .admin-inline-stats {
+        .toolbar-stats-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
-            gap: 14px;
-            margin-top: 14px;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 0.35rem;
+            flex: 1;
+            margin-bottom: 14px;
         }
 
-        .admin-inline-stat {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: center;
+        .toolbar-stat-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 0.35rem 0.5rem;
             text-align: right;
-            border: 1px solid rgba(226, 232, 240, 0.98);
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(248, 250, 252, 0.98));
-            border-radius: 20px;
-            padding: 14px 16px;
-            min-height: 110px;
-            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.05);
-            transition: box-shadow 0.2s ease, border-color 0.2s ease;
-            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            min-height: 62px;
         }
 
-        .admin-inline-stat:hover {
-            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
-        }
-
-        .admin-inline-stat.active {
-            border-color: rgba(59, 130, 246, 0.45);
-            box-shadow: 0 14px 30px rgba(59, 130, 246, 0.16);
-        }
-
-        .admin-inline-stat::before {
-            content: "";
+        .toolbar-stat-icon {
             position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent 48%);
-            pointer-events: none;
-        }
-
-        .admin-inline-stat-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 16px;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            width: 34px;
+            height: 34px;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
-            font-size: 1rem;
-            margin-bottom: 12px;
-        }
-
-        .admin-inline-stat-label {
-            color: #64748b;
-            font-size: 0.78rem;
-            font-weight: 800;
-            margin-bottom: 5px;
-            line-height: 1.2;
-        }
-
-        .admin-inline-stat-value {
-            color: var(--text-color);
-            font-size: 1.45rem;
-            font-weight: 900;
-            line-height: 1;
-        }
-
-        .admin-inline-stat-meta {
-            margin-top: 8px;
+            border-radius: 10px;
+            opacity: 1;
+            transition: background 0.2s;
             color: #94a3b8;
-            font-size: 0.72rem;
-            font-weight: 800;
+            background: transparent;
         }
 
-        .admin-inline-stat-total .admin-inline-stat-icon {
-            background: rgba(59, 130, 246, 0.14);
-            color: #2563eb;
-        }
+        .toolbar-stat-card:hover { border-color: #cbd5e1; background: transparent; }
+        .toolbar-stat-card:hover .toolbar-stat-icon { background: transparent; }
 
-        .admin-inline-stat-done .admin-inline-stat-icon {
-            background: rgba(16, 185, 129, 0.14);
-            color: #059669;
+        .toolbar-stat-filter { cursor: pointer; }
+        .toolbar-stat-filter.active {
+            background: #1e293b;
+            border-color: #1e293b;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
+        .toolbar-stat-filter.active .toolbar-stat-label,
+        .toolbar-stat-filter.active .toolbar-stat-value { color: #ffffff !important; }
+        .toolbar-stat-filter.active .toolbar-stat-icon { color: #ffffff !important; background: transparent !important; }
 
-        .admin-inline-stat-reject .admin-inline-stat-icon {
-            background: rgba(239, 68, 68, 0.14);
-            color: #dc2626;
-        }
+        .toolbar-stat-label { display: block; font-size: 0.65rem; font-weight: 700; color: #64748b; margin-bottom: 1px; z-index: 2; }
+        .toolbar-stat-value { display: block; font-size: 1rem; font-weight: 800; line-height: 1.2; color: #1e293b; z-index: 2; }
 
-        .admin-inline-stat-cancel .admin-inline-stat-icon {
-            background: rgba(245, 158, 11, 0.16);
-            color: #d97706;
-        }
+        .card-total { border-right: 3px solid #3b82f6; }
+        .card-visible { border-right: 3px solid #06b6d4; }
+        .card-nodelegate { border-right: 3px solid #f59e0b; }
+        .card-mjash { border-right: 3px solid #ef4444; }
+        .card-noamount { border-right: 3px solid #f97316; }
+        .card-duplicate { border-right: 3px solid #64748b; }
+        .card-warehouse { border-right: 3px solid #d97706; }
+        .card-indelivery { border-right: 3px solid #0891b2; }
+        .card-done { border-right: 3px solid #10b981; }
+        .card-amended { border-right: 3px solid #6366f1; }
+        .card-shipping { border-right: 3px solid #3b82f6; }
+        .card-reject { border-right: 3px solid #ef4444; }
+        .card-cancel { border-right: 3px solid #f59e0b; }
+        .card-postponed { border-right: 3px solid #f97316; }
 
-        .admin-inline-stat-shipping .admin-inline-stat-icon {
-            background: rgba(6, 182, 212, 0.14);
-            color: #0891b2;
-        }
+        .card-total .toolbar-stat-label,
+        .card-total .toolbar-stat-icon { color: #3b82f6; }
+        .card-visible .toolbar-stat-label,
+        .card-visible .toolbar-stat-icon { color: #06b6d4; }
+        .card-nodelegate .toolbar-stat-label,
+        .card-nodelegate .toolbar-stat-icon { color: #f59e0b; }
+        .card-mjash .toolbar-stat-label,
+        .card-mjash .toolbar-stat-icon { color: #ef4444; }
+        .card-noamount .toolbar-stat-label,
+        .card-noamount .toolbar-stat-icon { color: #f97316; }
+        .card-duplicate .toolbar-stat-label,
+        .card-duplicate .toolbar-stat-icon { color: #64748b; }
+        .card-warehouse .toolbar-stat-label,
+        .card-warehouse .toolbar-stat-icon { color: #d97706; }
+        .card-indelivery .toolbar-stat-label,
+        .card-indelivery .toolbar-stat-icon { color: #0891b2; }
+        .card-done .toolbar-stat-label,
+        .card-done .toolbar-stat-icon { color: #10b981; }
+        .card-amended .toolbar-stat-label,
+        .card-amended .toolbar-stat-icon { color: #6366f1; }
+        .card-shipping .toolbar-stat-label,
+        .card-shipping .toolbar-stat-icon { color: #3b82f6; }
+        .card-reject .toolbar-stat-label,
+        .card-reject .toolbar-stat-icon { color: #ef4444; }
+        .card-cancel .toolbar-stat-label,
+        .card-cancel .toolbar-stat-icon { color: #f59e0b; }
+        .card-postponed .toolbar-stat-label,
+        .card-postponed .toolbar-stat-icon { color: #f97316; }
 
-        .admin-inline-stat-amended .admin-inline-stat-icon {
-            background: rgba(99, 102, 241, 0.14);
-            color: #4f46e5;
-        }
+        .card-total .toolbar-stat-icon,
+        .card-visible .toolbar-stat-icon,
+        .card-nodelegate .toolbar-stat-icon,
+        .card-mjash .toolbar-stat-icon,
+        .card-noamount .toolbar-stat-icon,
+        .card-duplicate .toolbar-stat-icon,
+        .card-warehouse .toolbar-stat-icon,
+        .card-indelivery .toolbar-stat-icon,
+        .card-done .toolbar-stat-icon,
+        .card-amended .toolbar-stat-icon,
+        .card-shipping .toolbar-stat-icon,
+        .card-reject .toolbar-stat-icon,
+        .card-cancel .toolbar-stat-icon,
+        .card-postponed .toolbar-stat-icon { background: transparent; }
+        .card-done .toolbar-stat-subvalue,
+        .card-amended .toolbar-stat-subvalue,
+        .card-shipping .toolbar-stat-subvalue { color: #94a3b8; }
+
+        #housingStatsToggleIcon { transition: transform 0.3s ease; }
+        #housingStatsToggleIcon.rotated { transform: rotate(180deg); }
+        .housing-extra-stats-wrap { overflow: hidden; transition: max-height 0.35s ease, opacity 0.25s ease; max-height: 2000px; opacity: 1; }
+        .housing-extra-stats-wrap.collapsed { max-height: 0 !important; opacity: 0 !important; }
 
         .stat-amount-card {
             background: linear-gradient(135deg, #4f46e5, #312e81);
@@ -2754,7 +2850,7 @@
 
 <body>
     <div id="loading" class="loading-overlay">
-        <div class="spinner-border text-primary" role="status"></div>
+        <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
     </div>
 
     <nav class="navbar navbar-expand-lg border-bottom sticky-top shadow-sm">
@@ -2942,6 +3038,8 @@
                         </div>
                     </div>
                 </div>
+
+                <div id="adminDashboardStatsContainer" class="toolbar-stats-cards"></div>
 
                 <div class="admin-analytics-shell">
                     <div class="rep-analytics-grid">
@@ -3189,6 +3287,9 @@
                                 <button class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0 housing-tool-btn" title="إخفاء/إظهار الاحصائيات" style="width:30px;height:30px;padding:0;font-size:0.75rem;border:1px solid var(--border,#dee2e6);" onclick="housingStatsConfig()"><i class="fas fa-sliders-h"></i></button>
                                 <button id="housingColumnsBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0 housing-tool-btn" title="تنسيق الأعمدة" style="width:30px;height:30px;padding:0;font-size:0.75rem;border:1px solid var(--border,#dee2e6);" onclick="housingColumnsConfig()">
                                     <i class="fas fa-columns"></i>
+                                </button>
+                                <button id="housingStatsToggleBtn" class="btn btn-light btn-sm rounded-circle shadow-sm flex-shrink-0 housing-tool-btn" title="إظهار/طي الإحصائيات الإضافية" style="width:30px;height:30px;padding:0;font-size:0.75rem;border:1px solid var(--border,#dee2e6);" onclick="toggleHousingExtraStats()">
+                                    <i class="fas fa-chevron-up" id="housingStatsToggleIcon"></i>
                                 </button>
                                 <button id="housingClearFiltersBtn" class="btn btn-outline-secondary rounded-pill fw-bold px-2 shadow-sm flex-shrink-0"
                                     onclick="clearHousingFilters()" title="مسح الفلاتر" style="font-size:0.75rem;">
@@ -3590,7 +3691,6 @@
                                 <button class="btn btn-sm btn-link text-decoration-none fw-bold px-1" style="color:var(--text-secondary,#94a3b8);" onclick="clearBulkSelection()">الغاء الكل</button>
                             </div>
                             <div class="d-flex gap-2 align-items-center" style="flex-shrink:0;">
-                                <input type="hidden" id="bulkStatusPreview" value="">
                                 <div class="input-group input-group-sm rounded-pill overflow-hidden shadow-sm" style="max-width:180px;flex-shrink:0;">
                                     <span class="input-group-text border-0" style="background:var(--bg-color);color:var(--text-color);font-size:0.75rem;"><i class="fas fa-user-tag"></i></span>
                                     <input type="text" id="bulkRepInput" class="form-control border-0" style="background:var(--bg-color);font-size:0.75rem;" placeholder="مندوب..." list="bulkRepsList">
@@ -3601,7 +3701,7 @@
                                     <button class="btn btn-sm btn-outline-primary rounded-pill px-2 dropdown-toggle shadow-sm" style="font-size:0.75rem;" type="button" onclick="toggleBulkStatusMenu(event)">
                                         <i class="fas fa-sync-alt"></i> حالة
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4" id="bulkStatusMenu" style="max-height:200px;overflow-y:auto;font-size:0.8rem;"></ul>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4" id="bulkStatusMenu" style="max-height:200px;overflow-y:auto;font-size:0.8rem;z-index:9999;"></ul>
                                 </div>
                                 <button class="btn btn-sm btn-outline-info rounded-circle shadow-sm" style="flex-shrink:0;width:32px;height:32px;padding:0;font-size:0.75rem;" onclick="bulkCopySelected()" title="نسخ">
                                     <i class="fas fa-copy"></i>
@@ -3640,7 +3740,6 @@
                     </div>
                 </div>
                 <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn btn-secondary rounded-pill fw-bold" data-bs-dismiss="modal">إغلاق</button>
                 </div>
             </div>
         </div>
@@ -3693,10 +3792,11 @@
 
         let allShipments = [];
         let currentDailyFilter = '';
-        let allUsers = [];
         let originalShipments = new Map();
+        let bulkModalShipments = [];
         let housingDashStatFilter = ''; // Dashboard stat filter
         let housingDrafts = new Map();
+        let housingDuplicatePhoneFreq = null;
         let housingEventUsers = new Map();
         let housingStatsFilter = 'all';
         let housingUndoStack = []; // Each entry: { label, snapshots: [{id, fields}] }
@@ -3852,14 +3952,19 @@
                 // ملء قائمة اليوميات في كلا التبويبين بالقيم المتاحة دون جلب الشحنات
                 const statsSelect = document.getElementById('filterDate');
                 const housingSelect = document.getElementById('housingEditDateFilterSelect');
+                const dailyOpt = (d) => {
+                    const isArchived = archivedDailySet && archivedDailySet.has(d);
+                    const style = isArchived ? ' style="color:#dc2626;font-weight:bold;"' : '';
+                    return `<option value="${escapeAttr(d)}"${style}>${escapeHtml(d)}</option>`;
+                };
                 if (statsSelect) {
                     statsSelect.innerHTML = '<option value="">--- اختر اليومية ---</option>' +
-                        availableDailyValues.map(d => `<option value="${escapeAttr(d)}">${escapeHtml(d)}</option>`).join('');
+                        availableDailyValues.map(dailyOpt).join('');
                     statsSelect.value = '';
                 }
                 if (housingSelect) {
                     housingSelect.innerHTML = '<option value="">--- اختر اليومية ---</option>' +
-                        availableDailyValues.map(d => `<option value="${escapeAttr(d)}">${escapeHtml(d)}</option>`).join('');
+                        availableDailyValues.map(dailyOpt).join('');
                     housingSelect.value = '';
                 }
                 restoreHousingUiState();
@@ -3929,7 +4034,8 @@
                         if (activeSection === 'stats') {
                             refreshDashboard();
                         } else if (activeSection === 'housing') {
-                            renderHousingSection();
+                    renderHousingSection();
+                    searchBulkShipments();
                         }
                     }
                     console.log('تم تحديث البيانات لحظياً:', payload.new?.id || 'تغيير في الجدول');
@@ -4029,6 +4135,7 @@
             }
 
             allShipments = fetchedAll;
+            housingDuplicatePhoneFreq = null;
             currentDailyFilter = dailyFilter;
             markHousingDataChanged();
             originalShipments = new Map(allShipments.map(s => [String(s.id), { ...s }]));
@@ -4954,11 +5061,11 @@
         window.filterDashboardSearch = function(value) {
             const container = document.getElementById('adminDashboardStatsContainer');
             if (!container) return;
-            const cards = container.querySelectorAll('.kpi-card');
+            const cards = container.querySelectorAll('.toolbar-stat-card');
             if (!value) { cards.forEach(c => c.style.display = ''); return; }
             const q = value.toLowerCase();
             cards.forEach(c => {
-                const label = c.querySelector('.kpi-label')?.textContent?.toLowerCase() || '';
+                const label = c.querySelector('.toolbar-stat-label')?.textContent?.toLowerCase() || '';
                 c.style.display = label.includes(q) ? '' : 'none';
             });
         };
@@ -5139,29 +5246,23 @@
             const shippingCount = shipments.filter(isAdminShippingOnlyShipment).length;
             const amendedCount = shipments.filter(isAdminPriceEditOnlyShipment).length;
             const getActiveClass = (key) => adminDashStatFilter === key || (!adminDashStatFilter && key === 'الكل') ? 'active' : '';
-            const getShareLabel = (value) => totalCount ? `${Number(((value / totalCount) * 100).toFixed(1))}% من الإجمالي` : '0% من الإجمالي';
 
             const cards = [
-                { key: 'الكل', label: 'إجمالي الشحنات', value: totalCount, meta: getShareLabel(totalCount), icon: 'fas fa-boxes-stacked', className: 'admin-inline-stat-total' },
-                { key: 'تم', label: 'تم', value: doneCount, meta: getShareLabel(doneCount), icon: 'fas fa-circle-check', className: 'admin-inline-stat-done' },
-                { key: 'رفض', label: 'رفض', value: rejectCount, meta: getShareLabel(rejectCount), icon: 'fas fa-circle-xmark', className: 'admin-inline-stat-reject' },
-                { key: 'الغاء', label: 'الغاء', value: cancelCount, meta: getShareLabel(cancelCount), icon: 'fas fa-ban', className: 'admin-inline-stat-cancel' },
-                { key: 'شحن', label: 'شحن', value: shippingCount, meta: getShareLabel(shippingCount), icon: 'fas fa-truck-fast', className: 'admin-inline-stat-shipping' },
-                { key: 'تعديل سعر', label: 'تعديل سعر', value: amendedCount, meta: getShareLabel(amendedCount), icon: 'fas fa-pen-to-square', className: 'admin-inline-stat-amended' }
+                { key: 'الكل', label: 'إجمالي الشحنات', value: totalCount, icon: 'fas fa-boxes-stacked', cls: 'card-total' },
+                { key: 'تم', label: 'تم', value: doneCount, icon: 'fas fa-circle-check', cls: 'card-done' },
+                { key: 'رفض', label: 'رفض', value: rejectCount, icon: 'fas fa-circle-xmark', cls: 'card-reject' },
+                { key: 'الغاء', label: 'الغاء', value: cancelCount, icon: 'fas fa-ban', cls: 'card-cancel' },
+                { key: 'شحن', label: 'شحن', value: shippingCount, icon: 'fas fa-truck-fast', cls: 'card-shipping' },
+                { key: 'تعديل سعر', label: 'تعديل سعر', value: amendedCount, icon: 'fas fa-pen-to-square', cls: 'card-amended' }
             ];
 
             container.innerHTML = cards.map(card => `
                 <button type="button"
                     onclick="${card.key === 'الكل' ? 'resetAdminDashStatsFilter()' : `toggleAdminDashStatFilter('${card.key}')`}"
-                    class="admin-inline-stat ${card.className} ${getActiveClass(card.key)}">
-                    <div class="admin-inline-stat-icon">
-                        <i class="${card.icon}"></i>
-                    </div>
-                    <div>
-                        <div class="admin-inline-stat-label">${card.label}</div>
-                        <div class="admin-inline-stat-value">${card.value}</div>
-                        <div class="admin-inline-stat-meta">${card.meta}</div>
-                    </div>
+                    class="toolbar-stat-card toolbar-stat-filter ${card.cls} ${getActiveClass(card.key)}">
+                    <i class="${card.icon} toolbar-stat-icon"></i>
+                    <span class="toolbar-stat-label">${card.label}</span>
+                    <strong class="toolbar-stat-value">${card.value}</strong>
                 </button>
             `).join('');
         }
@@ -7390,6 +7491,20 @@
             badge.classList.toggle('bg-primary', selectedCount > 0);
         }
 
+        function getHousingDuplicatePhonesFreq() {
+            if (!housingDuplicatePhoneFreq) {
+                housingDuplicatePhoneFreq = {};
+                for (let i = 0; i < allShipments.length; i++) {
+                    const d = getHousingDisplayShipmentData(allShipments[i]);
+                    const phone = String(d.الهاتف || '').trim();
+                    const altPhone = String(d['هاتف بديل'] || '').trim();
+                    if (phone) housingDuplicatePhoneFreq[phone] = (housingDuplicatePhoneFreq[phone] || 0) + 1;
+                    if (altPhone) housingDuplicatePhoneFreq[altPhone] = (housingDuplicatePhoneFreq[altPhone] || 0) + 1;
+                }
+            }
+            return housingDuplicatePhoneFreq;
+        }
+
         function getHousingShipmentsFilteredBy(excludeFields = []) {
             const filters = getHousingColumnFilters();
             return allShipments.filter(s => {
@@ -7413,16 +7528,18 @@
                         if (d.المندوب) return false;
                     } else if (housingDashStatFilter === 'مخزن') {
                         if (String(d.المندوب || '').trim() !== 'مخزن') return false;
+                    } else if (housingDashStatFilter === 'هاتف مكرر') {
+                        const phone = String(d.الهاتف || '').trim();
+                        const altPhone = String(d['هاتف بديل'] || '').trim();
+                        const freq = getHousingDuplicatePhonesFreq();
+                        if (!((phone && freq[phone] > 1) || (altPhone && freq[altPhone] > 1))) return false;
                     } else {
                         if (disp !== housingDashStatFilter) return false;
                     }
                 }
 
                 if (!excludeFields.includes('editDate') && filters.editDates.length > 0) {
-                    const updateDateValue = getShipmentDailyValue(d);
-                    const archiveValue = String(d.ارشيف || d['أرشيف'] || '').trim();
-                    const archiveDateValue = filters.archive === 'archived' ? archiveValue : '';
-                    const effectiveDateValue = archiveDateValue || updateDateValue;
+                    const effectiveDateValue = getShipmentDailyValue(d);
                     const wantsEmptyUpdateDate = filters.editDates.includes(HOUSING_EMPTY_UPDATE_DATE_FILTER);
                     if (wantsEmptyUpdateDate) {
                         if (effectiveDateValue) return false;
@@ -7490,9 +7607,7 @@
                     baseShipments.forEach(s => {
                         const currentData = getHousingDisplayShipmentData(s);
                         const isArchived = !!String(currentData.ارشيف || currentData['أرشيف'] || '').trim();
-                        const val = isArchived
-                            ? String(currentData.ارشيف || currentData['أرشيف'] || '').trim()
-                            : getShipmentDailyValue(currentData);
+                        const val = getShipmentDailyValue(currentData);
                         if (val) counts[val] = (counts[val] || 0) + 1;
                         else if (!isArchived) counts[HOUSING_EMPTY_UPDATE_DATE_FILTER] = (counts[HOUSING_EMPTY_UPDATE_DATE_FILTER] || 0) + 1;
                     });
@@ -7504,18 +7619,23 @@
                          .map(d => getShipmentDailyValue(d)).filter(Boolean)
                 )].sort((a, b) => b.localeCompare(a));
 
-                // اليوميات المؤرشفة
+                // اليوميات المؤرشفة — نستخدم اليومية الأصلي وليس تاريخ الأرشفة
                 const archiveDates = [...new Set(
                     allData.filter(d => String(d.ارشيف || d['أرشيف'] || '').trim())
-                         .map(d => String(d.ارشيف || d['أرشيف'] || '').trim()).filter(Boolean)
+                         .map(d => getShipmentDailyValue(d)).filter(Boolean)
                 )].sort((a, b) => b.localeCompare(a));
 
                 // بدون تاريخ تحديث
                 const hasEmpty = allData.some(d => !String(d.ارشيف || d['أرشيف'] || '').trim() && !getShipmentDailyValue(d));
                 if (hasEmpty) allDates.push({ val: HOUSING_EMPTY_UPDATE_DATE_FILTER, archived: false, count: counts[HOUSING_EMPTY_UPDATE_DATE_FILTER] || 0 });
 
-                activeDates.forEach(d => allDates.push({ val: d, archived: false, count: counts[d] || 0 }));
-                archiveDates.forEach(d => allDates.push({ val: d, archived: true, count: counts[d] || 0 }));
+                const archiveSet = new Set(archiveDates);
+                const allDailyValues = [...new Set([...activeDates, ...archiveDates])];
+                allDailyValues.sort((a, b) => b.localeCompare(a));
+                allDailyValues.forEach(d => {
+                    const archived = archiveSet.has(d);
+                    allDates.push({ val: d, archived, count: counts[d] || 0 });
+                });
             }
 
             let html = '<option value="">--- اختر اليومية ---</option>';
@@ -7763,9 +7883,7 @@
 
                 if (!matchesSearch) return false;
 
-                const updateDateValue = getShipmentDailyValue(currentData);
-                const archiveDateValue = filters.archive === 'archived' ? archiveValue : '';
-                const effectiveDateValue = archiveDateValue || updateDateValue;
+                const effectiveDateValue = getShipmentDailyValue(currentData);
                 const matchesEditDate = !filters.editDates.length || (
                     filters.editDates.includes(HOUSING_EMPTY_UPDATE_DATE_FILTER)
                         ? !effectiveDateValue
@@ -7816,6 +7934,11 @@
                         if (String(currentData.المندوب || '').trim() !== 'مخزن') return false;
                     } else if (housingDashStatFilter === 'رفض') {
                         if (disp !== 'رفض') return false;
+                    } else if (housingDashStatFilter === 'هاتف مكرر') {
+                        const phone = String(currentData.الهاتف || '').trim();
+                        const altPhone = String(currentData['هاتف بديل'] || '').trim();
+                        const freq = getHousingDuplicatePhonesFreq();
+                        if (!((phone && freq[phone] > 1) || (altPhone && freq[altPhone] > 1))) return false;
                     } else {
                         if (disp !== housingDashStatFilter) return false;
                     }
@@ -8535,6 +8658,7 @@
         }
 
         // ===== Housing Dashboard Statistics =====
+        let housingExtraStatsCollapsed = localStorage.getItem('housingExtraStatsCollapsed') === 'true';
         function toggleHousingDashStatFilter(status) {
             if (housingDashStatFilter === status) {
                 housingDashStatFilter = '';
@@ -8560,6 +8684,8 @@
             let mjashCount = 0, inDeliveryCount = 0;
             let doneTotalPrice = 0, amendedTotalPrice = 0, shippingTotalPrice = 0;
             let totalAmount = 0, grossAmount = 0, totalCommission = 0, shippingCostTotal = 0;
+            const phoneFreq = {};
+            let duplicatePhoneCount = 0;
 
             for (let i = 0; i < shipments.length; i++) {
                 const s = shipments[i];
@@ -8567,6 +8693,11 @@
                 const rep = String(d.المندوب || '').trim();
                 const amt = String(d.المبلغ || '').trim();
                 const status = getHousingDashboardDisplayStatus(d);
+
+                const phone = String(d.الهاتف || '').trim();
+                const altPhone = String(d['هاتف بديل'] || '').trim();
+                if (phone) phoneFreq[phone] = (phoneFreq[phone] || 0) + 1;
+                if (altPhone) phoneFreq[altPhone] = (phoneFreq[altPhone] || 0) + 1;
 
                 if (!rep) noDelegate++;
                 if (!amt || amt === '0' || amt === '0.0' || amt === '0.00') noAmountCount++;
@@ -8594,84 +8725,104 @@
                 grossAmount += parseFloat(String(d.المبلغ || '0').replace(/[^0-9.-]+/g, '')) || 0;
                 shippingCostTotal += shippingCost;
             }
+
+            for (let i = 0; i < shipments.length; i++) {
+                const d = getHousingDisplayShipmentData(shipments[i]);
+                const phone = String(d.الهاتف || '').trim();
+                const altPhone = String(d['هاتف بديل'] || '').trim();
+                if ((phone && phoneFreq[phone] > 1) || (altPhone && phoneFreq[altPhone] > 1)) {
+                    duplicatePhoneCount++;
+                }
+            }
             let safiTotal = totalAmount - shippingCostTotal;
             const netAmountAfterCommission = totalAmount - totalCommission;
             const pendingCount = amendedCount + shippingCount + rejectedCount + postponedCount + inDeliveryCount;
             const commissionCount = doneCount + amendedCount + shippingCount;
 
             const getActiveClass = (s) => housingDashStatFilter === s
-                ? 'highlight-active shadow-lg'
+                ? 'active'
                 : '';
-
-            const cardStyle = "btn d-flex flex-column align-items-center justify-content-center text-center border bg-body rounded-3 px-2 py-2 flex-grow-1";
 
             const showCounts = getHousingEditDateFilters().length > 0 || !!getHousingArchiveFilterValue();
             const cardValue = (val) => showCounts ? val : '0';
 
             const _hiddenStat = getHousingStatCardHiddenKeys();
             const _vis = (k) => _hiddenStat.includes(k) ? 'd-none' : '';
+            const _collapsed = housingExtraStatsCollapsed;
             container.innerHTML = `
-                <div class="d-flex flex-column gap-2 w-100">
-                    <div class="d-flex flex-wrap align-items-stretch justify-content-center gap-1 w-100">
-                        <button type="button" data-stat-key="noDelegate" onclick="toggleHousingDashStatFilter('بدون مندوب')" class="${cardStyle} border-danger-subtle ${getActiveClass('بدون مندوب')} ${_vis('noDelegate')}" style="min-width:76px; flex-basis:76px;">
-                        <i class="fas fa-user-slash text-danger mb-0" style="font-size:0.75rem;"></i>
-                        <small class="text-muted fw-bold" style="font-size:0.55rem;line-height:1.1;">بدون مندوب</small>
-                        <span class="fw-bold text-danger" style="font-size:0.7rem;">${cardValue(noDelegate)}</span>
-                    </button>
-                    <button type="button" data-stat-key="mjash" onclick="toggleHousingDashStatFilter('مجاش')" class="${cardStyle} border-secondary-subtle ${getActiveClass('مجاش')} ${_vis('mjash')}" style="min-width:76px; flex-basis:76px;">
-                        <i class="fas fa-user-xmark text-secondary mb-0" style="font-size:0.75rem;"></i>
-                        <small class="text-muted fw-bold" style="font-size:0.55rem;line-height:1.1;">مجاش</small>
-                        <span class="fw-bold text-secondary" style="font-size:0.7rem;">${cardValue(mjashCount)}</span>
-                    </button>
-                    <button type="button" data-stat-key="noAmount" onclick="toggleHousingDashStatFilter('بدون مبلغ')" class="${cardStyle} border-danger-subtle ${getActiveClass('بدون مبلغ')} ${_vis('noAmount')}" style="min-width:76px; flex-basis:76px;">
-                        <i class="fas fa-comment-dollar text-danger mb-0" style="font-size:0.75rem;"></i>
-                        <small class="text-muted fw-bold" style="font-size:0.55rem;line-height:1.1;">بدون مبلغ</small>
-                        <span class="fw-bold text-danger" style="font-size:0.7rem;">${cardValue(noAmountCount)}</span>
-                    </button>
-                    <button type="button" data-stat-key="warehouse" onclick="toggleHousingDashStatFilter('مخزن')" class="${cardStyle} border-warning-subtle ${getActiveClass('مخزن')} ${_vis('warehouse')}" style="min-width:76px; flex-basis:76px;">
-                        <i class="fas fa-warehouse text-warning mb-0" style="font-size:0.75rem;"></i>
-                        <small class="text-muted fw-bold" style="font-size:0.55rem;line-height:1.1;">مخزن</small>
-                        <span class="fw-bold text-warning" style="font-size:0.7rem;">${cardValue(warehouseCount)}</span>
-                    </button>
-                    <button type="button" data-stat-key="inDelivery" onclick="toggleHousingDashStatFilter('قيد التوصيل')" class="${cardStyle} border-info-subtle ${getActiveClass('قيد التوصيل')} ${_vis('inDelivery')}" style="min-width:76px; flex-basis:76px;">
-                        <i class="fas fa-truck text-info mb-0" style="font-size:0.75rem;"></i>
-                        <small class="text-muted fw-bold" style="font-size:0.55rem;line-height:1.1;">قيد التوصيل</small>
-                        <span class="fw-bold text-info" style="font-size:0.7rem;">${cardValue(inDeliveryCount)}</span>
-                    </button>
-                    <button type="button" data-stat-key="all" onclick="resetHousingDashStatsFilter()" class="${cardStyle} border border-2 border-primary-subtle shadow-lg bg-body text-muted ${!housingDashStatFilter ? 'highlight-active shadow-lg' : ''} ${_vis('all')}" style="min-width:76px; flex-basis:76px;">
-                        <i class="fas fa-layer-group mb-0 text-primary" style="font-size:0.75rem;"></i>
-                        <small class="fw-bold text-muted" style="font-size:0.55rem;line-height:1.1;">الكل</small>
-                        <span class="fw-bold text-primary" style="font-size:0.7rem;">${showCounts ? shipments.length : '0'}</span>
-                    </button>
-                    <button type="button" data-stat-key="done" onclick="toggleHousingDashStatFilter('تم')" class="${cardStyle} border-success-subtle ${getActiveClass('تم')} ${_vis('done')}" style="min-width:76px; flex-basis:76px;">
-                        <i class="fas fa-check-circle text-success mb-0" style="font-size:0.75rem;"></i>
-                        <small class="text-muted fw-bold" style="font-size:0.55rem;line-height:1.1;">تم</small>
-                        <span class="fw-bold text-success" style="font-size:0.7rem;">${cardValue(doneCount)}</span>
-                        <small class="text-success small fw-bold lh-1" style="font-size:0.45rem;" dir="ltr">${showCounts ? doneTotalPrice.toLocaleString() : ''}</small>
-                    </button>
-                    <button type="button" data-stat-key="amended" onclick="toggleHousingDashStatFilter('تعديل سعر')" class="${cardStyle} border-primary-subtle ${getActiveClass('تعديل سعر')} ${_vis('amended')}" style="min-width:76px; flex-basis:76px;">
-                        <i class="fas fa-edit text-primary mb-0" style="font-size:0.75rem;"></i>
-                        <small class="text-muted fw-bold" style="font-size:0.55rem;line-height:1.1;">تعديل سعر</small>
-                        <span class="fw-bold text-primary" style="font-size:0.7rem;">${cardValue(amendedCount)}</span>
-                        <small class="text-primary small fw-bold lh-1" style="font-size:0.45rem;" dir="ltr">${showCounts ? amendedTotalPrice.toLocaleString() : ''}</small>
-                    </button>
-                    <button type="button" data-stat-key="shipping" onclick="toggleHousingDashStatFilter('شحن')" class="${cardStyle} border-info-subtle ${getActiveClass('شحن')} ${_vis('shipping')}" style="min-width:76px; flex-basis:76px;">
-                        <i class="fas fa-truck-fast text-info mb-0" style="font-size:0.75rem;"></i>
-                        <small class="text-muted fw-bold" style="font-size:0.55rem;line-height:1.1;">شحن</small>
-                        <span class="fw-bold text-info" style="font-size:0.7rem;">${cardValue(shippingCount)}</span>
-                        <small class="text-info small fw-bold lh-1" style="font-size:0.45rem;" dir="ltr">${showCounts ? (shippingTotalPrice || 0).toLocaleString() : ''}</small>
-                    </button>
-                    <button type="button" data-stat-key="rejected" onclick="toggleHousingDashStatFilter('رفض')" class="${cardStyle} border-danger-subtle ${getActiveClass('رفض')} ${_vis('rejected')}" style="min-width:76px; flex-basis:76px;">
-                        <i class="fas fa-times-circle text-danger mb-0" style="font-size:0.75rem;"></i>
-                        <small class="text-muted fw-bold" style="font-size:0.55rem;line-height:1.1;">الغاء</small>
-                        <span class="fw-bold text-danger" style="font-size:0.7rem;">${cardValue(rejectedCount)}</span>
-                    </button>
-                    <button type="button" data-stat-key="postponed" onclick="toggleHousingDashStatFilter('مؤجل')" class="${cardStyle} border-warning-subtle ${getActiveClass('مؤجل')} ${_vis('postponed')}" style="min-width:76px; flex-basis:76px;">
-                        <i class="fas fa-clock text-warning mb-0" style="font-size:0.75rem;"></i>
-                        <small class="text-muted fw-bold" style="font-size:0.55rem;line-height:1.1;">مؤجل</small>
-                        <span class="fw-bold text-warning" style="font-size:0.7rem;">${cardValue(postponedCount)}</span>
-                    </button>
-                    </div>
+                <div class="toolbar-stats-cards" style="grid-template-columns:repeat(auto-fit,minmax(90px,1fr))">
+                        <button type="button" data-stat-key="total" class="toolbar-stat-card card-total ${_vis('total')}" style="cursor:default;min-height:56px;">
+                            <i class="fas fa-boxes-stacked toolbar-stat-icon"></i>
+                            <span class="toolbar-stat-label">الشحنات</span>
+                            <strong class="toolbar-stat-value">${showCounts ? shipments.length : '0'}</strong>
+                        </button>
+                        <button type="button" data-stat-key="all" class="toolbar-stat-card card-visible ${_vis('all')}" style="cursor:default;min-height:56px;">
+                            <i class="fas fa-eye toolbar-stat-icon"></i>
+                            <span class="toolbar-stat-label">الظاهر</span>
+                            <strong class="toolbar-stat-value">${showCounts ? shipments.length : '0'}</strong>
+                        </button>
+                        <button type="button" data-stat-key="noDelegate" onclick="toggleHousingDashStatFilter('بدون مندوب')" class="toolbar-stat-card toolbar-stat-filter card-nodelegate ${getActiveClass('بدون مندوب')} ${_vis('noDelegate')}" style="min-height:56px;">
+                            <i class="fas fa-user-slash toolbar-stat-icon"></i>
+                            <span class="toolbar-stat-label">بدون مندوب</span>
+                            <strong class="toolbar-stat-value">${cardValue(noDelegate)}</strong>
+                        </button>
+                        <button type="button" data-stat-key="mjash" onclick="toggleHousingDashStatFilter('مجاش')" class="toolbar-stat-card toolbar-stat-filter card-mjash ${getActiveClass('مجاش')} ${_vis('mjash')}" style="min-height:56px;">
+                            <i class="fas fa-user-xmark toolbar-stat-icon"></i>
+                            <span class="toolbar-stat-label">مجاش</span>
+                            <strong class="toolbar-stat-value">${cardValue(mjashCount)}</strong>
+                        </button>
+                        <button type="button" data-stat-key="noAmount" onclick="toggleHousingDashStatFilter('بدون مبلغ')" class="toolbar-stat-card toolbar-stat-filter card-noamount ${getActiveClass('بدون مبلغ')} ${_vis('noAmount')}" style="min-height:56px;">
+                            <i class="fas fa-comment-dollar toolbar-stat-icon"></i>
+                            <span class="toolbar-stat-label">بدون مبلغ</span>
+                            <strong class="toolbar-stat-value">${cardValue(noAmountCount)}</strong>
+                        </button>
+                        <button type="button" data-stat-key="duplicatePhone" onclick="toggleHousingDashStatFilter('هاتف مكرر')" class="toolbar-stat-card toolbar-stat-filter card-duplicate ${getActiveClass('هاتف مكرر')} ${_vis('duplicatePhone')}" style="min-height:56px;">
+                            <i class="fas fa-phone-volume toolbar-stat-icon"></i>
+                            <span class="toolbar-stat-label">هاتف مكرر</span>
+                            <strong class="toolbar-stat-value">${showCounts ? duplicatePhoneCount : '0'}</strong>
+                        </button>
+                </div>
+                <div class="housing-extra-stats-wrap${_collapsed ? ' collapsed' : ''}">
+                <div class="toolbar-stats-cards" style="grid-template-columns:repeat(auto-fit,minmax(90px,1fr))">
+                        <button type="button" data-stat-key="warehouse" onclick="toggleHousingDashStatFilter('مخزن')" class="toolbar-stat-card toolbar-stat-filter card-warehouse ${getActiveClass('مخزن')} ${_vis('warehouse')}" style="min-height:56px;">
+                            <i class="fas fa-warehouse toolbar-stat-icon"></i>
+                            <span class="toolbar-stat-label">مخزن</span>
+                            <strong class="toolbar-stat-value">${cardValue(warehouseCount)}</strong>
+                        </button>
+                        <button type="button" data-stat-key="inDelivery" onclick="toggleHousingDashStatFilter('قيد التوصيل')" class="toolbar-stat-card toolbar-stat-filter card-indelivery ${getActiveClass('قيد التوصيل')} ${_vis('inDelivery')}" style="min-height:56px;">
+                            <i class="fas fa-truck toolbar-stat-icon"></i>
+                            <span class="toolbar-stat-label">قيد التوصيل</span>
+                            <strong class="toolbar-stat-value">${cardValue(inDeliveryCount)}</strong>
+                        </button>
+                        <button type="button" data-stat-key="done" onclick="toggleHousingDashStatFilter('تم')" class="toolbar-stat-card toolbar-stat-filter card-done ${getActiveClass('تم')} ${_vis('done')}" style="min-height:56px;">
+                            <i class="fas fa-check-circle toolbar-stat-icon"></i>
+                            <span class="toolbar-stat-label">تم</span>
+                            <strong class="toolbar-stat-value">${cardValue(doneCount)}</strong>
+                            <small class="toolbar-stat-subvalue">${showCounts ? doneTotalPrice.toLocaleString() : ''}</small>
+                        </button>
+                        <button type="button" data-stat-key="amended" onclick="toggleHousingDashStatFilter('تعديل سعر')" class="toolbar-stat-card toolbar-stat-filter card-amended ${getActiveClass('تعديل سعر')} ${_vis('amended')}" style="min-height:56px;">
+                            <i class="fas fa-edit toolbar-stat-icon"></i>
+                            <span class="toolbar-stat-label">تعديل سعر</span>
+                            <strong class="toolbar-stat-value">${cardValue(amendedCount)}</strong>
+                            <small class="toolbar-stat-subvalue">${showCounts ? amendedTotalPrice.toLocaleString() : ''}</small>
+                        </button>
+                        <button type="button" data-stat-key="shipping" onclick="toggleHousingDashStatFilter('شحن')" class="toolbar-stat-card toolbar-stat-filter card-shipping ${getActiveClass('شحن')} ${_vis('shipping')}" style="min-height:56px;">
+                            <i class="fas fa-truck-fast toolbar-stat-icon"></i>
+                            <span class="toolbar-stat-label">شحن</span>
+                            <strong class="toolbar-stat-value">${cardValue(shippingCount)}</strong>
+                            <small class="toolbar-stat-subvalue">${showCounts ? (shippingTotalPrice || 0).toLocaleString() : ''}</small>
+                        </button>
+                        <button type="button" data-stat-key="rejected" onclick="toggleHousingDashStatFilter('رفض')" class="toolbar-stat-card toolbar-stat-filter card-reject ${getActiveClass('رفض')} ${_vis('rejected')}" style="min-height:56px;">
+                            <i class="fas fa-times-circle toolbar-stat-icon"></i>
+                            <span class="toolbar-stat-label">الغاء</span>
+                            <strong class="toolbar-stat-value">${cardValue(rejectedCount)}</strong>
+                        </button>
+                        <button type="button" data-stat-key="postponed" onclick="toggleHousingDashStatFilter('مؤجل')" class="toolbar-stat-card toolbar-stat-filter card-postponed ${getActiveClass('مؤجل')} ${_vis('postponed')}" style="min-height:56px;">
+                            <i class="fas fa-clock toolbar-stat-icon"></i>
+                            <span class="toolbar-stat-label">مؤجل</span>
+                            <strong class="toolbar-stat-value">${cardValue(postponedCount)}</strong>
+                        </button>
+                </div>
                     <div class="housing-financial-stats-grid w-100">
                         <!-- إجمالي المبلغ -->
                         <div data-stat-key="grossAmount" class="housing-finance-card housing-finance-card--green ${_vis('grossAmount')}" style="cursor:default;">
@@ -8722,13 +8873,26 @@
                             </div>
                         </div>
                     </div>
+                </div>
             `;
+            const initIcon = document.getElementById('housingStatsToggleIcon');
+            if (initIcon) initIcon.classList.toggle('rotated', housingExtraStatsCollapsed);
+        }
+
+        function toggleHousingExtraStats() {
+            housingExtraStatsCollapsed = !housingExtraStatsCollapsed;
+            localStorage.setItem('housingExtraStatsCollapsed', housingExtraStatsCollapsed);
+            const icon = document.getElementById('housingStatsToggleIcon');
+            if (icon) icon.classList.toggle('rotated', housingExtraStatsCollapsed);
+            const wrap = document.querySelector('#housingDashboardStatsContainer .housing-extra-stats-wrap');
+            if (wrap) wrap.classList.toggle('collapsed', housingExtraStatsCollapsed);
         }
 
         const HOUSING_STAT_CARDS = [
             { key: 'noDelegate', label: 'بدون مندوب' },
             { key: 'mjash', label: 'مجاش' },
             { key: 'noAmount', label: 'بدون مبلغ' },
+            { key: 'duplicatePhone', label: 'هاتف مكرر' },
             { key: 'warehouse', label: 'مخزن' },
             { key: 'inDelivery', label: 'قيد التوصيل' },
             { key: 'all', label: 'الكل' },
@@ -10228,6 +10392,7 @@
                     showConfirmButton: true
                 });
 
+                housingSelectedIds.clear();
                 markHousingDataChanged();
                 refreshDashboard();
 
@@ -10450,7 +10615,16 @@
         }
 
         function showLoading(show) {
-            document.getElementById('loading').style.display = show ? 'flex' : 'none';
+            const el = document.getElementById('loading');
+            const bar = el?.querySelector('.loading-bar');
+            if (!el) return;
+            if (show) {
+                el.style.display = 'flex';
+                if (bar) { bar.style.width = '0%'; requestAnimationFrame(() => { bar.style.width = '100%'; }); }
+            } else {
+                if (bar) bar.style.width = '0%';
+                el.style.display = 'none';
+            }
         }
 
         function logout() {
@@ -11099,7 +11273,6 @@
             dailySelect.value = '';
             // populate rep datalist
             const bulkRepDatalist = document.getElementById('bulkRepsList');
-            const wasPopulated = bulkRepDatalist.dataset.populated;
             if (bulkRepDatalist && Array.isArray(allUsers)) {
                 bulkRepDatalist.innerHTML = allUsers
                     .filter(u => u.role === 'rep' && u.approved)
@@ -11110,7 +11283,7 @@
             modal.show();
         }
 
-        function onBulkDailyChange() {
+        async function onBulkDailyChange() {
             const dailyVal = document.getElementById('bulkDailyFilter').value;
             const input = document.getElementById('bulkCodesInput');
             input.disabled = !dailyVal;
@@ -11121,7 +11294,32 @@
             if (dw) dw.textContent = '';
             document.getElementById('bulkResultsContainer').style.display = 'none';
             document.getElementById('bulkResultsBody').innerHTML = '';
-            if (dailyVal) input.focus();
+            bulkModalShipments = [];
+            if (dailyVal) {
+                input.focus();
+                await fetchBulkShipments(dailyVal);
+            }
+        }
+
+        async function fetchBulkShipments(dailyVal) {
+            if (!dailyVal) { bulkModalShipments = []; return; }
+            const pageSize = 1000;
+            let from = 0;
+            let fetchedAll = [];
+            while (true) {
+                const { data, error } = await supabaseClient
+                    .from(CONFIG.TABLES.SHIPMENTS)
+                    .select('*')
+                    .eq('اليومية', dailyVal)
+                    .order('كود الشحنة', { ascending: false })
+                    .range(from, from + pageSize - 1);
+                if (error) { console.error(error); break; }
+                const chunk = (data || []).map(normalizeShipmentPriceField);
+                fetchedAll = fetchedAll.concat(chunk);
+                if (chunk.length < pageSize) break;
+                from += pageSize;
+            }
+            bulkModalShipments = fetchedAll;
         }
 
         function onBulkSearchModeChange() {
@@ -11177,9 +11375,8 @@
             dupeMsg.textContent = dupeCodes.size ? `⚠ تم تجاهل ${dupeCodes.size} كود مكرر` : '';
             const matched = [];
             codes.forEach(code => {
-                const s = allShipments.find(sh => {
+                const s = bulkModalShipments.find(sh => {
                     const d = normalizeShipmentRecordHeaders(sh);
-                    if (getShipmentDailyValue(sh) !== dailyVal) return false;
                     if (document.querySelector('input[name="bulkSearchMode"]:checked')?.value === 'code') {
                         return String(d['كود الشحنة'] || '').trim() === code;
                     }
@@ -11243,9 +11440,6 @@
                 ).join('');
                 bulkStatusMenu.dataset.populated = '1';
             }
-            // reset status preview
-            const statusPreview = document.getElementById('bulkStatusPreview');
-            if (statusPreview) statusPreview.value = '';
             // store matched IDs for save
             tbody._bulkIds = matched.map(s => String(s.id));
             container.style.display = 'block';
@@ -11276,35 +11470,105 @@
             return Array.from(document.querySelectorAll('.bulk-shipment-cb:checked')).map(cb => cb.dataset.id).filter(Boolean);
         }
 
+        let _bulkLastStatus = '';
+
         function toggleBulkStatusMenu(e) {
             e.stopPropagation();
             document.getElementById('bulkStatusMenu')?.classList.toggle('show');
         }
 
         function bulkSetStatus(status) {
-            const preview = document.getElementById('bulkStatusPreview');
-            if (preview) preview.value = status;
+            _bulkLastStatus = status;
             const ids = getSelectedBulkIds();
-            if (!ids.length) { Swal.fire('تنبيه', 'لم يتم تحديد شحنات', 'warning'); return; }
+            if (!ids.length) { Swal.fire('تنبيه', 'لم يتم تحديد شحنات', 'warning'); _bulkLastStatus = ''; return; }
+            if (status === 'تعديل سعر' || status === 'شحن') {
+                Swal.fire({
+                    title: status === 'تعديل سعر' ? 'تعديل سعر' : 'شحن',
+                    text: 'أدخل السعر الجديد',
+                    input: 'text',
+                    inputAttributes: { inputmode: 'numeric', dir: 'ltr' },
+                    showCancelButton: true,
+                    confirmButtonText: 'تأكيد',
+                    cancelButtonText: 'الغاء',
+                    inputValidator: (value) => {
+                        if (!value || value.trim() === '0' || isNaN(parseFloat(value))) return 'يرجى إدخال سعر صحيح';
+                    }
+                }).then(async (result) => {
+                    if (!result.isConfirmed || !result.value) { _bulkLastStatus = ''; return; }
+                    const newPrice = result.value.trim();
+                    let success = 0, fail = 0;
+                    for (const id of ids) {
+                        const payload = { 'الحالة': status, 'المدفوع': newPrice, 'الموظف': currentUser.full_name || currentUser.username || 'المدير' };
+                        const { error } = await supabaseClient.from(CONFIG.TABLES.SHIPMENTS).update(payload).eq('id', id);
+                        if (!error) { success++; } else { fail++; }
+                    }
+                    Swal.fire({ icon: fail ? 'warning' : 'success', title: fail ? 'تم مع بعض الأخطاء' : 'تم التحديث', text: `نجاح: ${success}، فشل: ${fail}` });
+                    _bulkLastStatus = '';
+                    if (success) {
+                        const payload = { 'الحالة': status, 'المدفوع': newPrice };
+                        ids.forEach(id => {
+                            const bi = bulkModalShipments.findIndex(s => String(s.id) === id);
+                            if (bi !== -1) bulkModalShipments[bi] = { ...bulkModalShipments[bi], ...payload };
+                        });
+                        renderHousingSection();
+                        searchBulkShipments();
+                    }
+                });
+                return;
+            }
             Swal.fire({
                 title: 'تأكيد تحديث الحالة',
                 html: `تحديث ${ids.length} شحنة إلى <strong>${status || 'بدون'}</strong>`,
                 icon: 'question', showCancelButton: true, confirmButtonText: 'نعم', cancelButtonText: 'الغاء',
                 confirmButtonColor: '#0dcaf0'
             }).then(async ({ isConfirmed }) => {
-                if (!isConfirmed) { if (preview) preview.value = ''; return; }
+                if (!isConfirmed) { _bulkLastStatus = ''; return; }
                 let success = 0, fail = 0;
                 for (const id of ids) {
                     const payload = {};
                     if (status) payload.الحالة = status;
                     else payload.الحالة = null;
+                    if (status === 'تم') {
+                        const s = bulkModalShipments.find(sh => String(sh.id) === id);
+                        if (s) {
+                            const d = getHousingDisplayShipmentData(s);
+                            payload['المدفوع'] = d['المبلغ'] || null;
+                        }
+                    }
+                    if (!status || ['قيد التوصيل', 'مؤجل', 'الغاء', 'مجاش'].includes(status)) {
+                        payload['المدفوع'] = null;
+                        payload['سبب الحالة'] = null;
+                    }
                     payload['الموظف'] = currentUser.full_name || currentUser.username || 'المدير';
                     const { error } = await supabaseClient.from(CONFIG.TABLES.SHIPMENTS).update(payload).eq('id', id);
                     if (!error) { success++; } else { fail++; }
                 }
                 Swal.fire({ icon: fail ? 'warning' : 'success', title: fail ? 'تم مع بعض الأخطاء' : 'تم التحديث', text: `نجاح: ${success}، فشل: ${fail}` });
-                if (preview) preview.value = '';
-                if (success) renderHousingSection();
+                _bulkLastStatus = success ? '' : status;
+                if (success) {
+                    const payload = {};
+                    if (status) payload.الحالة = status;
+                    else payload.الحالة = null;
+                    if (status === 'تم') {
+                        ids.forEach(id => {
+                            const s = bulkModalShipments.find(sh => String(sh.id) === id);
+                            if (s) {
+                                const d = getHousingDisplayShipmentData(s);
+                                payload['المدفوع'] = d['المبلغ'] || null;
+                            }
+                        });
+                    }
+                    if (!status || ['قيد التوصيل', 'مؤجل', 'الغاء', 'مجاش'].includes(status)) {
+                        payload['المدفوع'] = null;
+                        payload['سبب الحالة'] = null;
+                    }
+                    ids.forEach(id => {
+                        const bi = bulkModalShipments.findIndex(s => String(s.id) === id);
+                        if (bi !== -1) bulkModalShipments[bi] = { ...bulkModalShipments[bi], ...payload };
+                    });
+                    renderHousingSection();
+                    searchBulkShipments();
+                }
             });
         }
 
@@ -11327,7 +11591,15 @@
                     if (!error) { success++; } else { fail++; }
                 }
                 Swal.fire({ icon: fail ? 'warning' : 'success', title: fail ? 'تم مع بعض الأخطاء' : 'تم التعيين', text: `نجاح: ${success}، فشل: ${fail}` });
-                if (success) { renderHousingSection(); document.getElementById('bulkRepInput').value = ''; }
+                if (success) {
+                    ids.forEach(id => {
+                        const bi = bulkModalShipments.findIndex(s => String(s.id) === id);
+                        if (bi !== -1) bulkModalShipments[bi] = { ...bulkModalShipments[bi], 'المندوب': rep };
+                    });
+                    renderHousingSection();
+                    searchBulkShipments();
+                    document.getElementById('bulkRepInput').value = '';
+                }
             });
         }
 
@@ -11337,7 +11609,7 @@
             const headers = ['مندوب', 'م', 'العميل', 'الزون', 'الصنف', 'الهاتف', 'هاتف بديل', 'المبلغ', 'الراسل', 'الحالة'];
             const rows = [headers.join('\t')];
             ids.forEach(id => {
-                const data = allShipments.find(s => String(s.id) === id);
+                const data = bulkModalShipments.find(s => String(s.id) === id);
                 if (!data) return;
                 const d = getHousingDisplayShipmentData(data);
                 rows.push([
@@ -11367,7 +11639,13 @@
                     if (!error) { success++; } else { fail++; }
                 }
                 Swal.fire({ icon: fail ? 'warning' : 'success', title: fail ? 'تم مع بعض الأخطاء' : 'تمت الأرشفة', text: `نجاح: ${success}، فشل: ${fail}` });
-                if (success) renderHousingSection();
+                if (success) {
+                    ids.forEach(id => {
+                        const bi = bulkModalShipments.findIndex(s => String(s.id) === id);
+                        if (bi !== -1) bulkModalShipments[bi] = { ...bulkModalShipments[bi], 'ارشيف': 'نعم' };
+                    });
+                    renderHousingSection();
+                }
             });
         }
 
@@ -11387,7 +11665,12 @@
                     if (!error) { success++; } else { fail++; }
                 }
                 Swal.fire({ icon: fail ? 'warning' : 'success', title: fail ? 'تم مع بعض الأخطاء' : 'تم الحذف', text: `نجاح: ${success}، فشل: ${fail}` });
-                if (success) renderHousingSection();
+                if (success) {
+                    const idSet = new Set(ids);
+                    bulkModalShipments = bulkModalShipments.filter(s => !idSet.has(String(s.id)));
+                    renderHousingSection();
+                    searchBulkShipments();
+                }
             });
         }
 
@@ -11401,11 +11684,28 @@
                 Swal.fire({ icon: 'warning', title: 'لم يتم تحديد شحنات', text: 'اختر شحنة واحدة على الأقل', confirmButtonText: 'حسناً' });
                 return;
             }
-            const newStatus = document.getElementById('bulkStatusPreview')?.value || '';
+            const newStatus = _bulkLastStatus;
             const newRep = document.getElementById('bulkRepInput')?.value?.trim() || '';
             if (!newStatus && !newRep) {
                 Swal.fire({ icon: 'warning', title: 'اختر تحديثاً', text: 'اختر حالة أو مندوباً للتحديث أولاً', confirmButtonText: 'حسناً' });
                 return;
+            }
+            let priceOverride = '';
+            if (newStatus === 'تعديل سعر' || newStatus === 'شحن') {
+                const { value: price, isConfirmed: priceConfirmed } = await Swal.fire({
+                    title: newStatus === 'تعديل سعر' ? 'تعديل سعر' : 'شحن',
+                    text: 'أدخل السعر الجديد',
+                    input: 'text',
+                    inputAttributes: { inputmode: 'numeric', dir: 'ltr' },
+                    showCancelButton: true,
+                    confirmButtonText: 'تأكيد',
+                    cancelButtonText: 'الغاء',
+                    inputValidator: (value) => {
+                        if (!value || value.trim() === '0' || isNaN(parseFloat(value))) return 'يرجى إدخال سعر صحيح';
+                    }
+                });
+                if (!priceConfirmed || !price) return;
+                priceOverride = price.trim();
             }
             const { isConfirmed } = await Swal.fire({
                 title: 'تأكيد التحديث الجماعي',
@@ -11423,7 +11723,7 @@
                 allowOutsideClick: false, showConfirmButton: false, didOpen: () => Swal.showLoading()
             });
             let success = 0, fail = 0;
-            const shipmentMap = new Map(allShipments.map(s => [String(s.id), s]));
+            const shipmentMap = new Map(bulkModalShipments.map(s => [String(s.id), s]));
             const BATCH_SIZE = 20;
 
             for (let i = 0; i < ids.length; i += BATCH_SIZE) {
@@ -11437,12 +11737,19 @@
                     const payload = {};
                     if (newStatus) payload.الحالة = newStatus;
                     if (newRep) payload.المندوب = newRep;
-                    if (newStatus === 'قيد التوصيل') {
+                    const s = shipmentMap.get(id) || {};
+                    if (newStatus === 'تم') {
+                        const d = s ? getHousingDisplayShipmentData(s) : {};
+                        payload['المدفوع'] = d['المبلغ'] || null;
+                    }
+                    if (newStatus === 'تعديل سعر' || newStatus === 'شحن') {
+                        if (priceOverride) payload['المدفوع'] = priceOverride;
+                    }
+                    if (!newStatus || newStatus === 'قيد التوصيل' || newStatus === 'مؤجل' || newStatus === 'الغاء' || newStatus === 'مجاش') {
                         payload['المدفوع'] = null;
                         payload['سبب الحالة'] = null;
                     }
                     const currentU = currentUser.full_name || currentUser.username || 'المدير';
-                    const s = shipmentMap.get(id) || {};
                     const changedPayload = pickHousingChangedPayload(s, payload);
                     const finalPayload = toServerShipmentPayload({ ...changedPayload, ['الموظف']: currentU });
                     if (newStatus && ['تم', 'تعديل سعر', 'شحن'].includes(newStatus)) {
@@ -11459,6 +11766,8 @@
                         success++;
                         const idx = allShipments.findIndex(s => String(s.id) === id);
                         if (idx !== -1) allShipments[idx] = { ...allShipments[idx], ...p };
+                        const bIdx = bulkModalShipments.findIndex(s => String(s.id) === id);
+                        if (bIdx !== -1) bulkModalShipments[bIdx] = { ...bulkModalShipments[bIdx], ...p };
                     } else { fail++; }
                 }
 
@@ -11468,6 +11777,8 @@
                 if (txt) txt.textContent = `${done} / ${ids.length}`;
             }
             markHousingDataChanged();
+            _bulkLastStatus = '';
+            document.getElementById('bulkRepInput').value = '';
             Swal.fire({
                 icon: fail ? 'warning' : 'success',
                 title: fail ? 'تم مع بعض الأخطاء' : 'تم التحديث بنجاح',

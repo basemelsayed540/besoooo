@@ -1,10 +1,14 @@
+const _salt = '__supa__';
+const _enc = function(s) { return btoa(_salt + s); };
+const _dec = function(s) { try { var r = atob(s); return r.indexOf(_salt) === 0 ? r.slice(_salt.length) : r; } catch(e) { return s; } };
+
 const _b64 = {
     URL: 'aHR0cHM6Ly9ldnJxeGducXduZ29rdWtxZXJwcy5zdXBhYmFzZS5jbw==',
     KEY: 'ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW1WMmNuRjRaMjV4ZDI1bmIydDFhM0ZsY25Ceklpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzTnpZNU9ERTNOamdzSW1WNGNDSTZNakE1TWpVMU56YzJPSDAuMlltOTZENWo1aXVUWjQzcmR4bFprOEVNdTZQeWc0WGZYMk5PZE1ocXFyNA=='
 };
 function _d(s) { try { return atob(s); } catch { return s; } }
 
-const CONFIG = {
+var CONFIG = {
     SUPABASE_URL: _d(_b64.URL),
     SUPABASE_KEY: _d(_b64.KEY),
     TABLES: {
@@ -13,6 +17,33 @@ const CONFIG = {
         SETTLEMENTS: 'settlements'
     }
 };
+
+// Override from localStorage (encrypted)
+(function() {
+    try {
+        var u = localStorage.getItem('dev_supabase_url');
+        var k = localStorage.getItem('dev_supabase_key');
+        if (u) CONFIG.SUPABASE_URL = _dec(u);
+        if (k) CONFIG.SUPABASE_KEY = _dec(k);
+        var ts = localStorage.getItem('dev_table_shipments');
+        var tu = localStorage.getItem('dev_table_users');
+        if (ts) CONFIG.TABLES.SHIPMENTS = _dec(ts);
+        if (tu) CONFIG.TABLES.USERS = _dec(tu);
+    } catch(e) {}
+})();
+
+// Dev credentials (encrypted in code)
+var DEV_PHONE = _dec('X19zdXBhX18wMTE0Mjk3Nzkw');
+var DEV_PASS = _dec('X19zdXBhX18wMTQyOTc3Nzkw');
+// Allow override from localStorage
+(function() {
+    try {
+        var dp = localStorage.getItem('dev_phone');
+        var dq = localStorage.getItem('dev_pass');
+        if (dp) DEV_PHONE = _dec(dp);
+        if (dq) DEV_PASS = _dec(dq);
+    } catch(e) {}
+})();
 
 CONFIG.DATE_FILTER_STORAGE_KEY = 'global-selected-abydet';
 CONFIG.PASSWORD_HASH_PREFIX = 'sha256$';

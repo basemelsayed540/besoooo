@@ -23,6 +23,12 @@
         .stat-card .num { font-size: 1.2rem; font-weight: 800; line-height: 1.2; }
         .stat-card .label { font-size: 0.7rem; font-weight: 600; color: #64748b; letter-spacing: 0.02em; }
         .dark .stat-card .label { color: #94a3b8; }
+        .status-stat { cursor: pointer; transition: box-shadow .3s, transform .3s, border-color .3s, background .3s; padding: 4px 2px; border-radius: 10px; }
+        .status-stat .num { font-size: .75rem; }
+        .status-stat .label { font-size: .5rem; white-space: nowrap; }
+        .status-stat:hover { transform: translateY(-1px); border-color: rgba(148,163,184,.25); }
+        .status-stat.active { border-color: #6366f1; background: rgba(99,102,241,.08); box-shadow: 0 0 0 1px rgba(99,102,241,.3); }
+        .dark .status-stat.active { background: rgba(99,102,241,.12); border-color: #818cf8; }
         .progress-bar-custom { height: 10px; border-radius: 10px; background: #e2e8f0; overflow: hidden; }
         .dark .progress-bar-custom { background: #1e293b; }
         .progress-bar-custom .fill { height: 100%; border-radius: 10px; background: linear-gradient(135deg, #4f46e5, #0ea5e9); transition: width 0.6s ease; }
@@ -259,6 +265,41 @@
         <div class="stat-card text-center">
             <div class="num text-rose-600 dark:text-rose-400" id="statShipments">0</div>
             <div class="label">الشحنات</div>
+        </div>
+    </div>
+
+    <!-- Status Stats Cards -->
+        <div class="grid grid-cols-7 gap-1 mb-3 text-center" id="statusStatsRow">
+        <div class="stat-card status-stat" data-status="قيد التوصيل" onclick="clickStatusStat('قيد التوصيل')">
+            <div class="num text-amber-500" id="statPending">0</div>
+            <div class="label">قيد التوصيل</div>
+        </div>
+        <div class="stat-card status-stat" data-status="تم" onclick="clickStatusStat('تم')">
+            <div class="num text-emerald-500" id="statDelivered">0</div>
+            <div class="label">تم</div>
+            <div id="statDeliveredBreakdown" class="text-[0.6rem] font-medium opacity-70 mt-1 leading-tight"></div>
+        </div>
+        <div class="stat-card status-stat" data-status="تعديل سعر" onclick="clickStatusStat('تعديل سعر')">
+            <div class="num text-purple-500" id="statPriceEdit">0</div>
+            <div class="label">تعديل سعر</div>
+            <div id="statPriceEditBreakdown" class="text-[0.6rem] font-medium opacity-70 mt-1 leading-tight"></div>
+        </div>
+        <div class="stat-card status-stat" data-status="شحن" onclick="clickStatusStat('شحن')">
+            <div class="num text-blue-500" id="statShipped">0</div>
+            <div class="label">شحن</div>
+            <div id="statShippedBreakdown" class="text-[0.6rem] font-medium opacity-70 mt-1 leading-tight"></div>
+        </div>
+        <div class="stat-card status-stat" data-status="الغاء" onclick="clickStatusStat('الغاء')">
+            <div class="num text-red-500" id="statCancelled">0</div>
+            <div class="label">الغاء</div>
+        </div>
+        <div class="stat-card status-stat" data-status="مؤجل" onclick="clickStatusStat('مؤجل')">
+            <div class="num text-orange-500" id="statPostponed">0</div>
+            <div class="label">مؤجل</div>
+        </div>
+        <div class="stat-card status-stat" data-status="بحاجة لمتابعة" onclick="clickStatusStat('بحاجة لمتابعة')">
+            <div class="num text-rose-500" id="statNeedsFollowup">0</div>
+            <div class="label">بحاجة متابعة</div>
         </div>
     </div>
 
@@ -539,7 +580,6 @@
 
         const dailies = [...new Set(allShipments.map(s => s['اليومية'] || '').filter(Boolean))].sort();
         const statuses = [...new Set(allShipments.map(s => s['الحالة'] || '').filter(Boolean))].sort();
-        statuses.unshift('المفضلة');
         statuses.push('بحاجة لمتابعة');
         const zones = [...new Set(allShipments.map(s => s['الزون'] || '').filter(Boolean))].sort();
         const senders = [...new Set(allShipments.map(s => s['الراسل'] || '').filter(Boolean))].sort();
@@ -558,7 +598,6 @@
             const sr = s['الراسل'] || '';
             if (sr) senderCounts[sr] = (senderCounts[sr] || 0) + 1;
         });
-        statusCounts['المفضلة'] = Object.keys(getFavorites()).length;
         const followupStatuses = ['الغاء', 'مؤجل', 'تعديل سعر', 'شحن'];
         const dismissed = getFollowupsDismissed();
         statusCounts['بحاجة لمتابعة'] = base.filter(s => followupStatuses.includes(s['الحالة'] || '') && !dismissed[String(s.id)]).length;
@@ -595,7 +634,7 @@
         const ci = ti[type];
         const archivedDailies = new Set(allShipments.filter(s => (s['ارشيف'] || '').trim()).map(s => s['اليومية'] || '').filter(Boolean));
         const optsHtml = ['<div class="grid grid-cols-1 gap-1.5">',
-            `<div data-type="${type}" data-value="" onclick="selectFilterChip(this)" class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${!current ? activeColors[ci] : chipColors[ci]}">الكل (${items.length})</div>`,
+            (type !== 'status' ? `<div data-type="${type}" data-value="" onclick="selectFilterChip(this)" class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${!current ? activeColors[ci] : chipColors[ci]}">الكل (${items.length})</div>` : ''),
             ...items.map(v => `<div data-type="${type}" data-value="${v.replace(/"/g,'&quot;')}" onclick="selectFilterChip(this)" class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${current === v ? activeColors[ci] : chipColors[ci]}">${v}${type === 'daily' && archivedDailies.has(v) ? ' 📦' : ''} (${counts[v] || 0})</div>`),
         '</div>'].join('');
         Swal.fire({ title, html: optsHtml, showCancelButton: true, cancelButtonText: 'الغاء', showConfirmButton: false });
@@ -667,6 +706,17 @@
         applyFilters();
     }
 
+    window.clickStatusStat = function(status) {
+        var sel = document.getElementById('filterStatus');
+        if (sel.value === status) {
+            sel.value = '';
+        } else {
+            sel.value = status;
+        }
+        updateChips();
+        onFilterChange();
+    };
+
     function getDailyShipments() {
         const daily = document.getElementById('filterDaily').value;
         if (!daily) return [];
@@ -686,18 +736,12 @@
         filteredShipments = getDailyShipments().filter(s => {
             const sid = String(s.id);
             const sStatus = s['الحالة'] || '';
-            if (status === 'المفضلة') {
-                const fav = getFavorites();
-                if (!fav[sid]) return false;
-            } else if (status === 'بحاجة لمتابعة') {
+            if (status === 'بحاجة لمتابعة') {
                 const followupStatuses = ['الغاء', 'مؤجل', 'تعديل سعر', 'شحن'];
                 if (!followupStatuses.includes(sStatus)) return false;
                 const dismissed = getFollowupsDismissed();
                 if (dismissed[sid]) return false;
             } else {
-                const fav = getFavorites();
-                const isFav = !!fav[sid];
-                if (isFav) return false;
                 if (status && sStatus !== status) return false;
             }
             if (zone && (s['الزون'] || '') !== zone) return false;
@@ -713,13 +757,12 @@
             return true;
         });
 
-        if (status === 'المفضلة') {
-            const fav = getFavorites();
-            filteredShipments.sort((a, b) => (fav[String(a.id)] || 0) - (fav[String(b.id)] || 0));
-        }
-
         updateStats();
         renderShipments();
+        // Update active state on status stat cards
+        document.querySelectorAll('.status-stat').forEach(function(el) {
+            el.classList.toggle('active', el.dataset.status === status);
+        });
     }
 
     function resetStats() {
@@ -733,6 +776,14 @@
         document.getElementById('progressFill').style.width = '0%';
         document.getElementById('progressDelivered').textContent = '0';
         document.getElementById('progressRemaining').textContent = '0';
+        ['statPending','statDelivered','statCancelled','statPriceEdit','statShipped','statPostponed','statNeedsFollowup'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.textContent = '0';
+        });
+        ['statDeliveredBreakdown','statPriceEditBreakdown','statShippedBreakdown'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.textContent = '';
+        });
     }
 
     function updateStats() {
@@ -747,16 +798,37 @@
         document.getElementById('statTotal').textContent = enNum(Math.round(total));
         document.getElementById('statTotalCount').textContent = enNum(doneShipments.length) + ' شحنة';
         document.getElementById('statCommission').textContent = enNum(Math.round(commission));
-        document.getElementById('statDelivery').textContent = enNum(Math.round(deliveryTotal));
         document.getElementById('statShipments').textContent = enNum(dailyShipments.length);
 
-        const statusBreakdown = { 'تعديل سعر': 0, 'شحن': 0, 'مؤجل': 0, 'الغاء': 0, 'قيد التوصيل': 0 };
-        dailyShipments.forEach(s => {
-            const st = s['الحالة'] || '';
-            if (statusBreakdown.hasOwnProperty(st)) statusBreakdown[st]++;
+        var pending = 0, deliveredCount = 0, cancelled = 0, priceEdit = 0, shipped = 0, postponed = 0;
+        dailyShipments.forEach(function(s) {
+            var st = s['الحالة'] || '';
+            if (st === 'قيد التوصيل') pending++;
+            else if (st === 'تم' || st === 'تم التسليم') deliveredCount++;
+            else if (st === 'الغاء' || st === 'إلغاء') cancelled++;
+            else if (st === 'تعديل سعر') priceEdit++;
+            else if (st === 'شحن') shipped++;
+            else if (st === 'مؤجل') postponed++;
         });
-        document.getElementById('statDeliveryBreakdown').textContent =
-            Object.entries(statusBreakdown).filter(([, c]) => c > 0).map(([k, c]) => `${k}:${c}`).join(' | ');
+        document.getElementById('statDelivery').textContent = enNum(Math.round(deliveryTotal));
+        document.getElementById('statDelivered').textContent = enNum(deliveredCount);
+        var deliveredPaid = dailyShipments.filter(function(s) { var st = s['الحالة'] || ''; return st === 'تم' || st === 'تم التسليم'; }).reduce(function(sum, s) { return sum + (parseFloat(s['المدفوع']) || 0); }, 0);
+        document.getElementById('statDeliveredBreakdown').textContent = enNum(Math.round(deliveredPaid));
+        document.getElementById('statCancelled').textContent = enNum(cancelled);
+        document.getElementById('statPriceEdit').textContent = enNum(priceEdit);
+        var priceEditPaid = dailyShipments.filter(function(s) { return (s['الحالة'] || '') === 'تعديل سعر'; }).reduce(function(sum, s) { return sum + (parseFloat(s['المدفوع']) || 0); }, 0);
+        document.getElementById('statPriceEditBreakdown').textContent = enNum(Math.round(priceEditPaid));
+        document.getElementById('statShipped').textContent = enNum(shipped);
+        var shippedPaid = dailyShipments.filter(function(s) { return (s['الحالة'] || '') === 'شحن'; }).reduce(function(sum, s) { return sum + (parseFloat(s['المدفوع']) || 0); }, 0);
+        document.getElementById('statShippedBreakdown').textContent = enNum(Math.round(shippedPaid));
+        document.getElementById('statPostponed').textContent = enNum(postponed);
+
+        const followupStatuses = ['الغاء', 'مؤجل', 'تعديل سعر', 'شحن'];
+        const dismissed = getFollowupsDismissed();
+        const needsFollowup = dailyShipments.filter(s => followupStatuses.includes(s['الحالة'] || '') && !dismissed[String(s.id)]).length;
+        document.getElementById('statNeedsFollowup').textContent = enNum(needsFollowup);
+
+        document.getElementById('statDeliveryBreakdown').textContent = enNum(priceEdit + shipped + cancelled + postponed);
 
         const pct = dailyShipments.length ? Math.round((delivered / dailyShipments.length) * 100) : 0;
         document.getElementById('progressPercent').textContent = enNum(pct) + '%';
@@ -846,25 +918,43 @@
     function doFollowup(idx, sid) {
         const s = filteredShipments[idx];
         if (!s) return;
-        const details =
+        const msg = encodeURIComponent(
             `🧾 كود الشحنة: ${s['كود الشحنة'] || '-'}\n` +
             `👤 العميل: ${s['اسم العميل'] || '-'}\n` +
             `📞 الهاتف: ${s['الهاتف'] || ''}${s['هاتف بديل'] ? ' / ' + s['هاتف بديل'] : ''}\n` +
             `📍 العنوان: ${s['العنوان'] || '-'}\n` +
             `📦 الزون: ${s['الزون'] || '-'}\n` +
             `💰 المبلغ: ${s['المبلغ'] || '0'} ج\n` +
-            `💵 المدفوع: ${s['المدفوع'] || '-'}\n` +
             `📋 الحالة: ${s['الحالة'] || '-'}\n` +
             `🏢 الراسل: ${s['الراسل'] || '-'}\n` +
-            `👤 المندوب: ${s['المندوب'] || '-'}`;
-        navigator.clipboard.writeText(details).then(() => {
-            markFollowupSent(sid);
-            markFollowupDismissed(sid);
-            window.open('https://api.whatsapp.com/send', '_blank');
-            applyFilters();
-            Swal.fire({ icon: 'success', title: 'تم نسخ التفاصيل، اختر الرقم في واتساب', toast: true, position: 'top-end', showConfirmButton: false, timer: 2500 });
-        }).catch(() => {
-            Swal.fire('خطأ', 'فشل النسخ', 'error');
+            `👤 المندوب: ${s['المندوب'] || '-'}\n` +
+            `📌 سبب الحالة: ${s['سبب الحالة'] || '-'}`
+        );
+        const phones = [s['الهاتف'] || '', s['هاتف بديل'] || ''].filter(Boolean);
+        markFollowupSent(sid);
+        markFollowupDismissed(sid);
+        applyFilters();
+        if (!phones.length) {
+            Swal.fire({ icon: 'warning', title: 'لا يوجد رقم هاتف للمتابعة', toast: true, position: 'top-end', showConfirmButton: false, timer: 2500 });
+            return;
+        }
+        if (phones.length === 1) {
+            const num = formatPhoneForWA(phones[0]);
+            window.open(`https://api.whatsapp.com/send?phone=${num}&text=${msg}`, '_blank');
+            Swal.fire({ icon: 'success', title: 'تم فتح واتساب', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+            return;
+        }
+        Swal.fire({
+            title: 'اختر رقم لإرسال المتابعة',
+            html: `<div class="grid grid-cols-1 gap-2">${phones.map((p, i) => {
+                const num = formatPhoneForWA(p);
+                return `<a href="https://api.whatsapp.com/send?phone=${num}&text=${msg}" target="_blank" rel="noopener" class="block p-4 rounded-xl border-2 text-center font-bold text-lg no-underline cursor-pointer ${i === 0 ? 'popup-opt-herb' : 'popup-opt-lavender'}" onclick="Swal.close()">
+                    <i class="fab fa-whatsapp ml-2"></i>${p}
+                </a>`;
+            }).join('')}</div>`,
+            showCancelButton: true,
+            cancelButtonText: 'الغاء',
+            showConfirmButton: false
         });
     }
 
@@ -1089,6 +1179,11 @@
                         <div class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm ${rejectColors[i]}" onclick="Swal.close();doUpdateShipment(${idx},{'الحالة':'الغاء','سبب الحالة':'${o}'})">
                             ❌ ${o}
                         </div>`).join('')}
+                    <hr class="my-2 opacity-20">
+                    <input type="text" id="customRejectReason" class="w-full p-2.5 rounded-xl border-2 text-sm text-center font-bold border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 outline-none focus:ring-2 focus:ring-indigo-400" placeholder="اكتب سبب آخر..." oninput="document.getElementById('customRejectBtn').style.display=this.value.trim()?'':'none'">
+                    <div id="customRejectBtn" class="p-2.5 rounded-xl border-2 cursor-pointer text-center font-bold text-sm border-indigo-300 bg-indigo-50 text-indigo-700 dark:border-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300" style="display:none" onclick="var v=document.getElementById('customRejectReason').value.trim();if(v){Swal.close();doUpdateShipment(${idx},{'الحالة':'الغاء','سبب الحالة':v})}">
+                        ✏️ <span id="customRejectLabel">استخدام السبب المدخل</span>
+                    </div>
                 </div>
             `,
             showCancelButton: true,

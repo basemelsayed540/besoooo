@@ -775,35 +775,36 @@
             `📦 الزون: ${s['الزون'] || '-'}\n` +
             `💰 المبلغ: ${s['المبلغ'] || '0'} ج\n` +
             `📋 الحالة: ${s['الحالة'] || '-'}\n` +
-            `🏢 الراسل: ${s['الراسل'] || '-'}`
+            `🏢 الراسل: ${s['الراسل'] || '-'}\n` +
+            `👤 المندوب: ${s['المندوب'] || '-'}\n` +
+            `📌 سبب الحالة: ${s['سبب الحالة'] || '-'}`
         );
         const phones = [s['الهاتف'] || '', s['هاتف بديل'] || ''].filter(Boolean);
-        if (!phones.length) {
-            navigator.clipboard.writeText(
-                `🧾 كود الشحنة: ${s['كود الشحنة'] || '-'}\n` +
-                `👤 العميل: ${s['اسم العميل'] || '-'}\n` +
-                `📞 الهاتف: ${s['الهاتف'] || ''}${s['هاتف بديل'] ? ' / ' + s['هاتف بديل'] : ''}\n` +
-                `📍 العنوان: ${s['العنوان'] || '-'}\n` +
-                `📦 الزون: ${s['الزون'] || '-'}\n` +
-                `💰 المبلغ: ${s['المبلغ'] || '0'} ج\n` +
-                `💵 المدفوع: ${s['المدفوع'] || '-'}\n` +
-                `📋 الحالة: ${s['الحالة'] || '-'}\n` +
-                `🏢 الراسل: ${s['الراسل'] || '-'}\n` +
-                `👤 المندوب: ${s['المندوب'] || '-'}`
-            );
-            markFollowupSent(sid);
-            markFollowupDismissed(sid);
-            window.open('https://api.whatsapp.com/send', '_blank');
-            applyFilters();
-            Swal.fire({ icon: 'success', title: 'تم نسخ التفاصيل، اختر الرقم في واتساب', toast: true, position: 'top-end', showConfirmButton: false, timer: 2500 });
-            return;
-        }
-        const num = formatPhoneForWA(phones[0]);
         markFollowupSent(sid);
         markFollowupDismissed(sid);
-        window.open(`https://api.whatsapp.com/send?phone=${num}&text=${msg}`, '_blank');
         applyFilters();
-        Swal.fire({ icon: 'success', title: 'تم فتح واتساب', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+        if (!phones.length) {
+            Swal.fire({ icon: 'warning', title: 'لا يوجد رقم هاتف للمتابعة', toast: true, position: 'top-end', showConfirmButton: false, timer: 2500 });
+            return;
+        }
+        if (phones.length === 1) {
+            const num = formatPhoneForWA(phones[0]);
+            window.open(`https://api.whatsapp.com/send?phone=${num}&text=${msg}`, '_blank');
+            Swal.fire({ icon: 'success', title: 'تم فتح واتساب', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+            return;
+        }
+        Swal.fire({
+            title: 'اختر رقم لإرسال المتابعة',
+            html: `<div class="grid grid-cols-1 gap-2">${phones.map((p, i) => {
+                const num = formatPhoneForWA(p);
+                return `<a href="https://api.whatsapp.com/send?phone=${num}&text=${msg}" target="_blank" rel="noopener" class="block p-4 rounded-xl border-2 text-center font-bold text-lg no-underline cursor-pointer ${i === 0 ? 'popup-opt-herb' : 'popup-opt-lavender'}" onclick="Swal.close()">
+                    <i class="fab fa-whatsapp ml-2"></i>${p}
+                </a>`;
+            }).join('')}</div>`,
+            showCancelButton: true,
+            cancelButtonText: 'الغاء',
+            showConfirmButton: false
+        });
     }
 
     function dismissFollowup(sid) {

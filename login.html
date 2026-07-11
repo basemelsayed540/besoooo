@@ -307,6 +307,18 @@
             loginBtn.disabled = true;
             loginBtn.innerHTML = 'جاري التحقق...';
 
+            // Dev login check
+            try {
+                if (phone === DEV_PHONE && password === DEV_PASS) {
+                    localStorage.setItem('dev_logged_in', 'true');
+                    saveUserSession({ id: 0, username: 'Developer', phone: DEV_PHONE, role: 'developer' }, 'dev_token');
+                    Swal.fire({ icon: 'success', title: 'مرحباً أيها المطور', timer: 1000, showConfirmButton: false }).then(function() {
+                        window.location.href = 'dev-settings.html';
+                    });
+                    return;
+                }
+            } catch(devErr) {}
+
             try {
                 const loginResult = await invokeUsersAuthAction('login', { phone, password });
                 const data = loginResult?.user;
@@ -330,7 +342,7 @@
                 }).then(() => {
                     if (data.role === 'admin' || data.role === 'housing') window.location.href = 'dashboard.html';
                     else if (data.role === 'rep' || data.role === 'مندوب فرعي') window.location.href = 'rep-dashboard.html';
-                    else if (data.role === 'follower') window.location.href = 'monitor-dashboard.html';
+                    else if (data.role === 'follower') window.location.href = 'followup-dashboard.html';
                     else throw new Error('دور المستخدم غير معروف');
                 });
 

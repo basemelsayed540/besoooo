@@ -2845,6 +2845,134 @@
         #bulkUpdateModal.maximized .table-responsive {
             max-height: calc(100vh - 280px) !important;
         }
+
+        /* —— لوحة الإحصائيات العامة (تم نسخها من B) —— */
+        .gen-stats-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding-bottom: 2rem;
+        }
+        .gen-stats-header {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+        @media (min-width: 576px) {
+            .gen-stats-header {
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+        .gen-stats-filters-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.375rem 0.75rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .gen-stats-filters-box select {
+            background: transparent;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-color);
+            outline: none;
+            cursor: pointer;
+        }
+        .gen-stats-filters-box select option {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+        .gen-stats-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.5rem;
+        }
+        .gen-stats-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.5rem;
+        }
+        .gen-stats-grid-6 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.5rem;
+        }
+        @media (min-width: 576px) {
+            .gen-stats-grid-6 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+        .gen-stats-card-main {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .gen-stats-card-sub {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            border: 1.5px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .gen-stats-card-sub.clickable {
+            cursor: pointer;
+        }
+        .gen-stats-card-sub.clickable:hover {
+            transform: translateY(-2px);
+        }
+        .gen-stats-card-sub.active-filter {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            animation: pulse-border 1.5s infinite alternate;
+        }
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.1); }
+            100% { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3); }
+        }
+        .gen-stats-progress-container {
+            width: 100%;
+            background: rgba(0,0,0,0.06);
+            border-radius: 9999px;
+            height: 6px;
+            overflow: hidden;
+        }
+        [data-bs-theme="dark"] .gen-stats-progress-container {
+            background: rgba(255,255,255,0.05);
+        }
+        .gen-stats-progress-bar {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.3s ease;
+        }
+        .courier-item-card {
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            background: rgba(0,0,0,0.01);
+            transition: all 0.2s ease;
+        }
+        [data-bs-theme="dark"] .courier-item-card {
+            background: rgba(255,255,255,0.01);
+        }
+        .courier-item-card:hover {
+            border-color: var(--text-color);
+        }
+        .courier-expanded-details {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--border);
+        }
     </style>
 </head>
 
@@ -2861,6 +2989,7 @@
                 <div id="navHousingInfo" class="ms-3 ps-3 border-start d-flex align-items-center gap-2"></div>
                 <div class="d-flex gap-2 me-3" id="navSectionTabs">
                     <button class="section-tab btn btn-sm rounded-pill fw-bold px-3 active-section-tab" data-section="housing" onclick="showAdminSection('housing')"><i class="fas fa-boxes-stacked me-1"></i> تسكين الشحنات</button>
+                    <button class="section-tab btn btn-sm rounded-pill fw-bold px-3" data-section="general-stats" onclick="showAdminSection('general-stats')"><i class="fas fa-chart-pie me-1"></i> لوحة الإحصائيات العامة</button>
                     <button class="section-tab btn btn-sm rounded-pill fw-bold px-3" data-section="stats" onclick="showAdminSection('stats')"><i class="fas fa-chart-line me-1"></i> احصائية المندوب</button>
                     <button class="section-tab btn btn-sm rounded-pill fw-bold px-3 admin-only" data-section="users" onclick="showAdminSection('users')"><i class="fas fa-users-cog me-1"></i> إدارة الحسابات</button>
                 </div>
@@ -2870,6 +2999,8 @@
                         class="fas fa-chart-pie"></i></button>
                 <button onclick="window.open('live-map.html', '_blank')" class="btn btn-light rounded-circle shadow-sm admin-header-btn" title="خريطة المندوب المباشرة"><i
                         class="fas fa-satellite-dish"></i></button>
+                <button onclick="window.open('followup-dashboard.html', '_blank')" class="btn btn-light rounded-circle shadow-sm admin-header-btn" title="لوحة المتابعة"><i
+                        class="fas fa-list-check"></i></button>
                 <button onclick="toggleTheme()" class="btn btn-light rounded-circle shadow-sm admin-header-btn"><i
                         class="fas fa-moon"></i></button>
                 <button class="btn btn-sm btn-outline-primary rounded-pill fw-bold" onclick="openHousingQrScanner()" title="مسح QR">
@@ -3203,6 +3334,109 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div id="section-general-stats" style="display: none;">
+                <div class="gen-stats-container">
+                    
+                    <!-- Header with Title & Daily Filters -->
+                    <div class="gen-stats-header">
+                        <h2 class="h5 fw-bold mb-0 text-color d-flex align-items-center gap-2">
+                            <i class="fas fa-chart-line text-primary"></i>
+                            <span>إحصائيات النظام العامة</span>
+                            <span id="genStatsLoadingSpinner" class="spinner-border spinner-border-sm text-primary ms-2" role="status" style="display: none;"></span>
+                        </h2>
+                        
+                        <div class="d-flex align-items-center gap-2">
+                            <button onclick="refreshGeneralStatsData(true)" class="btn btn-sm btn-light rounded-circle shadow-sm border" title="تحديث البيانات">
+                                <i class="fas fa-sync-alt" id="genStatsRefreshIcon"></i>
+                            </button>
+                            
+                            <div class="gen-stats-filters-box">
+                                <span class="text-xs fw-bold text-muted me-1">اليومية:</span>
+                                <select id="genStatsDaily" onchange="handleGenStatsDailyChange()" dir="rtl">
+                                    <option value="الكل">كل اليوميات</option>
+                                </select>
+                                <select id="genStatsArchiveSelect" onchange="handleGenStatsArchiveFilterChange()">
+                                    <option value="نشطة">نشطة (0)</option>
+                                    <option value="مؤرشفة">مؤرشفة (0)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- General Distribution Section -->
+                    <div class="gen-stats-card-main">
+                        <h3 class="text-xs fw-bold mb-3 text-color d-flex align-items-center gap-2">
+                            <i class="fas fa-box text-primary"></i>
+                            <span>توزيع حالات الشحنات</span>
+                        </h3>
+                        
+                        <!-- Top Shipment & No Courier Cards -->
+                        <div class="gen-stats-grid-2 mb-3">
+                            <div class="p-3 rounded-3 text-center border" style="background: linear-gradient(to left, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05)); border-color: rgba(59, 130, 246, 0.2);">
+                                <span class="text-xs fw-bold text-primary d-flex align-items-center justify-content-center gap-1 mb-1">
+                                    <i class="fas fa-chart-simple"></i> الشحنات
+                                </span>
+                                <span id="genStatsTotalShipmentsCount" class="fs-4 fw-black text-primary">0</span>
+                            </div>
+                            <div class="p-3 rounded-3 text-center border" style="background: linear-gradient(to left, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); border-color: rgba(239, 68, 68, 0.2);">
+                                <span class="text-xs fw-bold text-danger d-flex align-items-center justify-content-center gap-1 mb-1">
+                                    بدون مندوب
+                                </span>
+                                <span id="genStatsNoRepCount" class="fs-4 fw-black text-danger">0</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Financial Breakdown Cards -->
+                        <div class="gen-stats-grid-3 mb-3">
+                            <div class="p-2 rounded-3 border text-center" style="border-color: rgba(59, 130, 246, 0.15); background: rgba(59, 130, 246, 0.05);">
+                                <span class="text-xs d-block mb-1 font-bold text-primary">المدفوع</span>
+                                <span id="genStatsTotalPaid" class="text-sm font-extrabold text-primary">0</span>
+                            </div>
+                            <div class="p-2 rounded-3 border text-center" style="border-color: rgba(245, 158, 11, 0.15); background: rgba(245, 158, 11, 0.05);">
+                                <span class="text-xs d-block mb-1 font-bold text-warning">عمولة المندوب</span>
+                                <span id="genStatsTotalCommission" class="text-sm font-extrabold text-warning">0</span>
+                            </div>
+                            <div class="p-2 rounded-3 border text-center" style="border-color: rgba(6, 182, 212, 0.15); background: rgba(6, 182, 212, 0.05);">
+                                <span class="text-xs d-block mb-1 font-bold text-info">التوريد</span>
+                                <span id="genStatsTotalRemittance" class="text-sm font-extrabold text-info">0</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Status Grid (Clickable to filter reps) -->
+                        <div class="gen-stats-grid-6" id="genStatsStatusGridContainer">
+                            <!-- Injected dynamically by Javascript -->
+                        </div>
+                    </div>
+
+                    <!-- Courier Breakdown Section -->
+                    <div class="gen-stats-card-main">
+                        <div class="d-flex flex-column sm:flex-row justify-content-between align-items-start sm:align-items-center gap-3 mb-4">
+                            <h3 class="text-sm fw-bold mb-0 text-color d-flex align-items-center gap-2">
+                                <i class="fas fa-users text-primary"></i>
+                                <span>إحصائيات المناديب بالتفصيل</span>
+                                <span id="genStatsCourierCountBadge" class="badge bg-primary rounded-pill">0</span>
+                                <span id="genStatsCourierFilterIndicator" class="text-xs text-muted font-normal" style="display: none;"></span>
+                            </h3>
+                            <div class="d-flex align-items-center gap-2 w-100 sm:w-auto">
+                                <select id="genStatsCourierSortSelect" onchange="handleGenStatsSortChange()" class="form-select form-select-sm" style="width: auto; font-size: 0.75rem; border-radius: 0.75rem;">
+                                    <option value="نسبة-تنازلي">الأعلى نسبة</option>
+                                    <option value="نسبة-تصاعدي">الأقل نسبة</option>
+                                    <option value="شحنات-تنازلي" selected>الأعلى شحنات</option>
+                                    <option value="شحنات-تصاعدي">الأقل شحنات</option>
+                                </select>
+                                <input type="text" id="genStatsRepSearchInput" oninput="handleGenStatsSearch()" placeholder="البحث باسم المندوب..." class="form-control form-control-sm" style="font-size: 0.75rem; border-radius: 0.75rem; width: 100%; max-width: 200px;" />
+                            </div>
+                        </div>
+                        
+                        <!-- Courier Cards Container -->
+                        <div class="d-flex flex-column gap-3" id="genStatsCourierBreakdownContainer">
+                            <!-- Injected dynamically by Javascript -->
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -3820,7 +4054,7 @@
         const unsupportedShipmentSchemaFields = new Set();
         const HOUSING_SCANNER_BASE_URL_KEY = 'housingScannerBaseUrl';
         const savedAdminSection = localStorage.getItem('adminActiveSection') || 'stats';
-        const validAdminSections = ['stats', 'users', 'housing'];
+        const validAdminSections = ['stats', 'users', 'housing', 'general-stats'];
         const initialAdminSection = validAdminSections.includes(savedAdminSection) ? savedAdminSection : 'stats';
         const GPS_ENFORCEMENT_SYSTEM_PHONE_PREFIX = '__gps_enforcement_rep__:';
         const GPS_ENFORCEMENT_SYSTEM_EMAIL_PREFIX = 'gps-enforcement+';
@@ -4060,7 +4294,7 @@
                 el.style.display = 'none';
             });
 
-            const allowedSection = ['housing', 'stats'].includes(initialAdminSection) ? initialAdminSection : 'stats';
+            const allowedSection = ['housing', 'stats', 'general-stats'].includes(initialAdminSection) ? initialAdminSection : 'stats';
             showAdminSection(allowedSection);
         }
 
@@ -4069,6 +4303,8 @@
             document.getElementById('section-stats').style.display = 'none';
             document.getElementById('section-users').style.display = 'none';
             document.getElementById('section-housing').style.display = 'none';
+            var genStats = document.getElementById('section-general-stats');
+            if (genStats) genStats.style.display = 'none';
 
             // Show target section
             const target = document.getElementById('section-' + sectionId);
@@ -4093,6 +4329,11 @@
                 if (adminSidebar) adminSidebar.classList.remove('hidden-sidebar');
                 initHousingFilterSidebar();
                 renderHousingSection();
+            } else if (sectionId === 'general-stats') {
+                document.getElementById('navHousingInfo').style.setProperty('display', 'flex', 'important');
+                if (housingSidebar) housingSidebar.style.display = 'none';
+                if (adminSidebar) adminSidebar.classList.add('hidden-sidebar');
+                loadGeneralStatsSection();
             } else if (sectionId === 'stats') {
                 document.getElementById('navHousingInfo').style.setProperty('display', 'flex', 'important');
                 if (housingSidebar) housingSidebar.style.display = 'none';
@@ -4135,6 +4376,7 @@
             }
 
             allShipments = fetchedAll;
+            if (typeof populateGenStatsFilters === 'function') populateGenStatsFilters();
             housingDuplicatePhoneFreq = null;
             currentDailyFilter = dailyFilter;
             markHousingDataChanged();
@@ -6010,6 +6252,596 @@
             container.innerHTML = sorted.map(([name, stats]) => itemBuilder(name, stats, {})).join('');
         }
 
+        // Global variables for General Stats Dashboard (copied from Project B)
+        let genStatsSelectedDaily = localStorage.getItem('adminDailyFilter') || 'الكل';
+        let genStatsArchiveFilter = 'نشطة';
+        let genStatsRepSearch = '';
+        let genStatsCourierSortBy = 'شحنات-تنازلي';
+        let genStatsCourierStatusFilter = null;
+        let genStatsExpandedCouriers = new Set();
+        
+        let genStatsDailyList = [];
+        let genStatsDailyCounts = {};
+        let genStatsArchivedDailiesSet = new Set();
+        let genStatsShipments = [];
+        let genStatsIsLoading = false;
+        let genStatsHasLoadedOptions = false;
+
+        async function loadGeneralStatsSection() {
+            if (genStatsIsLoading) return;
+            
+            showGenStatsLoading(true);
+            try {
+                if (!genStatsHasLoadedOptions) {
+                    await fetchGenStatsDailyOptions();
+                    genStatsHasLoadedOptions = true;
+                }
+                
+                // Populate/Update dropdown selectors
+                populateGenStatsDailyDropdown();
+                
+                // Ensure dropdown matches state
+                const dailySelect = document.getElementById('genStatsDaily');
+                if (dailySelect) {
+                    const values = Array.from(dailySelect.options).map(o => o.value);
+                    if (!values.includes(genStatsSelectedDaily)) {
+                        genStatsSelectedDaily = 'الكل';
+                    }
+                    dailySelect.value = genStatsSelectedDaily;
+                }
+                
+                const archiveSelect = document.getElementById('genStatsArchiveSelect');
+                if (archiveSelect) archiveSelect.value = genStatsArchiveFilter;
+                
+                // Fetch shipments for selected daily
+                await fetchGenStatsShipments(genStatsSelectedDaily);
+                
+                // Render stats
+                renderGenStatsView();
+            } catch (err) {
+                console.error("Failed to load general stats:", err);
+                Swal.fire('خطأ', 'فشل في تحميل إحصائيات النظام العامة: ' + (err.message || err), 'error');
+            } finally {
+                showGenStatsLoading(false);
+            }
+        }
+
+        function showGenStatsLoading(isLoading) {
+            genStatsIsLoading = isLoading;
+            const spinner = document.getElementById('genStatsLoadingSpinner');
+            if (spinner) spinner.style.display = isLoading ? 'inline-block' : 'none';
+            const icon = document.getElementById('genStatsRefreshIcon');
+            if (icon) {
+                if (isLoading) {
+                    icon.classList.add('fa-spin');
+                } else {
+                    icon.classList.remove('fa-spin');
+                }
+            }
+        }
+
+        async function fetchGenStatsDailyOptions() {
+            try {
+                const pageSize = 1000;
+                const dailyMap = new Map();
+                const countMap = {};
+                
+                for (let start = 0; ; start += pageSize) {
+                    const { data, error } = await supabaseClient
+                        .from(CONFIG.TABLES.SHIPMENTS)
+                        .select('اليومية, ارشيف')
+                        .not('اليومية', 'is', null)
+                        .range(start, start + pageSize - 1);
+                        
+                    if (error) throw error;
+                    if (!data || data.length === 0) break;
+                    
+                    data.forEach((r) => {
+                        const d = r['اليومية'] ? String(r['اليومية']).trim() : '';
+                        if (!d) return;
+                        countMap[d] = (countMap[d] || 0) + 1;
+                        
+                        const v = r['ارشيف'] ? String(r['ارشيف']).trim() : '';
+                        const isArch = v && v !== 'false' && v !== '0';
+                        if (isArch) dailyMap.set(d, true);
+                        if (!dailyMap.has(d)) dailyMap.set(d, false);
+                    });
+                    
+                    if (data.length < pageSize) break;
+                }
+                
+                genStatsDailyCounts = countMap;
+                const archived = new Set();
+                const dailies = [];
+                dailyMap.forEach((isArch, d) => {
+                    dailies.push(d);
+                    if (isArch) archived.add(d);
+                });
+                genStatsArchivedDailiesSet = archived;
+                
+                // Sort dailies: archived last, then descending by date
+                genStatsDailyList = dailies.sort((a, b) => {
+                    const aArch = archived.has(a) ? 1 : 0;
+                    const bArch = archived.has(b) ? 1 : 0;
+                    if (aArch !== bArch) return aArch - bArch;
+                    const dateA = a.match(/(\d+)-(\d+)/);
+                    const dateB = b.match(/(\d+)-(\d+)/);
+                    if (dateA && dateB) {
+                        return (parseInt(dateB[2]) * 100 + parseInt(dateB[1])) - (parseInt(dateA[2]) * 100 + parseInt(dateA[1]));
+                    }
+                    return b.localeCompare(a);
+                });
+            } catch (err) {
+                console.error("fetchGenStatsDailyOptions failed:", err);
+                throw err;
+            }
+        }
+
+        async function fetchGenStatsShipments(daily) {
+            if (daily === 'الكل') {
+                genStatsShipments = [];
+                return;
+            }
+            
+            try {
+                let allData = [];
+                const pageSize = 1000;
+                let from = 0;
+                
+                while (true) {
+                    const { data, error } = await supabaseClient
+                        .from(CONFIG.TABLES.SHIPMENTS)
+                        .select('*')
+                        .eq('اليومية', daily)
+                        .order('id', { ascending: false })
+                        .range(from, from + pageSize - 1);
+                        
+                    if (error) throw error;
+                    if (!data || data.length === 0) break;
+                    
+                    const chunk = data.map(normalizeShipmentPriceField);
+                    allData = allData.concat(chunk);
+                    
+                    if (data.length < pageSize) break;
+                    from += pageSize;
+                }
+                
+                genStatsShipments = allData;
+            } catch (err) {
+                console.error("fetchGenStatsShipments failed:", err);
+                throw err;
+            }
+        }
+
+        function populateGenStatsDailyDropdown() {
+            const dailySelect = document.getElementById('genStatsDaily');
+            const archiveSelect = document.getElementById('genStatsArchiveSelect');
+            if (!dailySelect) return;
+            
+            const activeList = genStatsDailyList.filter(d => !genStatsArchivedDailiesSet.has(d));
+            const archivedList = genStatsDailyList.filter(d => genStatsArchivedDailiesSet.has(d));
+            
+            if (archiveSelect) {
+                archiveSelect.options[0].text = `نشطة (${activeList.length})`;
+                archiveSelect.options[1].text = `مؤرشفة (${archivedList.length})`;
+            }
+            
+            const filteredDailies = genStatsArchiveFilter === 'نشطة' ? activeList : archivedList;
+            
+            let html = '<option value="الكل">كل اليوميات</option>';
+            filteredDailies.forEach(day => {
+                const count = genStatsDailyCounts[day] || 0;
+                const isArchived = genStatsArchivedDailiesSet.has(day);
+                const colorStyle = isArchived ? ' style="color: #ef4444;"' : '';
+                html += `<option value="${escapeAttr(day)}"${colorStyle}>${escapeHtml(day)} (${count})</option>`;
+            });
+            
+            dailySelect.innerHTML = html;
+        }
+
+        function renderGenStatsView() {
+            const counts = {
+                'تم': 0,
+                'قيد التوصيل': 0,
+                'مؤجل': 0,
+                'الغاء': 0,
+                'شحن': 0,
+                'تعديل سعر': 0,
+            };
+            
+            let paidForDone = 0;
+            let paidForPriceAdj = 0;
+            let paidForShipping = 0;
+            let totalPaid = 0;
+            let totalCommission = 0;
+            let other = 0;
+            let noRep = 0;
+            
+            genStatsShipments.forEach(s => {
+                let status = s["الحالة"] ? String(s["الحالة"]).trim() : '';
+                if (status === 'إلغاء') {
+                    status = 'الغاء';
+                }
+                
+                if (status in counts) {
+                    counts[status] += 1;
+                    const paid = Number(s["المدفوع"] || 0);
+                    if (status === 'تم') {
+                        paidForDone += paid;
+                    } else if (status === 'تعديل سعر') {
+                        paidForPriceAdj += paid;
+                    } else if (status === 'شحن') {
+                        paidForShipping += paid;
+                    }
+                } else {
+                    other += 1;
+                }
+                
+                const isEligible = ['تم', 'تم التسليم', 'شحن', 'تعديل سعر', 'استلم جزئي'].includes(status);
+                if (isEligible) {
+                    totalPaid += Number(s["المدفوع"] || 0);
+                    totalCommission += Number(s["عمولة المندوب"] || 0);
+                }
+                
+                const rep = s["المندوب"] ? String(s["المندوب"]).trim() : '';
+                if (!rep) {
+                    noRep += 1;
+                }
+            });
+            
+            const totalShipments = genStatsSelectedDaily === 'الكل' 
+                ? Object.values(genStatsDailyCounts).reduce((a, b) => a + (Number(b) || 0), 0)
+                : genStatsShipments.length;
+                
+            const noRepFinal = genStatsSelectedDaily === 'الكل' ? 0 : noRep;
+            
+            document.getElementById('genStatsTotalShipmentsCount').textContent = enNum(totalShipments);
+            document.getElementById('genStatsNoRepCount').textContent = enNum(noRepFinal);
+            
+            document.getElementById('genStatsTotalPaid').textContent = enNum(Math.round(totalPaid));
+            document.getElementById('genStatsTotalCommission').textContent = enNum(Math.round(totalCommission));
+            document.getElementById('genStatsTotalRemittance').textContent = enNum(Math.round(totalPaid - totalCommission));
+            
+            const statusDefs = [
+                { key: 'قيد التوصيل', label: 'قيد التوصيل', count: counts['قيد التوصيل'], paid: null, tc: 'text-warning' },
+                { key: 'تم', label: 'تم', count: counts['تم'], paid: paidForDone, tc: 'text-success' },
+                { key: 'تعديل سعر', label: 'تعديل سعر', count: counts['تعديل سعر'], paid: paidForPriceAdj, tc: 'text-secondary' },
+                { key: 'شحن', label: 'شحن', count: counts['شحن'], paid: paidForShipping, tc: 'text-primary' },
+                { key: 'الغاء', label: 'الغاء', count: counts['الغاء'], paid: null, tc: 'text-danger' },
+                { key: 'مؤجل', label: 'مؤجل', count: counts['مؤجل'], paid: null, tc: 'text-orange' }
+            ];
+            
+            const statusGridContainer = document.getElementById('genStatsStatusGridContainer');
+            if (statusGridContainer) {
+                statusGridContainer.innerHTML = statusDefs.map(item => {
+                    const isActive = genStatsCourierStatusFilter === item.key;
+                    const activeClass = isActive ? ' active-filter' : '';
+                    
+                    let inlineStyles = '';
+                    if (item.key === 'مؤجل') {
+                        inlineStyles = 'color: #f97316 !important;';
+                    }
+                    
+                    const paidHtml = item.paid !== null 
+                        ? `<span class="text-[9px] d-block mt-1 font-bold ${item.tc}" style="font-size: 0.7rem; ${inlineStyles}">${enNum(Math.round(item.paid))}</span>`
+                        : '';
+                        
+                    return `
+                        <div onclick="toggleGenStatsCourierStatusFilter('${escapeAttr(item.key)}')" 
+                             class="gen-stats-card-sub clickable border rounded-3 p-2${activeClass}"
+                             style="border-color: rgba(0,0,0,0.05); background: rgba(0,0,0,0.02);">
+                            <span class="text-[10px] d-block mb-1 font-bold ${item.tc}" style="font-size: 0.75rem; ${inlineStyles}">${item.label}</span>
+                            <span class="fs-5 fw-extrabold ${item.tc}" style="${inlineStyles}">${enNum(item.count)}</span>
+                            ${paidHtml}
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            const filteredShipments = genStatsCourierStatusFilter 
+                ? genStatsShipments.filter(s => {
+                    let st = s["الحالة"] ? String(s["الحالة"]).trim() : '';
+                    if (st === 'إلغاء') st = 'الغاء';
+                    return st === genStatsCourierStatusFilter;
+                  })
+                : genStatsShipments;
+                
+            const courierMap = {};
+            filteredShipments.forEach(s => {
+                const name = s["المندوب"] ? String(s["المندوب"]).trim() : 'غير محدد';
+                if (!courierMap[name]) {
+                    courierMap[name] = { 
+                        total: 0, 
+                        delivered: 0, 
+                        'قيد التوصيل': 0, 
+                        'تم': 0, 
+                        'تعديل سعر': 0, 
+                        'شحن': 0, 
+                        'مؤجل': 0, 
+                        'الغاء': 0, 
+                        paidForDone: 0, 
+                        paidForPriceAdj: 0, 
+                        paidForShipping: 0, 
+                        paid: 0, 
+                        commission: 0 
+                    };
+                }
+                
+                const cData = courierMap[name];
+                cData.total += 1;
+                
+                let st = s["الحالة"] ? String(s["الحالة"]).trim() : '';
+                if (st === 'إلغاء') st = 'الغاء';
+                
+                if (st) {
+                    if (st in cData) {
+                        cData[st] += 1;
+                    }
+                    const paid = Number(s["المدفوع"] || 0);
+                    if (st === 'تم') {
+                        cData.paidForDone += paid;
+                    } else if (st === 'تعديل سعر') {
+                        cData.paidForPriceAdj += paid;
+                    } else if (st === 'شحن') {
+                        cData.paidForShipping += paid;
+                    }
+                }
+                
+                const isEligible = ['تم', 'تم التسليم', 'شحن', 'تعديل سعر', 'استلم جزئي'].includes(st);
+                if (isEligible) {
+                    cData.paid += Number(s["المدفوع"] || 0);
+                    cData.commission += Number(s["عمولة المندوب"] || 0);
+                }
+                
+                const isDelivered = ['تم', 'تم التسليم', 'تعديل سعر', 'شحن', 'استلم جزئي'].includes(st);
+                if (isDelivered) {
+                    cData.delivered += 1;
+                }
+            });
+            
+            let courierBreakdownList = Object.entries(courierMap).map(([name, data]) => {
+                const rate = data.total > 0 ? Math.round((data.delivered / data.total) * 100) : 0;
+                return {
+                    name,
+                    ...data,
+                    remittance: data.paid - data.commission,
+                    rate
+                };
+            });
+            
+            if (genStatsRepSearch.trim()) {
+                const query = genStatsRepSearch.toLowerCase();
+                courierBreakdownList = courierBreakdownList.filter(c => c.name.toLowerCase().includes(query));
+            }
+            
+            courierBreakdownList.sort((a, b) => {
+                if (genStatsCourierSortBy === 'نسبة-تنازلي') return b.rate - a.rate;
+                if (genStatsCourierSortBy === 'نسبة-تصاعدي') return a.rate - b.rate;
+                if (genStatsCourierSortBy === 'شحنات-تصاعدي') return a.total - b.total;
+                return b.total - a.total;
+            });
+            
+            document.getElementById('genStatsCourierCountBadge').textContent = courierBreakdownList.length;
+            
+            const filterIndicator = document.getElementById('genStatsCourierFilterIndicator');
+            if (filterIndicator) {
+                if (genStatsCourierStatusFilter) {
+                    filterIndicator.style.display = 'inline';
+                    filterIndicator.innerHTML = `— فلتر: <span class="badge bg-warning text-dark">${escapeHtml(genStatsCourierStatusFilter)}</span> <button onclick="clearGenStatsCourierStatusFilter(event)" class="btn btn-link text-danger p-0 ms-1 fw-bold text-decoration-none" style="font-size:12px;">✕</button>`;
+                } else {
+                    filterIndicator.style.display = 'none';
+                    filterIndicator.innerHTML = '';
+                }
+            }
+            
+            const breakdownContainer = document.getElementById('genStatsCourierBreakdownContainer');
+            if (breakdownContainer) {
+                if (courierBreakdownList.length === 0) {
+                    breakdownContainer.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">لا يوجد مناديب مطابقين للبحث</div>`;
+                } else {
+                    breakdownContainer.innerHTML = courierBreakdownList.map((courier, idx) => {
+                        const isExpanded = genStatsExpandedCouriers.has(courier.name);
+                        const chevronIconClass = isExpanded ? 'fa-chevron-down' : 'fa-chevron-left';
+                        const expandedDetailsStyle = isExpanded ? 'display: block;' : 'display: none;';
+                        
+                        let progressColor = '#22c55e';
+                        if (courier.rate < 30) {
+                            progressColor = '#ef4444';
+                        } else if (courier.rate < 60) {
+                            progressColor = '#f59e0b';
+                        }
+                        
+                        return `
+                            <div class="courier-item-card">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h4 class="font-bold text-color mb-1" style="font-size: 0.875rem;">${escapeHtml(courier.name)}</h4>
+                                        <span class="text-xs text-muted cursor-pointer" onclick="toggleGenStatsCourierExpansion('${escapeAttr(courier.name)}')">
+                                            <i class="fas ${chevronIconClass} me-1" style="font-size: 10px;"></i>
+                                            معدل التسليم: ${courier.rate}%
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2.5 py-1 text-xs rounded-pill">
+                                            ${courier.total} شحنة
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="gen-stats-progress-container mb-2">
+                                    <div class="gen-stats-progress-bar" style="width: ${courier.rate}%; background-color: ${progressColor};"></div>
+                                </div>
+                                
+                                <div class="courier-expanded-details" style="${expandedDetailsStyle}">
+                                    <div class="gen-stats-grid-6 text-center mb-3">
+                                        <div class="p-1 border rounded-3 bg-light-subtle" style="border-color: rgba(245, 158, 11, 0.15);">
+                                            <span class="text-[9px] d-block text-warning font-bold" style="font-size: 0.65rem;">قيد التوصيل</span>
+                                            <span class="text-xs font-bold text-warning">${courier['قيد التوصيل']}</span>
+                                        </div>
+                                        <div class="p-1 border rounded-3 bg-light-subtle" style="border-color: rgba(34, 197, 94, 0.15);">
+                                            <span class="text-[9px] d-block text-success font-bold" style="font-size: 0.65rem;">تم</span>
+                                            <span class="text-xs font-bold text-success">${courier['تم']}</span>
+                                            <span class="text-[9px] d-block text-success font-bold" style="font-size: 0.65rem;">${enNum(Math.round(courier.paidForDone))}</span>
+                                        </div>
+                                        <div class="p-1 border rounded-3 bg-light-subtle" style="border-color: rgba(139, 92, 246, 0.15);">
+                                            <span class="text-[9px] d-block text-secondary font-bold" style="font-size: 0.65rem;">تعديل سعر</span>
+                                            <span class="text-xs font-bold text-secondary">${courier['تعديل سعر']}</span>
+                                            <span class="text-[9px] d-block text-secondary font-bold" style="font-size: 0.65rem;">${enNum(Math.round(courier.paidForPriceAdj))}</span>
+                                        </div>
+                                        <div class="p-1 border rounded-3 bg-light-subtle" style="border-color: rgba(59, 130, 246, 0.15);">
+                                            <span class="text-[9px] d-block text-primary font-bold" style="font-size: 0.65rem;">شحن</span>
+                                            <span class="text-xs font-bold text-primary">${courier['شحن']}</span>
+                                            <span class="text-[9px] d-block text-primary font-bold" style="font-size: 0.65rem;">${enNum(Math.round(courier.paidForShipping))}</span>
+                                        </div>
+                                        <div class="p-1 border rounded-3 bg-light-subtle" style="border-color: rgba(239, 68, 68, 0.15);">
+                                            <span class="text-[9px] d-block text-danger font-bold" style="font-size: 0.65rem;">الغاء</span>
+                                            <span class="text-xs font-bold text-danger">${courier['الغاء']}</span>
+                                        </div>
+                                        <div class="p-1 border rounded-3 bg-light-subtle" style="border-color: rgba(249, 115, 22, 0.15);">
+                                            <span class="text-[9px] d-block font-bold" style="font-size: 0.65rem; color: #f97316;">مؤجل</span>
+                                            <span class="text-xs font-bold" style="color: #f97316;">${courier['مؤجل']}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="gen-stats-grid-3 text-center">
+                                        <div class="p-2 border rounded-3" style="border-color: rgba(59, 130, 246, 0.1); background: rgba(59, 130, 246, 0.02);">
+                                            <span class="text-[9px] text-primary d-block mb-0.5 font-bold" style="font-size:0.65rem;">المدفوع</span>
+                                            <span class="text-xs font-extrabold text-primary">${enNum(Math.round(courier.paid))}</span>
+                                        </div>
+                                        <div class="p-2 border rounded-3" style="border-color: rgba(245, 158, 11, 0.1); background: rgba(245, 158, 11, 0.02);">
+                                            <span class="text-[9px] text-warning d-block mb-0.5 font-bold" style="font-size:0.65rem;">العمولة</span>
+                                            <span class="text-xs font-extrabold text-warning">${enNum(Math.round(courier.commission))}</span>
+                                        </div>
+                                        <div class="p-2 border rounded-3" style="border-color: rgba(6, 182, 212, 0.1); background: rgba(6, 182, 212, 0.02);">
+                                            <span class="text-[9px] text-info d-block mb-0.5 font-bold" style="font-size:0.65rem;">التوريد</span>
+                                            <span class="text-xs font-extrabold text-info">${enNum(Math.round(courier.remittance))}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+        }
+
+        async function handleGenStatsDailyChange() {
+            const select = document.getElementById('genStatsDaily');
+            if (!select) return;
+            genStatsSelectedDaily = select.value;
+            localStorage.setItem('adminDailyFilter', genStatsSelectedDaily);
+            
+            showGenStatsLoading(true);
+            try {
+                await fetchGenStatsShipments(genStatsSelectedDaily);
+                renderGenStatsView();
+            } catch (err) {
+                console.error("Failed to load daily shipments:", err);
+                Swal.fire('خطأ', 'فشل في تحميل الشحنات لهذه اليومية', 'error');
+            } finally {
+                showGenStatsLoading(false);
+            }
+        }
+        
+        async function handleGenStatsArchiveFilterChange() {
+            const select = document.getElementById('genStatsArchiveSelect');
+            if (!select) return;
+            genStatsArchiveFilter = select.value;
+            
+            populateGenStatsDailyDropdown();
+            
+            genStatsSelectedDaily = 'الكل';
+            localStorage.setItem('adminDailyFilter', genStatsSelectedDaily);
+            const dailySelect = document.getElementById('genStatsDaily');
+            if (dailySelect) dailySelect.value = 'الكل';
+            
+            showGenStatsLoading(true);
+            try {
+                await fetchGenStatsShipments(genStatsSelectedDaily);
+                renderGenStatsView();
+            } catch (err) {
+                console.error("Failed to update shipments after archive filter change:", err);
+            } finally {
+                showGenStatsLoading(false);
+            }
+        }
+        
+        function handleGenStatsSortChange() {
+            const select = document.getElementById('genStatsCourierSortSelect');
+            if (!select) return;
+            genStatsCourierSortBy = select.value;
+            renderGenStatsView();
+        }
+        
+        function handleGenStatsSearch() {
+            const input = document.getElementById('genStatsRepSearchInput');
+            if (!input) return;
+            genStatsRepSearch = input.value;
+            renderGenStatsView();
+        }
+        
+        function toggleGenStatsCourierStatusFilter(statusKey) {
+            if (genStatsCourierStatusFilter === statusKey) {
+                genStatsCourierStatusFilter = null;
+            } else {
+                genStatsCourierStatusFilter = statusKey;
+            }
+            renderGenStatsView();
+        }
+        
+        function clearGenStatsCourierStatusFilter(e) {
+            if (e) e.stopPropagation();
+            genStatsCourierStatusFilter = null;
+            renderGenStatsView();
+        }
+        
+        function toggleGenStatsCourierExpansion(courierName) {
+            if (genStatsExpandedCouriers.has(courierName)) {
+                genStatsExpandedCouriers.delete(courierName);
+            } else {
+                genStatsExpandedCouriers.add(courierName);
+            }
+            renderGenStatsView();
+        }
+        
+        async function refreshGeneralStatsData(force = false) {
+            showGenStatsLoading(true);
+            try {
+                if (force) {
+                    await fetchGenStatsDailyOptions();
+                    populateGenStatsDailyDropdown();
+                    
+                    const dailySelect = document.getElementById('genStatsDaily');
+                    if (dailySelect) {
+                        const values = Array.from(dailySelect.options).map(o => o.value);
+                        if (!values.includes(genStatsSelectedDaily)) {
+                            genStatsSelectedDaily = 'الكل';
+                        }
+                        dailySelect.value = genStatsSelectedDaily;
+                    }
+                }
+                
+                await fetchGenStatsShipments(genStatsSelectedDaily);
+                renderGenStatsView();
+            } catch (err) {
+                console.error("refreshGeneralStatsData failed:", err);
+                Swal.fire('خطأ', 'فشل في تحديث إحصائيات النظام العامة', 'error');
+            } finally {
+                showGenStatsLoading(false);
+            }
+        }
+
+        // Expose functions globally for HTML events
+        window.loadGeneralStatsSection = loadGeneralStatsSection;
+        window.refreshGeneralStatsData = refreshGeneralStatsData;
+        window.handleGenStatsDailyChange = handleGenStatsDailyChange;
+        window.handleGenStatsArchiveFilterChange = handleGenStatsArchiveFilterChange;
+        window.handleGenStatsSortChange = handleGenStatsSortChange;
+        window.handleGenStatsSearch = handleGenStatsSearch;
+        window.toggleGenStatsCourierStatusFilter = toggleGenStatsCourierStatusFilter;
+        window.clearGenStatsCourierStatusFilter = clearGenStatsCourierStatusFilter;
+        window.toggleGenStatsCourierExpansion = toggleGenStatsCourierExpansion;
+
         function renderRepsStats(data) {
             const repsData = {};
 
@@ -6249,6 +7081,7 @@
             return html;
         }
 
+        function enNum(v) { return v != null ? String(v) : ''; }
         function escapeHtml(value) {
             return String(value ?? '')
                 .replace(/&/g, '&amp;')

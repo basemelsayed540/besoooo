@@ -450,10 +450,10 @@
             const icon = document.getElementById('themeIcon');
             const isDark = body.classList.toggle('dark');
             icon.className = isDark ? 'fas fa-sun text-xl' : 'fas fa-moon text-xl';
-            localStorage.setItem('admin-theme', isDark ? 'dark' : 'light');
+            localStorage.setItem('shipment-theme', isDark ? 'dark' : 'light');
         }
 
-        if (localStorage.getItem('admin-theme') === 'dark') {
+        if (localStorage.getItem('shipment-theme') === 'dark' || (!localStorage.getItem('shipment-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.body.classList.add('dark');
             document.getElementById('themeIcon').className = 'fas fa-sun text-xl';
         }

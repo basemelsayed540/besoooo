@@ -19,28 +19,28 @@
         .glass { background: rgba(30,41,59,.85); backdrop-filter: blur(16px); border: 1px solid rgba(148,163,184,.1); border-radius: 1rem; }
         body.light .glass { background: rgba(255,255,255,.9); border-color: rgba(0,0,0,.08); }
         .input-field { width: 100%; padding: .75rem 1rem; border-radius: .75rem; border: 2px solid rgba(148,163,184,.2); background: rgba(15,23,42,.6); color: #e2e8f0; font-family: 'Cairo', sans-serif; font-size: .95rem; transition: border .2s; outline: none; }
-        .input-field:focus { border-color: #3b82f6; }
+        .input-field:focus { border-color: #6366f1; }
         body.light .input-field { background: #fff; color: #1e293b; border-color: #cbd5e1; }
-        body.light .input-field:focus { border-color: #3b82f6; }
+        body.light .input-field:focus { border-color: #6366f1; }
         .btn { padding: .6rem 1.5rem; border-radius: .75rem; font-family: 'Cairo', sans-serif; font-weight: 700; cursor: pointer; border: none; transition: all .2s; }
-        .btn-primary { background: linear-gradient(135deg,#3b82f6,#2563eb); color: #fff; }
-        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(59,130,246,.3); }
+        .btn-primary { background: linear-gradient(135deg,#6366f1,#4f46e5); color: #fff; }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(99,102,241,.3); }
         .btn-danger { background: linear-gradient(135deg,#ef4444,#dc2626); color: #fff; }
         .btn-danger:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(239,68,68,.3); }
         .btn-success { background: linear-gradient(135deg,#22c55e,#16a34a); color: #fff; }
         .btn-success:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(34,197,94,.3); }
         .btn-outline { background: transparent; border: 2px solid rgba(148,163,184,.3); color: #94a3b8; }
-        .btn-outline:hover { border-color: #3b82f6; color: #3b82f6; }
+        .btn-outline:hover { border-color: #6366f1; color: #6366f1; }
         label { display: block; font-weight: 600; margin-bottom: .35rem; font-size: .9rem; color: #94a3b8; }
         body.light label { color: #64748b; }
         .section-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem; padding-bottom: .5rem; border-bottom: 2px solid rgba(148,163,184,.15); display: flex; align-items: center; gap: .5rem; }
         pre.sql-block { background: #1e293b; color: #a5b4fc; padding: 1rem; border-radius: .75rem; overflow-x: auto; font-size: .8rem; line-height: 1.6; direction: ltr; text-align: left; white-space: pre-wrap; word-break: break-word; max-height: 300px; overflow-y: auto; border: 1px solid rgba(148,163,184,.15); font-family: 'Courier New', monospace; }
-        body.light pre.sql-block { background: #f8fafc; color: #2563eb; }
-        .copy-btn { position: absolute; top: .5rem; left: .5rem; background: rgba(59,130,246,.2); border: none; color: #3b82f6; padding: .3rem .7rem; border-radius: .5rem; cursor: pointer; font-size: .75rem; font-family: 'Cairo', sans-serif; transition: all .2s; }
-        .copy-btn:hover { background: rgba(59,130,246,.4); }
+        body.light pre.sql-block { background: #f8fafc; color: #4f46e5; }
+        .copy-btn { position: absolute; top: .5rem; left: .5rem; background: rgba(99,102,241,.2); border: none; color: #6366f1; padding: .3rem .7rem; border-radius: .5rem; cursor: pointer; font-size: .75rem; font-family: 'Cairo', sans-serif; transition: all .2s; }
+        .copy-btn:hover { background: rgba(99,102,241,.4); }
         .sql-wrapper { position: relative; margin-top: .5rem; }
         .badge { display: inline-flex; align-items: center; gap: .3rem; padding: .15rem .65rem; border-radius: 999px; font-size: .75rem; font-weight: 700; }
-        .badge-blue { background: rgba(59,130,246,.2); color: #60a5fa; }
+        .badge-blue { background: rgba(99,102,241,.2); color: #a5b4fc; }
         .badge-green { background: rgba(34,197,94,.2); color: #4ade80; }
         .toast { position: fixed; bottom: 2rem; right: 2rem; padding: 1rem 1.5rem; border-radius: 1rem; font-weight: 700; z-index: 9999; animation: slideUp .3s ease; }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -143,14 +143,24 @@
         var icon = document.getElementById('themeIcon');
         var isLight = document.body.classList.contains('light');
         icon.className = isLight ? 'fas fa-sun' : 'fas fa-moon';
-        localStorage.setItem('dev-theme', isLight ? 'light' : 'dark');
+        localStorage.setItem('shipment-theme', isLight ? 'light' : 'dark');
     }
 
-    if (localStorage.getItem('dev-theme') === 'light') {
-        document.body.classList.remove('dark');
-        document.body.classList.add('light');
-        document.getElementById('themeIcon').className = 'fas fa-sun';
-    }
+    (function initTheme() {
+        var saved = localStorage.getItem('shipment-theme');
+        var preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var shouldBeLight = saved ? saved === 'light' : !preferDark;
+        var icon = document.getElementById('themeIcon');
+        if (shouldBeLight) {
+            document.body.classList.remove('dark');
+            document.body.classList.add('light');
+            if (icon) icon.className = 'fas fa-sun';
+        } else {
+            document.body.classList.remove('light');
+            document.body.classList.add('dark');
+            if (icon) icon.className = 'fas fa-moon';
+        }
+    })();
 
     function loadConfig() {
         try {
@@ -327,7 +337,7 @@
         var key = document.getElementById('supabaseKey').value.trim();
         var el = document.getElementById('connStatus');
         if (!url || !key) { el.innerHTML = '<span style="color:#ef4444">⚠️ يرجى إدخال الرابط والمفتاح أولاً</span>'; return; }
-        el.innerHTML = '<span style="color:#60a5fa">⏳ جاري اختبار الاتصال...</span>';
+        el.innerHTML = '<span style="color:#a5b4fc">⏳ جاري اختبار الاتصال...</span>';
         try {
             var client = window.supabase.createClient(url, key);
             var res = await client.from(document.getElementById('tableUsers').value.trim() || 'users').select('count', { count: 'exact', head: true });
@@ -367,7 +377,7 @@
 
     async function runSqlQuery() {
         var resultDiv = document.getElementById('queryResult');
-        resultDiv.innerHTML = '<span style="color:#60a5fa">⏳ جاري تنفيذ الاستعلام...</span>';
+        resultDiv.innerHTML = '<span style="color:#a5b4fc">⏳ جاري تنفيذ الاستعلام...</span>';
         try {
             var url = document.getElementById('supabaseUrl').value.trim();
             var key = document.getElementById('supabaseKey').value.trim();
@@ -400,7 +410,7 @@
             var uSample = await client.from(usersTable).select('*').limit(3);
 
             var html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem">';
-            html += '<div class="glass" style="padding:1rem;text-align:center;background:rgba(59,130,246,.1)"><div style="font-size:2rem;font-weight:800;color:#60a5fa">' + results.shipments + '</div><div style="color:#94a3b8;font-size:.85rem;font-weight:600">📦 إجمالي الشحنات</div></div>';
+            html += '<div class="glass" style="padding:1rem;text-align:center;background:rgba(99,102,241,.1)"><div style="font-size:2rem;font-weight:800;color:#a5b4fc">' + results.shipments + '</div><div style="color:#94a3b8;font-size:.85rem;font-weight:600">📦 إجمالي الشحنات</div></div>';
             html += '<div class="glass" style="padding:1rem;text-align:center;background:rgba(34,197,94,.1)"><div style="font-size:2rem;font-weight:800;color:#4ade80">' + results.users + '</div><div style="color:#94a3b8;font-size:.85rem;font-weight:600">👤 إجمالي المستخدمين</div></div>';
             html += '<div class="glass" style="padding:1rem;text-align:center;background:rgba(168,85,247,.1)"><div style="font-size:2rem;font-weight:800;color:#a78bfa">' + results.settlements + '</div><div style="color:#94a3b8;font-size:.85rem;font-weight:600">💰 التسويات</div></div>';
             html += '</div>';

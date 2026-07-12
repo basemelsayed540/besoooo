@@ -2852,9 +2852,6 @@
             flex-direction: column;
             gap: 1.5rem;
             padding-bottom: 2rem;
-            max-width: 1000px;
-            margin: 0 auto;
-            width: 100%;
         }
         .gen-stats-header {
             display: flex;
@@ -3030,12 +3027,20 @@
                 <button class="btn btn-light d-md-none me-3 py-1 px-2 border" type="button" data-bs-toggle="offcanvas"
                     data-bs-target="#mobileSidebar"><i class="fas fa-bars"></i></button>
                 <div id="navHousingInfo" class="ms-3 ps-3 border-start d-flex align-items-center gap-2"></div>
+                <div class="d-flex gap-2 me-3" id="navSectionTabs">
+                    <button class="section-tab btn btn-sm rounded-pill fw-bold px-3 active-section-tab" data-section="housing" onclick="showAdminSection('housing')"><i class="fas fa-boxes-stacked me-1"></i> تسكين الشحنات</button>
+                    <button class="section-tab btn btn-sm rounded-pill fw-bold px-3" data-section="general-stats" onclick="showAdminSection('general-stats')"><i class="fas fa-chart-pie me-1"></i> لوحة الإحصائيات العامة</button>
+                    <button class="section-tab btn btn-sm rounded-pill fw-bold px-3" data-section="stats" onclick="showAdminSection('stats')"><i class="fas fa-chart-line me-1"></i> احصائية المندوب</button>
+                    <button class="section-tab btn btn-sm rounded-pill fw-bold px-3 admin-only" data-section="users" onclick="showAdminSection('users')"><i class="fas fa-users-cog me-1"></i> إدارة الحسابات</button>
+                </div>
             </span>
             <div class="d-flex align-items-center gap-3">
                 <button onclick="openHousingChangesStatsModal()" class="btn btn-light rounded-circle shadow-sm admin-header-btn" title="احصائية التغيرات"><i
                         class="fas fa-chart-pie"></i></button>
                 <button onclick="window.open('live-map.html', '_blank')" class="btn btn-light rounded-circle shadow-sm admin-header-btn" title="خريطة المندوب المباشرة"><i
                         class="fas fa-satellite-dish"></i></button>
+                <button onclick="window.open('followup-dashboard.html', '_blank')" class="btn btn-light rounded-circle shadow-sm admin-header-btn" title="لوحة المتابعة"><i
+                        class="fas fa-list-check"></i></button>
                 <button onclick="toggleTheme()" class="btn btn-light rounded-circle shadow-sm admin-header-btn"><i
                         class="fas fa-moon"></i></button>
                 <button class="btn btn-sm btn-outline-primary rounded-pill fw-bold" onclick="openHousingQrScanner()" title="مسح QR">
@@ -3082,13 +3087,6 @@
                 <button class="btn text-start sidebar-tab text-secondary fw-bold"
                     onclick="showGeneralPerformanceReport()"><i class="fas fa-chart-simple me-2"></i><span class="btn-text"> إحصائية عامة</span></button>
                 <hr class="text-secondary opacity-25">
-                <button class="btn text-start sidebar-tab section-tab text-primary fw-bold" data-section="housing"
-                    onclick="showAdminSection('housing')"><i class="fas fa-boxes-stacked me-2"></i><span class="btn-text">تسكين الشحنات</span></button>
-                <button class="btn text-start sidebar-tab section-tab text-primary fw-bold" data-section="general-stats"
-                    onclick="showAdminSection('general-stats')"><i class="fas fa-chart-pie me-2"></i><span class="btn-text">لوحة الإحصائيات العامة</span></button>
-                <button class="btn text-start sidebar-tab section-tab text-primary fw-bold admin-only" data-section="users"
-                    onclick="showAdminSection('users')"><i class="fas fa-users-cog me-2"></i><span class="btn-text">إدارة الحسابات</span></button>
-                <hr class="text-secondary opacity-25">
                 <!-- Housing Sidebar Filter -->
                 <aside class="housing-filter-sidebar shadow-sm" id="housingSidebar" style="width:100%;min-width:0;border-radius:14px;">
                     <div class="housing-filter-sidebar-header d-flex align-items-center border-bottom px-1 py-1" style="border-color: var(--border);">
@@ -3122,6 +3120,8 @@
                         onclick="showAdminSection('housing')" data-bs-dismiss="offcanvas"><i class="fas fa-boxes-stacked me-2"></i><span class="btn-text">تسكين الشحنات</span></button>
                     <button class="btn text-start sidebar-tab section-tab text-primary fw-bold" data-section="general-stats"
                         onclick="showAdminSection('general-stats')" data-bs-dismiss="offcanvas"><i class="fas fa-chart-pie me-2"></i><span class="btn-text">لوحة الإحصائيات العامة</span></button>
+                    <button class="btn text-start sidebar-tab section-tab text-primary fw-bold" data-section="stats"
+                        onclick="showAdminSection('stats')" data-bs-dismiss="offcanvas"><i class="fas fa-chart-line me-2"></i><span class="btn-text">احصائية المندوب</span></button>
                     <button class="btn text-start sidebar-tab section-tab text-primary fw-bold admin-only" data-section="users"
                         onclick="showAdminSection('users')" data-bs-dismiss="offcanvas"><i class="fas fa-users-cog me-2"></i><span class="btn-text">إدارة الحسابات</span></button>
                     <hr class="text-secondary opacity-25">
@@ -3140,6 +3140,128 @@
         
         <!-- Main Content -->
         <div class="flex-grow-1 p-3 p-md-4" style="min-width: 0; overflow-x: hidden;">
+            <div id="section-stats" style="display: none;">
+                <div class="order-card shadow-sm border-0" style="overflow:hidden;">
+                    <div class="p-4">
+                        <!-- الفلاتر -->
+                        <div class="order-card p-4 mb-4">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold">📅 اليومية</label>
+                            <select id="filterDate" class="form-select filter-select rep-date-filter-glow"
+                                onchange="onStatsDailyFilterChange()">
+                                <option value="">--- اختر اليومية ---</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2" style="display: none;">
+                            <label class="form-label small fw-bold">📍 المنطقة</label>
+                            <div class="dropdown w-100">
+                                <button id="filterZoneBtn"
+                                    class="form-select filter-select text-start d-flex justify-content-between align-items-center"
+                                    type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                    aria-expanded="false">
+                                    <span id="filterZoneLabel" class="text-truncate">كل المناطق</span>
+                                </button>
+                                <div id="filterZoneMenu" class="dropdown-menu w-100 p-2 shadow-sm"
+                                    style="max-height: 300px; overflow-y: auto;">
+                                    <!-- Zones checkboxes will be injected here -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2" style="display: none;">
+                            <label class="form-label small fw-bold">🤝 المندوب</label>
+                            <div class="dropdown w-100">
+                                <button id="filterRepBtn"
+                                    class="form-select filter-select text-start d-flex justify-content-between align-items-center"
+                                    type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                    aria-expanded="false">
+                                    <span id="filterRepLabel" class="text-truncate">كل المناديب</span>
+                                </button>
+                                <div id="filterRepMenu" class="dropdown-menu w-100 p-2 shadow-sm"
+                                    style="max-height: 300px; overflow-y: auto;">
+                                    <!-- Reps checkboxes will be injected here -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2" style="display: none;">
+                            <label class="form-label small fw-bold">🏢 الراسل</label>
+                            <div class="dropdown w-100">
+                                <button id="filterOfficeBtn"
+                                    class="form-select filter-select text-start d-flex justify-content-between align-items-center"
+                                    type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                    aria-expanded="false">
+                                    <span id="filterOfficeLabel" class="text-truncate">كل المكاتب</span>
+                                </button>
+                                <div id="filterOfficeMenu" class="dropdown-menu w-100 p-2 shadow-sm"
+                                    style="max-height: 300px; overflow-y: auto;">
+                                    <!-- Offices checkboxes will be injected here -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2" style="display: none;">
+                            <label class="form-label small fw-bold">🔴 الحالة</label>
+                            <div class="dropdown w-100">
+                                <button id="filterStatusBtn"
+                                    class="form-select filter-select text-start d-flex justify-content-between align-items-center"
+                                    type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                    aria-expanded="false">
+                                    <span id="filterStatusLabel" class="text-truncate">كل الحالات</span>
+                                </button>
+                                <div id="filterStatusMenu" class="dropdown-menu w-100 p-2 shadow-sm"
+                                    style="max-height: 300px; overflow-y: auto;">
+                                    <!-- Status checkboxes will be injected here -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button onclick="resetFilters()"
+                                class="btn btn-outline-secondary w-100 rounded-pill py-2 fw-bold">إعادة تعيين</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="adminDashboardStatsContainer" class="toolbar-stats-cards"></div>
+
+                <div class="admin-analytics-shell">
+                    <div class="rep-analytics-grid">
+                    </div>
+
+                </div>
+
+                <div class="stats-collapsible-body">
+                        <div class="rep-leaderboards-grid">
+
+                        </div>
+                        <div class="row g-4 mt-1">
+                    <!-- أداء المناديب -->
+                    <div class="col-12">
+                        <div class="order-card p-4 shadow-sm">
+                            <h5 class="fw-bold text-primary rep-section-title-compact"><i class="fas fa-users-cog me-2"></i>تحليلات أداء
+                                المناديب</h5>
+                            <div class="rep-performance-shell">
+                                <div class="rep-performance-toolbar compact">
+                                    <div class="rep-performance-meta compact" id="repsStatsSummary">يتم تحديث البطاقات حسب الفلاتر الحالية</div>
+                                    <select id="repsStatsSort" class="rep-sort-select" onchange="handleStatsSortChange('rep', this.value)">
+                                        <option value="success_desc">الترتيب: نسبة النجاح الأعلى</option>
+                                        <option value="success_asc">الترتيب: نسبة النجاح الأقل</option>
+                                        <option value="total_desc">الترتيب: إجمالي الشحنات الأعلى</option>
+                                        <option value="amount_desc">الترتيب: المبلغ الأعلى</option>
+                                        <option value="name_asc">الترتيب: الاسم أ-ي</option>
+                                    </select>
+                                </div>
+                                <div id="repsStatsTable" class="rep-cards-grid">
+                                    <!-- Dynamic cards -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                        </div>
+                            </div>
+                        </div>
+                        </div><!-- close p-4 -->
+                    </div><!-- close outer order-card -->
+            </div>
 
             <div id="section-users" style="display: none;">
                 <!-- إدارة الحسابات -->
@@ -3981,9 +4103,9 @@
         let housingPhoneCountsCacheValue = new Map();
         const unsupportedShipmentSchemaFields = new Set();
         const HOUSING_SCANNER_BASE_URL_KEY = 'housingScannerBaseUrl';
-        const savedAdminSection = localStorage.getItem('adminActiveSection') || 'housing';
-        const validAdminSections = ['users', 'housing', 'general-stats'];
-        const initialAdminSection = validAdminSections.includes(savedAdminSection) ? savedAdminSection : 'housing';
+        const savedAdminSection = localStorage.getItem('adminActiveSection') || 'stats';
+        const validAdminSections = ['stats', 'users', 'housing', 'general-stats'];
+        const initialAdminSection = validAdminSections.includes(savedAdminSection) ? savedAdminSection : 'stats';
         const GPS_ENFORCEMENT_SYSTEM_PHONE_PREFIX = '__gps_enforcement_rep__:';
         const GPS_ENFORCEMENT_SYSTEM_EMAIL_PREFIX = 'gps-enforcement+';
 
@@ -4134,8 +4256,7 @@
                 const savedDaily = getHousingEditDateFilters()[0] || '';
                 if (savedDaily) {
                     await fetchShipments(savedDaily);
-                    const fdEl = document.getElementById('filterDate');
-                    if (fdEl) fdEl.value = savedDaily;
+                    document.getElementById('filterDate').value = savedDaily;
                 }
                 refreshDashboard();
                 initHousingScannerUi();
@@ -4193,12 +4314,12 @@
                 .on('postgres_changes', { event: '*', schema: 'public', table: CONFIG.TABLES.SHIPMENTS }, async (payload) => {
                     if (currentDailyFilter) {
                         await fetchShipments(currentDailyFilter);
-                        const activeSection = localStorage.getItem('adminActiveSection') || 'housing';
-                        if (activeSection === 'housing') {
-                            renderHousingSection();
-                            searchBulkShipments();
-                        } else if (activeSection === 'general-stats') {
-                            loadGeneralStatsSection();
+                        const activeSection = localStorage.getItem('adminActiveSection') || 'stats';
+                        if (activeSection === 'stats') {
+                            refreshDashboard();
+                        } else if (activeSection === 'housing') {
+                    renderHousingSection();
+                    searchBulkShipments();
                         }
                     }
                     console.log('تم تحديث البيانات لحظياً:', payload.new?.id || 'تغيير في الجدول');
@@ -4223,12 +4344,13 @@
                 el.style.display = 'none';
             });
 
-            const allowedSection = ['housing', 'general-stats'].includes(initialAdminSection) ? initialAdminSection : 'housing';
+            const allowedSection = ['housing', 'stats', 'general-stats'].includes(initialAdminSection) ? initialAdminSection : 'stats';
             showAdminSection(allowedSection);
         }
 
         function showAdminSection(sectionId, btnElem) {
             // Hide all sections
+            document.getElementById('section-stats').style.display = 'none';
             document.getElementById('section-users').style.display = 'none';
             document.getElementById('section-housing').style.display = 'none';
             var genStats = document.getElementById('section-general-stats');
@@ -4260,11 +4382,16 @@
             } else if (sectionId === 'general-stats') {
                 document.getElementById('navHousingInfo').style.setProperty('display', 'flex', 'important');
                 if (housingSidebar) housingSidebar.style.display = 'none';
+                if (adminSidebar) adminSidebar.classList.add('hidden-sidebar');
                 loadGeneralStatsSection();
+            } else if (sectionId === 'stats') {
+                document.getElementById('navHousingInfo').style.setProperty('display', 'flex', 'important');
+                if (housingSidebar) housingSidebar.style.display = 'none';
+                if (adminSidebar) adminSidebar.classList.add('hidden-sidebar');
             } else if (sectionId === 'users') {
                 document.getElementById('navHousingInfo').style.setProperty('display', 'flex', 'important');
                 if (housingSidebar) housingSidebar.style.display = 'none';
-                renderUsers();
+                if (adminSidebar) adminSidebar.classList.add('hidden-sidebar');
             } else {
                 document.getElementById('navHousingInfo').style.setProperty('display', 'none', 'important');
             }
@@ -4433,7 +4560,7 @@
 
         function updateFilterDropdowns(filteredData = allShipments) {
             const filters = {
-                date: document.getElementById('filterDate')?.value || '',
+                date: document.getElementById('filterDate').value,
                 zone: [],
                 rep: [],
                 office: [],
@@ -5236,7 +5363,7 @@
         };
 
         async function onStatsDailyFilterChange() {
-            const dailyVal = document.getElementById('filterDate')?.value || '';
+            const dailyVal = document.getElementById('filterDate').value;
             syncDailyFilterDropdowns(dailyVal);
             if (!dailyVal) {
                 allShipments = [];
@@ -5257,7 +5384,7 @@
 
         function refreshDashboard() {
             const filters = {
-                date: document.getElementById('filterDate')?.value || '',
+                date: document.getElementById('filterDate').value,
                 zone: [],
                 rep: [],
                 office: [],
@@ -11356,8 +11483,7 @@
             refreshDashboard();
         }
 
-        const filterDateEl = document.getElementById('filterDate');
-        if (filterDateEl) filterDateEl.addEventListener('change', (event) => {
+        document.getElementById('filterDate').addEventListener('change', (event) => {
             saveDateFilter(event.target.value);
         });
 

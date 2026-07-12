@@ -3030,6 +3030,11 @@
                 <button class="btn btn-light d-md-none me-3 py-1 px-2 border" type="button" data-bs-toggle="offcanvas"
                     data-bs-target="#mobileSidebar"><i class="fas fa-bars"></i></button>
                 <div id="navHousingInfo" class="ms-3 ps-3 border-start d-flex align-items-center gap-2"></div>
+                <div class="d-flex gap-2 me-3" id="navSectionTabs">
+                    <button class="section-tab btn btn-sm rounded-pill fw-bold px-3 active-section-tab" data-section="housing" onclick="showAdminSection('housing')"><i class="fas fa-boxes-stacked me-1"></i> تسكين الشحنات</button>
+                    <button class="section-tab btn btn-sm rounded-pill fw-bold px-3" data-section="general-stats" onclick="showAdminSection('general-stats')"><i class="fas fa-chart-pie me-1"></i> لوحة الإحصائيات العامة</button>
+                    <button class="section-tab btn btn-sm rounded-pill fw-bold px-3 admin-only" data-section="users" onclick="showAdminSection('users')"><i class="fas fa-users-cog me-1"></i> إدارة الحسابات</button>
+                </div>
             </span>
             <div class="d-flex align-items-center gap-3">
                 <button onclick="openHousingChangesStatsModal()" class="btn btn-light rounded-circle shadow-sm admin-header-btn" title="احصائية التغيرات"><i
@@ -3081,13 +3086,6 @@
                     onclick="showExportOptions()"><i class="fas fa-file-excel me-2 text-success"></i><span class="btn-text"> تصدير</span></button>
                 <button class="btn text-start sidebar-tab text-secondary fw-bold"
                     onclick="showGeneralPerformanceReport()"><i class="fas fa-chart-simple me-2"></i><span class="btn-text"> إحصائية عامة</span></button>
-                <hr class="text-secondary opacity-25">
-                <button class="btn text-start sidebar-tab section-tab text-primary fw-bold" data-section="housing"
-                    onclick="showAdminSection('housing')"><i class="fas fa-boxes-stacked me-2"></i><span class="btn-text">تسكين الشحنات</span></button>
-                <button class="btn text-start sidebar-tab section-tab text-primary fw-bold" data-section="general-stats"
-                    onclick="showAdminSection('general-stats')"><i class="fas fa-chart-pie me-2"></i><span class="btn-text">لوحة الإحصائيات العامة</span></button>
-                <button class="btn text-start sidebar-tab section-tab text-primary fw-bold admin-only" data-section="users"
-                    onclick="showAdminSection('users')"><i class="fas fa-users-cog me-2"></i><span class="btn-text">إدارة الحسابات</span></button>
                 <hr class="text-secondary opacity-25">
                 <!-- Housing Sidebar Filter -->
                 <aside class="housing-filter-sidebar shadow-sm" id="housingSidebar" style="width:100%;min-width:0;border-radius:14px;">
@@ -3981,9 +3979,9 @@
         let housingPhoneCountsCacheValue = new Map();
         const unsupportedShipmentSchemaFields = new Set();
         const HOUSING_SCANNER_BASE_URL_KEY = 'housingScannerBaseUrl';
-        const savedAdminSection = localStorage.getItem('adminActiveSection') || 'housing';
-        const validAdminSections = ['users', 'housing', 'general-stats'];
-        const initialAdminSection = validAdminSections.includes(savedAdminSection) ? savedAdminSection : 'housing';
+        const savedAdminSection = localStorage.getItem('adminActiveSection') || 'stats';
+        const validAdminSections = ['stats', 'users', 'housing', 'general-stats'];
+        const initialAdminSection = validAdminSections.includes(savedAdminSection) ? savedAdminSection : 'stats';
         const GPS_ENFORCEMENT_SYSTEM_PHONE_PREFIX = '__gps_enforcement_rep__:';
         const GPS_ENFORCEMENT_SYSTEM_EMAIL_PREFIX = 'gps-enforcement+';
 
@@ -4193,12 +4191,12 @@
                 .on('postgres_changes', { event: '*', schema: 'public', table: CONFIG.TABLES.SHIPMENTS }, async (payload) => {
                     if (currentDailyFilter) {
                         await fetchShipments(currentDailyFilter);
-                        const activeSection = localStorage.getItem('adminActiveSection') || 'housing';
-                        if (activeSection === 'housing') {
-                            renderHousingSection();
-                            searchBulkShipments();
-                        } else if (activeSection === 'general-stats') {
-                            loadGeneralStatsSection();
+                        const activeSection = localStorage.getItem('adminActiveSection') || 'stats';
+                        if (activeSection === 'stats') {
+                            refreshDashboard();
+                        } else if (activeSection === 'housing') {
+                    renderHousingSection();
+                    searchBulkShipments();
                         }
                     }
                     console.log('تم تحديث البيانات لحظياً:', payload.new?.id || 'تغيير في الجدول');
@@ -4223,7 +4221,7 @@
                 el.style.display = 'none';
             });
 
-            const allowedSection = ['housing', 'general-stats'].includes(initialAdminSection) ? initialAdminSection : 'housing';
+            const allowedSection = ['housing', 'stats', 'general-stats'].includes(initialAdminSection) ? initialAdminSection : 'stats';
             showAdminSection(allowedSection);
         }
 
@@ -4260,11 +4258,12 @@
             } else if (sectionId === 'general-stats') {
                 document.getElementById('navHousingInfo').style.setProperty('display', 'flex', 'important');
                 if (housingSidebar) housingSidebar.style.display = 'none';
+                if (adminSidebar) adminSidebar.classList.add('hidden-sidebar');
                 loadGeneralStatsSection();
             } else if (sectionId === 'users') {
                 document.getElementById('navHousingInfo').style.setProperty('display', 'flex', 'important');
                 if (housingSidebar) housingSidebar.style.display = 'none';
-                renderUsers();
+                if (adminSidebar) adminSidebar.classList.add('hidden-sidebar');
             } else {
                 document.getElementById('navHousingInfo').style.setProperty('display', 'none', 'important');
             }

@@ -2973,46 +2973,6 @@
             padding-top: 1rem;
             border-top: 1px dashed var(--border);
         }
-
-        /* ===== Navbar Mobile Responsive ===== */
-        @media (max-width: 991.98px) {
-            .navbar > .container {
-                flex-wrap: wrap;
-            }
-            .navbar > .container > .navbar-brand {
-                width: 100%;
-            }
-            #navHousingInfo {
-                display: none !important;
-            }
-            #navSectionTabs {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                flex: 1;
-                min-width: 0;
-            }
-            #navSectionTabs::-webkit-scrollbar {
-                display: none;
-            }
-            #navSectionTabs .section-tab {
-                white-space: nowrap;
-                flex-shrink: 0;
-                font-size: 0.7rem;
-                padding: 0.2rem 0.55rem;
-            }
-            .navbar > .container > div.d-flex {
-                flex-wrap: wrap;
-                gap: 6px !important;
-                width: 100%;
-                justify-content: flex-start;
-            }
-            .admin-header-btn {
-                width: 32px !important;
-                height: 32px !important;
-                font-size: 0.8rem;
-            }
-        }
     </style>
 </head>
 
@@ -3115,16 +3075,6 @@
             </div>
             <div class="offcanvas-body">
                 <div class="nav flex-column gap-2">
-                    <span class="small fw-bold text-secondary px-1 mb-1">الأقسام</span>
-                    <button class="btn text-start sidebar-tab section-tab text-primary fw-bold" data-section="housing"
-                        onclick="showAdminSection('housing')" data-bs-dismiss="offcanvas"><i class="fas fa-boxes-stacked me-2"></i><span class="btn-text">تسكين الشحنات</span></button>
-                    <button class="btn text-start sidebar-tab section-tab text-primary fw-bold" data-section="general-stats"
-                        onclick="showAdminSection('general-stats')" data-bs-dismiss="offcanvas"><i class="fas fa-chart-pie me-2"></i><span class="btn-text">لوحة الإحصائيات العامة</span></button>
-                    <button class="btn text-start sidebar-tab section-tab text-primary fw-bold" data-section="stats"
-                        onclick="showAdminSection('stats')" data-bs-dismiss="offcanvas"><i class="fas fa-chart-line me-2"></i><span class="btn-text">احصائية المندوب</span></button>
-                    <button class="btn text-start sidebar-tab section-tab text-primary fw-bold admin-only" data-section="users"
-                        onclick="showAdminSection('users')" data-bs-dismiss="offcanvas"><i class="fas fa-users-cog me-2"></i><span class="btn-text">إدارة الحسابات</span></button>
-                    <hr class="text-secondary opacity-25">
                     <button class="btn text-start sidebar-tab text-primary fw-bold" style="background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2);"
                         onclick="document.getElementById('housingExcelInput').click()"><i class="fas fa-file-import me-2 text-primary"></i><span class="btn-text"> فتح ملف</span></button>
                     <button class="btn text-start sidebar-tab text-info fw-bold" style="background:rgba(13,202,240,0.08);border:1px solid rgba(13,202,240,0.2);"

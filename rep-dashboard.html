@@ -23,6 +23,7 @@
         .stat-card .num { font-size: 1.2rem; font-weight: 800; line-height: 1.2; }
         .stat-card .label { font-size: 0.7rem; font-weight: 600; color: #64748b; letter-spacing: 0.02em; }
         .dark .stat-card .label { color: #94a3b8; }
+        .dark [id$="Breakdown"] { color: rgba(148,163,184,0.5) !important; }
         .status-stat { cursor: pointer; transition: box-shadow .3s, transform .3s, border-color .3s, background .3s; padding: 4px 2px; border-radius: 10px; }
         .status-stat .num { font-size: .75rem; }
         .status-stat .label { font-size: .5rem; white-space: nowrap; }
@@ -277,17 +278,17 @@
         <div class="stat-card status-stat" data-status="تم" onclick="clickStatusStat('تم')">
             <div class="num text-emerald-500" id="statDelivered">0</div>
             <div class="label">تم</div>
-            <div id="statDeliveredBreakdown" class="text-[0.6rem] font-medium opacity-70 mt-1 leading-tight"></div>
+            <div id="statDeliveredBreakdown" class="text-[0.6rem] font-medium mt-1 leading-tight" style="color:#64748b;">&nbsp;</div>
         </div>
         <div class="stat-card status-stat" data-status="تعديل سعر" onclick="clickStatusStat('تعديل سعر')">
             <div class="num text-purple-500" id="statPriceEdit">0</div>
             <div class="label">تعديل سعر</div>
-            <div id="statPriceEditBreakdown" class="text-[0.6rem] font-medium opacity-70 mt-1 leading-tight"></div>
+            <div id="statPriceEditBreakdown" class="text-[0.6rem] font-medium mt-1 leading-tight" style="color:#64748b;">&nbsp;</div>
         </div>
         <div class="stat-card status-stat" data-status="شحن" onclick="clickStatusStat('شحن')">
             <div class="num text-indigo-500" id="statShipped">0</div>
             <div class="label">شحن</div>
-            <div id="statShippedBreakdown" class="text-[0.6rem] font-medium opacity-70 mt-1 leading-tight"></div>
+            <div id="statShippedBreakdown" class="text-[0.6rem] font-medium mt-1 leading-tight" style="color:#64748b;">&nbsp;</div>
         </div>
         <div class="stat-card status-stat" data-status="الغاء" onclick="clickStatusStat('الغاء')">
             <div class="num text-red-500" id="statCancelled">0</div>

@@ -3164,18 +3164,25 @@
            GLASSMORPHISM: Unified stat cards with style.css tokens
            ============================================= */
         .gen-stats-card-main {
-            background: var(--bg-glass, rgba(255,255,255,0.82)) !important;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--border-color, rgba(148,163,184,0.22)) !important;
-            border-radius: var(--radius-xl, 24px) !important;
-            box-shadow: var(--shadow-card, 0 18px 45px rgba(15,23,42,0.08));
-            transition: box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+            background: var(--card-bg) !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 14px !important;
+            padding: 1.25rem;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+            transition: box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .gen-stats-card-main:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.10);
         }
         [data-bs-theme="dark"] .gen-stats-card-main {
-            background: rgba(15, 23, 42, 0.78) !important;
-            border: 1px solid rgba(148, 163, 184, 0.14) !important;
-            box-shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border) !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+        }
+        [data-bs-theme="dark"] .gen-stats-card-main:hover {
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
         }
 
         .toolbar-stat-card {
@@ -3196,35 +3203,79 @@
             border: 1px solid rgba(148, 163, 184, 0.14) !important;
         }
 
+        /* =============================================
+           GEN-STATS: Match housing-finance-card style (flat, subtle shadow)
+           ============================================= */
+        .gen-stats-card-sub {
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 14px !important;
+            padding: 6px 8px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+            transition: box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+        }
+        .gen-stats-card-sub.clickable:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.10);
+            border-color: var(--primary) !important;
+        }
+        [data-bs-theme="dark"] .gen-stats-card-sub {
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border) !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+        }
+        [data-bs-theme="dark"] .gen-stats-card-sub.clickable:hover {
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+        }
+        .gen-stats-grid-2 > div,
+        .gen-stats-grid-3 > div {
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+            transition: box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .gen-stats-grid-2 > div:hover,
+        .gen-stats-grid-3 > div:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.10);
+        }
+        [data-bs-theme="dark"] .gen-stats-grid-2 > div,
+        [data-bs-theme="dark"] .gen-stats-grid-3 > div {
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border) !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+        }
+
         .courier-item-card {
-            background: var(--bg-glass, rgba(255,255,255,0.82)) !important;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color, rgba(148,163,184,0.22)) !important;
-            border-radius: var(--radius-lg, 16px) !important;
-            box-shadow: var(--shadow-card, 0 18px 45px rgba(15,23,42,0.08));
-            transition: all 0.2s ease;
+            background: var(--card-bg) !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+            transition: box-shadow 0.25s ease, border-color 0.25s ease;
         }
         .courier-item-card:hover {
             border-color: var(--primary) !important;
-            box-shadow: var(--shadow-hover, 0 22px 55px rgba(79,70,229,0.14));
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.10);
         }
         [data-bs-theme="dark"] .courier-item-card {
-            background: rgba(15, 23, 42, 0.78) !important;
-            border: 1px solid rgba(148, 163, 184, 0.14) !important;
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border) !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
         }
 
         .stats-card-mini {
-            background: var(--bg-glass, rgba(255,255,255,0.82)) !important;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color, rgba(148,163,184,0.22)) !important;
-            border-radius: var(--radius-lg, 16px) !important;
-            box-shadow: var(--shadow-card, 0 18px 45px rgba(15,23,42,0.08));
+            background: var(--card-bg) !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
         }
         [data-bs-theme="dark"] .stats-card-mini {
-            background: rgba(15, 23, 42, 0.78) !important;
-            border: 1px solid rgba(148, 163, 184, 0.14) !important;
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border) !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
         }
 
         .gen-stats-card-sub {
@@ -3390,10 +3441,10 @@
                 <div>
                     <div class="order-card p-4 shadow-sm border-0">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h5 class="fw-bold m-0 text-primary">
+                            <h6 class="fw-bold m-0 text-primary" style="font-size:0.9rem;">
                                 <i class="fas fa-user-check me-2"></i>إدارة حسابات المناديب والراسلين
-                            </h5>
-                            <button class="btn btn-primary btn-sm rounded-pill px-4" onclick="openAddUserModal()">
+                            </h6>
+                            <button class="btn btn-primary rounded-pill px-3 py-1" style="font-size:0.75rem;" onclick="openAddUserModal()">
                                 <i class="fas fa-plus me-1"></i> إضافة حساب جديد
                             </button>
                         </div>

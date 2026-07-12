@@ -484,12 +484,21 @@
         }
     });
 
-    // Fetch all shipments (no rep filter)
+    // Fetch all shipments (no rep filter) — with pagination (Supabase default limit is 1000)
     async function loadShipments() {
         try {
-            var res = await supabaseClient.from(CONFIG.TABLES.SHIPMENTS).select('*').order('m', { ascending: false });
-            if (res.error) throw res.error;
-            allShipments = res.data || [];
+            var pageSize = 1000;
+            var from = 0;
+            var allData = [];
+            while (true) {
+                var res = await supabaseClient.from(CONFIG.TABLES.SHIPMENTS).select('*').order('m', { ascending: false }).range(from, from + pageSize - 1);
+                if (res.error) throw res.error;
+                var chunk = res.data || [];
+                allData = allData.concat(chunk);
+                if (chunk.length < pageSize) break;
+                from += pageSize;
+            }
+            allShipments = allData;
             populateFilters();
             restoreFilters();
             updateChips();

@@ -1,0 +1,1909 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://iodyohssotttmbrapgbk.supabase.co https://*.supabase.co wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="expires" content="0">
+    <title>لوحة الإدارة | نظام الشحن</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={darkMode:'class'}</script>
+    <script>(function(){try{var s=localStorage.getItem('shipment-theme');var d=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('light-forced',s==='light'||(!s&&!d));}catch(e){}})();</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css?v=3963DF0D8A">
+    <style>
+        * { font-family: 'Cairo', 'Tajawal', sans-serif; box-sizing: border-box; }
+        body { background: #f6f8fc; min-height: 100vh; font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+        body.dark { background: #020617; }
+        .glass-card { background: #fff; border-radius: 1rem; border: 1px solid rgba(148,163,184,0.15); box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+        .dark .glass-card { background: #0f172a; border-color: rgba(148,163,184,0.1); box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+
+        .stat-card { border-radius: 14px; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.04); border: 1px solid rgba(148,163,184,0.15); padding: 12px 6px; text-align: center; cursor: pointer; transition: box-shadow .2s, border-color .2s, transform .2s; }
+        .dark .stat-card { background: #0f172a; border-color: rgba(148,163,184,0.1); }
+        .stat-card:hover { transform: translateY(-1px); }
+        .stat-card.active { border-color: #22c55e; background: rgba(34, 197, 94,.08); box-shadow: 0 0 0 1px rgba(34, 197, 94,.3); }
+        .dark .stat-card.active { background: rgba(34, 197, 94,.12); border-color: #818cf8; }
+        .stat-card .num { font-size: 1.15rem; font-weight: 800; line-height: 1.2; }
+        .stat-card .label { font-size: .7rem; font-weight: 600; color: #64748b; }
+        .dark .stat-card .label { color: #94a3b8; }
+        .stat-card .breakdown { font-size: .62rem; font-weight: 700; color: #94a3b8; margin-top: 2px; }
+        #statusFilterRow .stat-card { min-height: 86px; }
+
+        .progress-bar { height: 10px; border-radius: 10px; background: #e2e8f0; overflow: hidden; }
+        .dark .progress-bar { background: #1e293b; }
+        .progress-bar .fill { height: 100%; border-radius: 10px; background: linear-gradient(135deg, #16a34a, #0ea5e9); transition: width .5s ease; }
+
+        .filter-chip { padding: 8px 12px; border-radius: 999px; border: 2px solid rgba(148,163,184,.18); background: #fff; color: #475569; font-weight: 700; font-size: .72rem; cursor: pointer; white-space: nowrap; transition: all .2s; }
+        .dark .filter-chip { background: #1e293b; color: #94a3b8; border-color: rgba(148,163,184,.12); }
+        .filter-chip.active { border-color: #22c55e; color: #22c55e; background: rgba(34, 197, 94,.1); }
+        .filter-chip:hover { border-color: #22c55e; color: #22c55e; }
+
+        .soft-input { width: 100%; min-height: 3rem; border-radius: .75rem; border: 1px solid rgba(148,163,184,.22); background: #fff; color: #0f172a; padding: .6rem .8rem; outline: none; transition: border-color .2s, box-shadow .2s; }
+        .dark .soft-input { background: #1e293b; color: #f8fafc; border-color: rgba(148,163,184,.16); }
+        .soft-input:focus { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94,.12); }
+        .soft-select { width: 100%; min-height: 3rem; border-radius: .75rem; border: 1px solid rgba(148,163,184,.22); background: #fff; color: #0f172a; padding: .4rem .6rem; outline: none; }
+        .dark .soft-select { background: #1e293b; color: #f8fafc; border-color: rgba(148,163,184,.16); }
+        .field-label { font-size: .8rem; font-weight: 800; color: #475569; margin-bottom: .3rem; display: block; }
+        .dark .field-label { color: #cbd5e1; }
+
+        .role-badge-admin { background: rgba(34, 197, 94,.14); color: #16a34a; }
+        .role-badge-rep { background: rgba(16,185,129,.14); color: #059669; }
+        .role-badge-follower { background: rgba(14,165,233,.14); color: #0284c7; }
+        .role-badge-other { background: rgba(148,163,184,.18); color: #64748b; }
+        .dark .role-badge-admin { background: rgba(34, 197, 94,.22); color: #a5b4fc; }
+        .dark .role-badge-rep { background: rgba(16,185,129,.2); color: #6ee7b7; }
+        .dark .role-badge-follower { background: rgba(14,165,233,.2); color: #7dd3fc; }
+        .dark .role-badge-other { background: rgba(148,163,184,.2); color: #94a3b8; }
+
+        .empty-state { text-align: center; padding: 40px 16px; color: #94a3b8; }
+        .sidebar-tab { display: flex; align-items: center; justify-content: center; gap: .5rem; padding: .7rem .5rem; border-radius: .9rem; font-weight: 800; font-size: .8rem; color: #64748b; cursor: pointer; white-space: nowrap; transition: all .2s; background: #fff; border: 1px solid rgba(148,163,184,0.18); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .dark .sidebar-tab { color: #94a3b8; background: #1e293b; border-color: rgba(148,163,184,0.12); }
+        .sidebar-tab:hover { background: rgba(34, 197, 94,.08); color: #22c55e; }
+        .sidebar-tab.active { background: #22c55e; color: #fff; border-color: transparent; box-shadow: 0 8px 18px rgba(34, 197, 94,.3); }
+        .icon-btn { width: 2.5rem; height: 2.5rem; min-height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white; border: 1px solid rgba(148,163,184,0.15); color: #64748b; transition: background .25s, color .25s, transform .25s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; }
+        .dark .icon-btn { background: #1e293b; border-color: rgba(148,163,184,0.12); color: #94a3b8; box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
+        .icon-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(34, 197, 94,0.15); }
+        .dark .icon-btn:hover { background: #334155; color: #e2e8f0; border-color: rgba(34, 197, 94,0.25); }
+        .toast-btn { min-height: 40px; padding: 8px 12px; border-radius: .75rem; font-weight: 800; font-size: .74rem; cursor: pointer; transition: filter .15s; }
+        .toast-btn:hover { filter: brightness(1.08); }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-thumb { background: #22c55e; border-radius: 10px; }
+        .rep-row { cursor: pointer; }
+        .rep-row:hover { background: rgba(34, 197, 94,.04); }
+        .dark .rep-row:hover { background: rgba(34, 197, 94,.08); }
+        .swal2-show,.swal2-hide{animation:none!important}.swal2-popup{transition:none!important}body.no-transitions,body.no-transitions *{transition:none!important}
+        .dark .swal2-popup { background:#1e293b!important; color:#e2e8f0!important; }
+        .dark .swal2-title { color:#f1f5f9!important; }
+        .dark .swal2-html-container { color:#cbd5e1!important; }
+        .ring-text { fill:#0f172a; }
+        .dark .ring-text { fill:#f8fafc; }
+        .bar-text { fill:#0f172a; }
+        .dark .bar-text { fill:#f8fafc; }
+        @media (max-width:420px){
+            .stat-card { padding: 10px 4px; }
+            .stat-card .num { font-size: 1rem; }
+            .stat-card .label { font-size: .6rem; }
+            .sidebar-tab { font-size: .7rem; padding: .65rem .4rem; min-width: 42px; min-height: 42px; }
+            .sidebar-tab i { font-size: 1.05rem; }
+        }
+        /* تسكين الشحنات فقط: امتداد بعرض الشاشة الكامل خارج حدود الحاوية */
+        body { overflow-x: hidden; }
+        #tab-housing {
+            width: 100vw;
+            margin-inline: calc((100% - 100vw) / 2);
+        }
+        /* القائمة المنسدلة (تعديل الحساب / تسجيل الخروج) */
+        .admin-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            min-width: 195px;
+            z-index: 40;
+            background: #fff;
+            border: 1px solid rgba(148,163,184,0.18);
+            border-radius: .9rem;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+            padding: .35rem;
+        }
+        .dark .admin-dropdown { background: #1e293b; border-color: rgba(148,163,184,0.16); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+        .admin-dropdown-item {
+            display: flex; align-items: center; gap: .6rem;
+            width: 100%; padding: .6rem .8rem;
+            border: none; background: none; cursor: pointer;
+            border-radius: .65rem;
+            font-weight: 700; font-size: .82rem;
+            color: #334155; text-align: right;
+            transition: background .15s, color .15s;
+        }
+        .dark .admin-dropdown-item { color: #e2e8f0; }
+        .admin-dropdown-item:hover { background: rgba(234,88,12,.08); color: #22c55e; }
+        .dark .admin-dropdown-item:hover { background: rgba(234,88,12,.14); color: #fdba74; }
+        .admin-dropdown-item-danger:hover { background: rgba(220,38,38,.1); color: #dc2626; }
+        .dark .admin-dropdown-item-danger:hover { background: rgba(220,38,38,.16); color: #f87171; }
+    </style>
+</head>
+<body>
+
+<div class="max-w-7xl mx-auto px-2 sm:px-4 py-3">
+    <!-- Header -->
+    <div class="flex items-center gap-2 sm:gap-3 mb-3">
+        <div class="flex items-center gap-2 min-w-0">
+            <p class="hidden" aria-hidden="true">مرحباً، <span id="adminName">...</span></p>
+        </div>
+        <div id="adminTabs" role="tablist" class="flex items-center justify-center gap-1 sm:gap-2 flex-1 min-w-0 overflow-x-auto py-1">
+            <button class="sidebar-tab shrink-0" data-tab="housing" onclick="showHousingTab()"><i class="fas fa-boxes-stacked"></i><span class="hidden sm:inline">تسكين الشحنات</span></button>
+            <button class="sidebar-tab active shrink-0" data-tab="overview" onclick="switchTab('overview')"><i class="fas fa-chart-pie"></i><span class="hidden sm:inline">إحصائيات</span></button>
+            <button class="sidebar-tab shrink-0" data-tab="accounts" onclick="switchTab('accounts')"><i class="fas fa-users"></i><span class="hidden sm:inline">حسابات</span></button>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+            <button onclick="adminRefresh()" class="icon-btn" title="تحديث البيانات"><i class="fas fa-sync-alt" id="refreshIcon"></i></button>
+            <button onclick="toggleTheme()" class="icon-btn" title="الوضع الليلي"><i id="themeIcon" class="fas fa-moon"></i></button>
+            <div class="relative" id="adminMenuWrap">
+                <button onclick="toggleAdminMenu()" class="icon-btn" title="القائمة" id="adminMenuBtn"><i class="fas fa-bars"></i></button>
+                <div id="adminDropdown" class="hidden admin-dropdown">
+                    <button type="button" onclick="adminSelfEdit()" class="admin-dropdown-item"><i class="fas fa-user-pen"></i> تعديل الحساب</button>
+                    <button type="button" onclick="logout()" class="admin-dropdown-item admin-dropdown-item-danger"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingBlock" class="glass-card p-6 flex flex-col items-center justify-center" style="min-height:280px">
+        <div class="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-3"></div>
+        <p class="font-bold text-slate-500 dark:text-slate-400 text-sm">جاري تحميل البيانات...</p>
+    </div>
+
+    <!-- ============ OVERVIEW ============ -->
+    <div id="tab-overview" class="hidden space-y-4">
+        <div class="glass-card p-3 space-y-3">
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+                <select id="ovDailySelect" class="soft-input flex-1 min-w-[160px]" aria-label="اختيار اليومية"><option value="">اختر اليومية</option></select>
+                <select id="ovSenderSelect" class="soft-input flex-1 min-w-[160px]" aria-label="اختيار الراسل" disabled><option value="">اختر اليومية أولاً</option></select>
+                <button onclick="toggleArchiveMode()" id="archiveModeBtn" class="filter-chip"><i class="fas fa-archive ml-1"></i> نشطة</button>
+            </div>
+            <div id="ovArchivedDailyPicker" class="glass-card p-3 space-y-2" style="display:none;">
+                <div class="flex items-center justify-between gap-2 mb-1">
+                    <span class="text-xs font-bold text-slate-400" id="ovArchivedDailyCount">لم يتم اختيار أي يومية</span>
+                    <button type="button" onclick="clearArchivedDailySelection()" class="filter-chip">إلغاء التحديد</button>
+                </div>
+                <div id="ovArchivedDailyMonths" class="space-y-3 max-h-[360px] overflow-y-auto"></div>
+            </div>
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="statusFilterRow"></div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="ovCardsGrid">
+            <div class="stat-card"><div class="num text-indigo-600 dark:text-indigo-400" id="ovTotalCount">0</div><div class="label">إجمالي الشحنات</div></div>
+            <div class="stat-card"><div class="num text-amber-600 dark:text-amber-400" id="ovNoRepCount">0</div><div class="label">شحنات بدون مندوب</div><div class="breakdown" id="ovNoRepBreakdown"></div></div>
+            <div class="stat-card"><div class="num text-emerald-600 dark:text-emerald-400" id="ovPaid">0</div><div class="label">المدفوع</div></div>
+            <div class="stat-card"><div class="num text-sky-600 dark:text-sky-400" id="ovCommission">0</div><div class="label">عمولة المندوب</div></div>
+            <div class="stat-card col-span-2"><div class="num text-rose-600 dark:text-rose-400" id="ovSupply">0</div><div class="label">التوريد (المدفوع − العمولة)</div><div class="breakdown" id="ovSupplyBreakdown"></div></div>
+        </div>
+
+                <div class="glass-card p-4" id="ovRingsCard">
+            <h3 class="font-extrabold text-slate-800 dark:text-white mb-3 flex items-center gap-2 text-sm"><i class="fas fa-chart-pie text-indigo-500"></i> نسب الحالات</h3>
+            <div class="grid grid-cols-3 gap-3" id="archiveRings"></div>
+        </div>
+
+        <div class="glass-card p-4" id="ovDailyChartCard">
+            <h3 class="font-extrabold text-slate-800 dark:text-white mb-1 flex items-center gap-2 text-sm"><i class="fas fa-chart-bar text-emerald-500"></i> الشحنات اليومية</h3>
+            <p class="text-xs text-slate-400 font-semibold mb-3" id="barChartLabel"></p>
+            <div id="barChartContainer" class="w-full overflow-x-auto"></div>
+        </div>
+<div id="ovDailyPlaceholder" class="glass-card p-6 text-center" style="display:none;">
+            <i class="fas fa-calendar-day text-4xl text-slate-300 dark:text-slate-600 mb-3" style="display:block;"></i>
+            <p class="font-extrabold text-slate-700 dark:text-white mb-1">اختر اليومية أولاً</p>
+            <p class="text-xs font-bold text-slate-400">لا تظهر تفاصيل الإحصائيات إلا بعد اختيار يومية من القائمة بالأعلى</p>
+        </div>
+
+        <div class="glass-card p-3" id="ovRepsCard">
+            <div class="flex items-center justify-between mb-3 gap-2">
+                <h3 class="font-extrabold text-slate-800 dark:text-white flex items-center gap-2 text-sm" id="ovRepsTitle"><i class="fas fa-users text-indigo-500"></i> المناديب</h3>
+            <button onclick="toggleRepViewMode()" id="repViewToggleBtn" class="filter-chip"><i class="fas fa-right-left ml-1"></i> عرض حسب الراسل</button>
+                <span class="text-xs font-bold text-slate-400" id="ovRepCount">0 مندوب</span>
+            </div>
+            <div class="flex gap-2 items-center mb-3">
+                <div class="relative flex-1 min-w-0">
+                    <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="repSearchInput" class="soft-input pr-9" placeholder="بحث بالاسم..." autocomplete="off">
+                </div>
+                <select id="repSortSelect" class="soft-select w-auto" aria-label="ترتيب المناديب">
+                    <option value="default">بلا ترتيب</option>
+                    <option value="pct-asc">نسبة تسليم ↑</option>
+                    <option value="pct-desc">نسبة تسليم ↓</option>
+                    <option value="count-asc">عدد شحنات ↑</option>
+                    <option value="count-desc">عدد شحنات ↓</option>
+                </select>
+            </div>
+            <div id="repListContainer"></div>
+        </div>
+    </div>
+
+    <!-- ============ ACCOUNTS ============ -->
+    <div id="tab-accounts" class="hidden space-y-4">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+            <button onclick="openUserForm()" class="btn-primary flex items-center gap-2 text-sm min-h-[44px]"><i class="fas fa-user-plus"></i> إضافة حساب جديد</button>
+            <button onclick="reloadUsers()" class="icon-btn" title="تحديث المستخدمين"><i class="fas fa-sync-alt"></i></button>
+        </div>
+
+        <div class="glass-card p-3 space-y-3">
+            <div class="relative">
+                <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="userSearchInput" class="soft-input pr-9" placeholder="ابحث بالاسم / الموبايل / الإيميل..." autocomplete="off">
+            </div>
+            <div class="flex gap-2 overflow-x-auto pb-1" id="userRoleFilterRow"></div>
+        </div>
+
+        <div id="userListContainer"></div>
+        <div id="senderUnifyCard" class="glass-card p-4 space-y-3 hidden">
+            <h3 class="font-extrabold text-slate-800 dark:text-white flex items-center gap-2 text-sm">
+                <i class="fas fa-code-branch text-indigo-500"></i> توحيد أسماء الراسلين
+            </h3>
+            <p class="text-xs text-slate-400 font-semibold">
+                يكتشف القيم المتطابقة شكلاً (مسافات، همزة، حالة أحرف) ويعرضها للمراجعة قبل الدمج.
+            </p>
+            <button onclick="analyzeSenderGroups()" id="senderAnalyzeBtn" class="btn-primary text-sm min-h-[44px] flex items-center gap-2">
+                <i class="fas fa-search"></i> تحليل أسماء الراسلين
+            </button>
+            <div id="senderGroupsStatus" class="text-xs font-bold text-slate-400"></div>
+            <div id="senderGroupsList" class="space-y-2 max-h-[420px] overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- ============ HOUSING (iframe) ============ -->
+    <div id="tab-housing" class="hidden">
+        <iframe id="housingFrame" title="تسكين الشحنات" src="about:blank"
+                style="width:100%;height:calc(100vh - 100px);min-height:540px;border:0;border-radius:.9rem;background:transparent;display:block;"></iframe>
+    </div>
+</div>
+
+<!-- ============ USER MODAL ============ -->
+<div id="userModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-3 overflow-y-auto">
+    <div class="w-full max-w-lg auth-modal rounded-[1.5rem] p-5 sm:p-6 relative my-6">
+        <button type="button" id="closeUserModal" class="absolute top-3 left-3 w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2 class="text-xl font-extrabold text-slate-800 dark:text-white mb-4" id="userModalTitle">إضافة حساب جديد</h2>
+        <form id="userForm" class="grid grid-cols-1 gap-3">
+            <div>
+                <label class="field-label">الاسم <span class="text-red-500">*</span></label>
+                <input type="text" id="ufName" class="soft-input" placeholder="الاسم بالكامل">
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="field-label">رقم الموبايل <span class="text-red-500">*</span></label>
+                    <input type="tel" id="ufPhone" class="soft-input" placeholder="01xxxxxxxxx" inputmode="tel">
+                </div>
+                <div>
+                    <label class="field-label">البريد الإلكتروني</label>
+                    <input type="email" id="ufEmail" class="soft-input" placeholder="name@example.com">
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="field-label" id="ufPassLabel">كلمة المرور <span class="text-red-500">*</span></label>
+                    <input type="password" id="ufPassword" class="soft-input" placeholder="6 أحرف على الأقل" autocomplete="new-password">
+                </div>
+                <div>
+                    <label class="field-label">الصلاحية</label>
+                    <select id="ufRole" class="soft-select">
+                        <option value="rep">مندوب</option>
+                        <option value="follower">متابعة</option>
+                        <option value="admin">مدير</option>
+                    </select>
+                </div>
+            </div>
+            <label class="flex items-center gap-2 cursor-pointer mt-1">
+                <input type="checkbox" id="ufApproved" class="w-5 h-5 rounded text-indigo-600 border-slate-300 focus:ring-indigo-500">
+                <span class="text-sm font-bold text-slate-600 dark:text-slate-300">تفعيل الحساب مباشرة</span>
+            </label>
+            <div class="flex gap-2 mt-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button type="submit" id="ufSubmitBtn" class="btn-primary flex-1 flex items-center justify-center gap-2 text-sm min-h-[44px]">
+                    <span id="ufSubmitLabel">إنشاء الحساب</span>
+                </button>
+                <button type="button" id="ufCancelBtn" class="px-5 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-bold text-sm min-h-[44px]" style="background:none">إلغاء</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============ ADMIN SELF-EDIT MODAL (تعديل حساب المدير فقط) ============ -->
+<div id="adminSelfEditModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-3 overflow-y-auto">
+    <div class="w-full max-w-lg glass-card rounded-[1.5rem] p-5 sm:p-6 relative m-4">
+        <button type="button" id="closeAdminSelfEditModal" class="absolute top-3 left-3 w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2 class="text-xl font-extrabold text-slate-800 dark:text-white mb-4">تعديل حسابي</h2>
+        <p class="text-xs font-bold text-slate-400 dark:text-slate-500 mb-4">هذه البيانات تخص حساب المدير الحالي فقط.</p>
+        <form id="adminSelfEditForm" class="grid grid-cols-1 gap-3">
+            <div>
+                <label class="field-label">الاسم الكامل <span class="text-red-500">*</span></label>
+                <input type="text" id="aseName" class="soft-input" placeholder="الاسم بالكامل">
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="field-label">رقم الموبايل <span class="text-red-500">*</span></label>
+                    <input type="tel" id="asePhone" class="soft-input" placeholder="01xxxxxxxxx" inputmode="tel">
+                </div>
+                <div>
+                    <label class="field-label">البريد الإلكتروني</label>
+                    <input type="email" id="aseEmail" class="soft-input" placeholder="name@example.com">
+                </div>
+            </div>
+            <div>
+                <label class="field-label">كلمة المرور</label>
+                <input type="password" id="asePassword" class="soft-input" placeholder="اتركها فارغة إذا لم ترد التغيير" autocomplete="new-password">
+            </div>
+            <div class="flex gap-2 mt-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button type="submit" id="aseSubmitBtn" class="btn-primary flex-1 flex items-center justify-center gap-2 text-sm min-h-[44px]">
+                    <span id="aseSubmitLabel">حفظ التعديلات</span>
+                </button>
+                <button type="button" id="aseCancelBtn" class="px-5 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-bold text-sm min-h-[44px]" style="background:none">إلغاء</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="assets/js/shipment-config.js?v=F8F696B76F"></script>
+<script>
+    (function () {
+        'use strict';
+
+        var BUILD = '2';
+        if (!window.location.href.includes('_t=')) {
+            localStorage.setItem('admin-version', BUILD);
+            window.location.href = window.location.href.split('?')[0] + '?_t=' + BUILD;
+        }
+
+        // ---------- Globals ----------
+        var THEME_KEY = 'shipment-theme';
+        var CACHE_KEY = 'admin_data_cache_v3';
+        var CACHE_TTL = 60 * 1000; // دقيقة واحدة
+
+        var supabaseClient = getSharedSupabaseClient();
+        var currentUser = readStoredUser();
+
+        // ---------- Auth guard: مدير فقط ----------
+        if (!currentUser || currentUser.role !== 'admin') {
+            clearStoredUserSession('login.html');
+            return;
+        }
+
+        // ---------- State ----------
+        var state = {
+            shipments: [],
+            users: [],
+            currentDaily: '',
+            currentDailies: [], // تُستخدم فقط في وضع مؤرشفة (اختيار متعدد)
+            currentSender: '',
+            overviewMode: 'active', // active | archived
+            statusFilter: '',
+            repSearch: '',
+            repSort: 'default',
+            repViewMode: 'rep', // rep | sender
+            userSearch: '',
+            userRoleFilter: 'all',
+            editingUserId: null,
+            archiveMonth: ''
+        };
+
+        // ---------- Helpers ----------
+        function $(id) { return document.getElementById(id); }
+
+        function esc(v) {
+            return String(v == null ? '' : v)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function enNum(s) {
+            return String(s).replace(/[٠-٩]/g, function (d) { return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); });
+        }
+
+        function money(n) {
+            var num = parseFloat(n) || 0;
+            return enNum(Math.round(num).toLocaleString('en-US'));
+        }
+
+        function isDoneStatusList(st) {
+            return ['تم', 'تم التسليم', 'شحن', 'تعديل سعر', 'استلم جزئي'].indexOf(st) !== -1;
+        }
+
+        function isArchived(s) { return !!String(s['ارشيف'] || '').trim(); }
+
+        function toast(icon, message) {
+            Swal.fire({ icon: icon, title: message, toast: true, position: 'top-end', showConfirmButton: false, timer: 2200 });
+        }
+
+        function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+        function debounce(fn, wait) {
+            var t;
+            return function () {
+                var ctx = this, args = arguments;
+                clearTimeout(t);
+                t = setTimeout(function () { fn.apply(ctx, args); }, wait);
+            };
+        }
+
+        function emptyState(content) {
+            return '<div class="empty-state">' + content + '</div>';
+        }
+
+        function readStoredUser() {
+            try { return JSON.parse(localStorage.getItem('user')) || null; } catch (e) { return null; }
+        }
+
+        function formatDate(iso) {
+            if (!iso) return '—';
+            var d = new Date(iso);
+            if (isNaN(d.getTime())) return '—';
+            return enNum(d.getDate()) + '/' + enNum(d.getMonth() + 1) + '/' + enNum(d.getFullYear());
+        }
+
+        // يحوّل الأرقام العربية/الفارسية ثم يبحث في عدة صيغ تواريخ
+        function parseDate(s) {
+            if (s == null) return null;
+            s = String(s)
+                .replace(/[٠-٩]/g, function (d) { return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); })
+                .replace(/[۰-۹]/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d); })
+                .trim();
+            if (!s) return null;
+
+            // رقم تسلسلي من Excel (شائع جداً مع البيانات المرفوعة من ملفات Excel)
+            if (/^\d{5,6}$/.test(s)) {
+                var excelEpoch = Date.UTC(1899, 11, 30);
+                var e = new Date(excelEpoch + parseInt(s, 10) * 86400000);
+                if (!isNaN(e.getTime()) && e.getUTCFullYear() > 1990 && e.getUTCFullYear() < 2100) {
+                    return { y: e.getUTCFullYear(), m: e.getUTCMonth() + 1, d: e.getUTCDate() };
+                }
+            }
+
+            var m;
+            // ISO: YYYY-MM-DD (مع أو بدون وقت)
+            m = s.match(/(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/);
+            if (m) return { y: parseInt(m[1], 10), m: parseInt(m[2], 10), d: parseInt(m[3], 10) };
+            // يوم/شهر/سنة
+            m = s.match(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})/);
+            if (m) return { y: parseInt(m[3], 10), m: parseInt(m[2], 10), d: parseInt(m[1], 10) };
+            // اسم شهر عربي: "15 يناير 2024"
+            m = s.match(/(\d{1,2})\s*([\u0600-\u06FF\u0660-\u0669]+)\s*(\d{4})/);
+            if (m) {
+                var names = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+                var mi = names.indexOf(m[2]);
+                if (mi !== -1) return { y: parseInt(m[3], 10), m: mi + 1, d: parseInt(m[1], 10) };
+            }
+            return null;
+        }
+
+        function locMonth(m) {
+            var names = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+            return names[(m - 1 + 12) % 12];
+        }
+
+        // ---------- Theme ----------
+        (function initTheme() {
+            var saved = localStorage.getItem(THEME_KEY);
+            var preferDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (saved ? saved === 'dark' : preferDark) {
+                document.body.classList.add('dark');
+                setThemeIcon(true);
+            }
+        })();
+
+        function setThemeIcon(isDark) {
+            var el = $('themeIcon');
+            if (el) el.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        window.toggleTheme = function () {
+            document.body.classList.add('no-transitions');
+            var isDark = document.body.classList.toggle('dark');
+            localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+            document.documentElement.classList.toggle('light-forced', !isDark);
+            setThemeIcon(isDark);
+            requestAnimationFrame(function () { document.body.classList.remove('no-transitions'); });
+            /* مزامنة فورية لتبويب تسكين الشحنات (iframe) */
+            try {
+                var fr = document.getElementById('housingFrame');
+                if (fr && fr.contentWindow) fr.contentWindow.postMessage({ type: 'shipment-theme', theme: isDark ? 'dark' : 'light' }, '*');
+            } catch (e) { }
+        };
+        /* استقبال تغيير الوضع القادم من صفحة تسكين الشحنات */
+        window.addEventListener('message', function (ev) {
+            var d = ev && ev.data;
+            if (!d || d.type !== 'shipment-theme') return;
+            var isDark = d.theme === 'dark';
+            if (document.body.classList.contains('dark') === isDark) return;
+            document.body.classList.add('no-transitions');
+            document.body.classList.toggle('dark', isDark);
+            localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+            document.documentElement.classList.toggle('light-forced', !isDark);
+            setThemeIcon(isDark);
+            requestAnimationFrame(function () { document.body.classList.remove('no-transitions'); });
+        });
+        window.logout = function () { clearStoredUserSession('login.html'); };
+
+        // ---------- Tabs ----------
+        window.switchTab = function (tab) {
+            ['overview', 'accounts', 'housing'].forEach(function (k) {
+                var p = $('tab-' + k);
+                if (p) p.classList.add('hidden');
+            });
+            var panel = $('tab-' + tab);
+            if (panel) panel.classList.remove('hidden');
+            document.querySelectorAll('#adminTabs .sidebar-tab').forEach(function (b) {
+                b.classList.toggle('active', b.dataset.tab === tab);
+            });
+            try { localStorage.setItem('adminDashboardTab', tab); } catch (e) { }
+            if (tab === 'overview') renderOverview();
+            if (tab === 'accounts') renderUserList();
+
+        };
+
+        // ---------- Cache ----------
+        function loadCache() {
+            try {
+                var raw = sessionStorage.getItem(CACHE_KEY);
+                if (!raw) return null;
+                var o = JSON.parse(raw);
+                if (!o || !o.t || (Date.now() - o.t) > CACHE_TTL) return null;
+                return o;
+            } catch (e) { return null; }
+        }
+        function writeCache(shipments, users) {
+            try {
+                sessionStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), shipments: shipments, users: users }));
+            } catch (e) { /* مساحة التخزين قد تكون ممتلئة */ }
+        }
+
+        // ---------- Data loading ----------
+        // NOTE: الـ RPC (get_daily_summary / get_archive_summary / get_archive_daily_summary
+        // / get_archive_rep_summary) لم تُوثّق بنيتها في المشروع، لذلك لا نستدعيها الآن.
+        // TODO: بعد توثيق بنية بياناتها، أضِف استدعاءها هنا مع fallback للتجميع client-side.
+
+        // جلب كامل جدول بتقسيمه لصفحات متوازية (PostgREST يقتطع عند 1000 صف افتراضيًا).
+        const FETCH_PAGE_SIZE = 1000;
+        async function fetchAllFromTable(tableName) {
+            var first = await supabaseClient
+                .from(tableName)
+                .select('*', { count: 'exact' })
+                .order('id', { ascending: false })
+                .range(0, FETCH_PAGE_SIZE - 1);
+            if (first.error) throw first.error;
+
+            var all = first.data || [];
+            var total = first.count;
+
+            // لو الـ count مش متاح (قيود أمان)، استمر بالتتابع حتى صفحة فارغة
+            if (total == null) {
+                var from = FETCH_PAGE_SIZE;
+                var more = true;
+                while (more) {
+                    var r = await supabaseClient
+                        .from(tableName)
+                        .select('*')
+                        .order('id', { ascending: false })
+                        .range(from, from + FETCH_PAGE_SIZE - 1);
+                    if (r.error) throw r.error;
+                    var d = r.data || [];
+                    all = all.concat(d);
+                    if (d.length < FETCH_PAGE_SIZE) more = false;
+                    from += FETCH_PAGE_SIZE;
+                }
+                return all;
+            }
+
+            var pages = Math.ceil(total / FETCH_PAGE_SIZE);
+            if (pages <= 1) return all;
+
+            var tasks = [];
+            for (var p = 1; p < pages; p++) {
+                (function (rangeFrom, rangeTo) {
+                    tasks.push(
+                        supabaseClient
+                            .from(tableName)
+                            .select('*')
+                            .order('id', { ascending: false })
+                            .range(rangeFrom, rangeTo)
+                            .then(function (resp) {
+                                if (resp.error) throw resp.error;
+                                return resp.data || [];
+                            })
+                    );
+                })(p * FETCH_PAGE_SIZE, Math.min(p * FETCH_PAGE_SIZE + FETCH_PAGE_SIZE - 1, total - 1));
+            }
+            var results = await Promise.all(tasks);
+            results.forEach(function (arr) { all = all.concat(arr); });
+            return all;
+        }
+
+        async function loadFromServer() {
+            var results = await loadRawFromTables();
+            if (results) {
+                state.shipments = results.shipments || [];
+                state.users = results.users || [];
+                writeCache(state.shipments, state.users);
+                return true;
+            }
+            return false;
+        }
+
+        async function loadRawFromTables() {
+            var shipments = [], users = [];
+            try {
+                shipments = await fetchAllFromTable(CONFIG.TABLES.SHIPMENTS);
+            } catch (e) {
+                console.error('فشل جلب الشحنات:', e);
+                shipments = [];
+            }
+            try {
+                users = await fetchAllFromTable(CONFIG.TABLES.USERS);
+            } catch (e) {
+                console.error('فشل جلب المستخدمين:', e);
+                users = [];
+            }
+            if (!shipments.length && !users.length) return null;
+            return { shipments: shipments, users: users };
+        }
+
+        async function ensureData(force) {
+            if (!force) {
+                var cached = loadCache();
+                if (cached) {
+                    state.shipments = cached.shipments || [];
+                    state.users = cached.users || [];
+                    hideLoading();
+                    renderAll();
+                    // تحديث في الخلفية دون تجميد الواجهة
+                    refreshInBackground();
+                    return;
+                }
+            }
+            showLoading();
+            try {
+                var ok = await loadFromServer();
+                hideLoading();
+                if (!ok) throw new Error('تعذر تحميل البيانات. تحقق من الاتصال.');
+                renderAll();
+            } catch (err) {
+                hideLoading();
+                toast('error', err.message || 'تعذر تحميل البيانات. تحقق من الاتصال.');
+                showEmptyFallback();
+            }
+        }
+
+        async function refreshInBackground() {
+            try {
+                await loadFromServer();
+                renderAll();
+            } catch (err) { /* نشيط: نُبقي البيانات القديمة */ }
+        }
+
+        window.adminRefresh = function () {
+            var icon = $('refreshIcon');
+            if (icon) icon.className = 'fas fa-spinner fa-spin';
+            refreshInBackground().then(function () {
+                if (icon) icon.className = 'fas fa-sync-alt';
+            });
+        };
+
+        function showLoading() {
+            var b = $('loadingBlock');
+            b.classList.remove('hidden');
+            b.innerHTML = '<div class="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-3"></div><p class="font-bold text-slate-500 dark:text-slate-400 text-sm">جاري تحميل البيانات...</p>';
+        }
+        function hideLoading() { $('loadingBlock').classList.add('hidden'); }
+        function showEmptyFallback() {
+            var b = $('loadingBlock');
+            b.classList.remove('hidden');
+            b.innerHTML = '<div class="text-center text-slate-400 py-8 space-y-2"><i class="fas fa-wifi-slash text-5xl opacity-50 mb-2"></i><p class="font-bold">تعذر الاتصال بالخادم</p><p class="text-sm">يرجى التحقق من الاتصال بالإنترنت والمحاولة مجدداً</p><button onclick="location.reload()" class="btn-primary mt-3">إعادة المحاولة</button></div>';
+        }
+
+        // =================================================================
+        // 1) OVERVIEW
+        // =================================================================
+        function getOverviewRows() {
+            var rows = state.shipments;
+            if (state.overviewMode === 'active') rows = rows.filter(function (s) { return !isArchived(s); });
+            else if (state.overviewMode === 'archived') rows = rows.filter(function (s) { return isArchived(s); });
+            if (state.overviewMode === 'archived') {
+                if (state.currentDailies.length) {
+                    rows = rows.filter(function (s) { return state.currentDailies.indexOf(s['اليومية'] || '') !== -1; });
+                }
+            } else if (state.currentDaily) {
+                var dv = state.currentDaily;
+                rows = rows.filter(function (s) { return (s['اليومية'] || '') === dv; });
+            }
+            if (state.currentSender) {
+                var sv = state.currentSender;
+                rows = rows.filter(function (s) { return (s['الراسل'] || '') === sv; });
+            }
+            if (state.statusFilter) {
+                var sf = state.statusFilter;
+                rows = rows.filter(function (s) { return (s['الحالة'] || '') === sf || (sf === 'الغاء' && (s['الحالة'] || '') === 'إلغاء'); });
+            }
+            return rows;
+        }
+
+        // حساب مجمّع واحد لكل دورة رسم (يتجنب تكرار التكرار)
+        function computeOverview() {
+            var rows = getOverviewRows();
+            var agg = {
+                total: rows.length,
+                noRep: 0,
+                paid: 0,
+                commission: 0,
+                supply: 0,
+                collectedCount: 0,
+                statuses: { 'قيد التوصيل': 0, 'تم': 0, 'تعديل سعر': 0, 'شحن': 0, 'الغاء': 0, 'مؤجل': 0 },
+                statusPaid: { 'تم': 0, 'تعديل سعر': 0, 'شحن': 0 }
+            };
+            var doneStatuses = ['تم', 'تم التسليم', 'شحن', 'تعديل سعر', 'استلم جزئي'];
+
+            rows.forEach(function (s) {
+                var st = s['الحالة'] || '';
+                if (st === 'إلغاء') st = 'الغاء';
+                if (Object.prototype.hasOwnProperty.call(agg.statuses, st)) agg.statuses[st]++;
+
+                if (!(s['المندوب'] || '').trim()) agg.noRep++;
+
+                if (doneStatuses.indexOf(st) !== -1) {
+                    var paid = parseFloat(s['المدفوع']) || 0;
+                    var comm = parseFloat(s['عمولة المندوب']) || 0;
+                    agg.paid += paid;
+                    agg.commission += comm;
+                    agg.collectedCount++;
+                    if (st === 'تم' || st === 'تعديل سعر' || st === 'شحن') agg.statusPaid[st] += paid;
+                }
+            });
+            agg.supply = agg.paid - agg.commission;
+            return agg;
+        }
+
+        function renderStatusRow(agg) {
+            var row = $('statusFilterRow');
+            var items = [
+                { key: 'قيد التوصيل', label: 'قيد التوصيل', color: 'text-amber-500', paid: null },
+                { key: 'تم', label: 'تم', color: 'text-emerald-500', paid: agg.statusPaid['تم'] },
+                { key: 'تعديل سعر', label: 'تعديل سعر', color: 'text-purple-500', paid: agg.statusPaid['تعديل سعر'] },
+                { key: 'شحن', label: 'شحن', color: 'text-indigo-500', paid: agg.statusPaid['شحن'] },
+                { key: 'الغاء', label: 'الغاء', color: 'text-red-500', paid: null },
+                { key: 'مؤجل', label: 'مؤجل', color: 'text-orange-500', paid: null }
+            ];
+            row.innerHTML = items.map(function (c) {
+                var active = state.statusFilter === c.key ? ' active' : '';
+                var paidHtml = c.paid != null && c.paid > 0 ? '<div class="breakdown">المدفوع: ' + money(c.paid) + '</div>' : '';
+                return '<button data-key="' + c.key + '" class="stat-card' + active + '" role="button"><div class="num ' + c.color + '">' + enNum(agg.statuses[c.key]) + '</div><div class="label">' + c.label + '</div>' + paidHtml + '</button>';
+            }).join('');
+        }
+
+        function populateDailyOptions() {
+            var select = $('ovDailySelect');
+            /* تجميع لكل يومية: الإجمالي وعدد المؤرشف — اليومية مؤرشفة فقط لو كل شحناتها مؤرشفة */
+            var totals = {}, archs = {};
+            state.shipments.forEach(function (s) {
+                var d = (s['اليومية'] || '').trim();
+                if (!d) return;
+                totals[d] = (totals[d] || 0) + 1;
+                if (isArchived(s)) archs[d] = (archs[d] || 0) + 1;
+            });
+            var days = Object.keys(totals).filter(function (d) {
+                var fullyArchived = archs[d] === totals[d];
+                return state.overviewMode === 'archived' ? fullyArchived : !fullyArchived;
+            });
+            days.sort(function (a, b) {
+                var da = parseDate(a), db = parseDate(b);
+                if (!da && !db) return 0;
+                if (!da) return 1;
+                if (!db) return -1;
+                return (da.y - db.y) || (da.m - db.m) || (da.d - db.d);
+            });
+            select.innerHTML = '<option value="">اختر اليومية</option>' + days.map(function (d) {
+                return '<option value="' + esc(d) + '">' + esc(d) + ' (' + enNum(totals[d]) + ')</option>';
+            }).join('');
+            select.value = state.currentDaily;
+        }
+
+        function populateArchivedDailyMonths() {
+            var container = $('ovArchivedDailyMonths');
+            if (!container) return;
+
+            /* نفس منطق تحديد "اليومية المؤرشفة بالكامل" المستخدم في populateDailyOptions */
+            var totals = {}, archs = {};
+            state.shipments.forEach(function (s) {
+                var d = (s['اليومية'] || '').trim();
+                if (!d) return;
+                totals[d] = (totals[d] || 0) + 1;
+                if (isArchived(s)) archs[d] = (archs[d] || 0) + 1;
+            });
+            var archivedDays = Object.keys(totals).filter(function (d) { return archs[d] === totals[d]; });
+
+            /* تجميع اليوميات حسب الشهر باستخدام parseDate و locMonth الموجودتين بالفعل */
+            var months = {}; // key: "YYYY-MM" -> { label, days: [{name, count}] }
+            archivedDays.forEach(function (d) {
+                var dt = parseDate(d);
+                if (!dt) return;
+                var key = dt.y + '-' + (dt.m < 10 ? '0' : '') + dt.m;
+                if (!months[key]) months[key] = { label: locMonth(dt.m) + ' ' + enNum(dt.y), days: [] };
+                months[key].days.push({ name: d, count: totals[d], dayNum: dt.d });
+            });
+
+            var monthKeys = Object.keys(months).sort().reverse();
+            if (!monthKeys.length) {
+                container.innerHTML = '<p class="text-xs font-bold text-slate-400 text-center py-4">لا توجد يوميات مؤرشفة</p>';
+                return;
+            }
+
+            container.innerHTML = monthKeys.map(function (mk) {
+                var month = months[mk];
+                month.days.sort(function (a, b) {
+                    if (b.dayNum !== a.dayNum) return b.dayNum - a.dayNum;
+                    return a.name.localeCompare(b.name, 'ar');
+                });
+                var allChecked = month.days.every(function (dd) { return state.currentDailies.indexOf(dd.name) !== -1; });
+                var daysHtml = month.days.map(function (dd) {
+                    var checked = state.currentDailies.indexOf(dd.name) !== -1 ? 'checked' : '';
+                    return '<label class="flex items-center justify-between gap-2 px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 text-xs font-bold cursor-pointer">'
+                        + '<span class="flex items-center gap-2"><input type="checkbox" class="archived-daily-checkbox" data-daily="' + esc(dd.name) + '" ' + checked + '> ' + esc(dd.name) + '</span>'
+                        + '<span class="text-slate-400 shrink-0">' + enNum(dd.count) + '</span></label>';
+                }).join('');
+                return '<div class="border border-slate-100 dark:border-slate-800 rounded-xl p-2">'
+                    + '<label class="flex items-center gap-2 font-extrabold text-slate-700 dark:text-white text-sm mb-2 cursor-pointer">'
+                    + '<input type="checkbox" class="archived-month-checkbox" data-month="' + mk + '" ' + (allChecked ? 'checked' : '') + '> ' + month.label
+                    + '</label>'
+                    + '<div class="space-y-1 pr-1">' + daysHtml + '</div></div>';
+            }).join('');
+
+            updateArchivedDailyCountLabel();
+        }
+
+        function updateArchivedDailyCountLabel() {
+            var el = $('ovArchivedDailyCount');
+            if (!el) return;
+            var n = state.currentDailies.length;
+            el.textContent = n ? (enNum(n) + ' يومية محددة') : 'لم يتم اختيار أي يومية';
+        }
+
+        window.clearArchivedDailySelection = function () {
+            state.currentDailies = [];
+            state.currentSender = '';
+            populateArchivedDailyMonths();
+            populateSenderOptions();
+            renderOverview();
+        };
+
+        function populateSenderOptions() {
+            var select = $('ovSenderSelect');
+            if (!select) return;
+            var hasSelection = state.overviewMode === 'archived' ? state.currentDailies.length > 0 : !!state.currentDaily;
+            if (!hasSelection) {
+                select.disabled = true;
+                select.innerHTML = '<option value="">اختر اليومية أولاً</option>';
+                return;
+            }
+            /* أسماء الراسل الموجودة فعليًا داخل نفس اليومية المختارة ونفس وضع نشطة/مؤرشفة الحالي */
+            var rows = state.shipments.filter(function (s) {
+                if (state.overviewMode === 'active' && isArchived(s)) return false;
+                if (state.overviewMode === 'archived' && !isArchived(s)) return false;
+                if (state.overviewMode === 'archived') return state.currentDailies.indexOf(s['اليومية'] || '') !== -1;
+                return (s['اليومية'] || '') === state.currentDaily;
+            });
+            var counts = {};
+            rows.forEach(function (s) {
+                var name = (s['الراسل'] || '').trim();
+                if (!name) return;
+                counts[name] = (counts[name] || 0) + 1;
+            });
+            var senders = Object.keys(counts).sort(function (a, b) { return a.localeCompare(b, 'ar'); });
+
+            /* لو الراسل المختار سابقًا لم يعد موجودًا ضمن اليومية الجديدة، صفّر الاختيار */
+            if (senders.indexOf(state.currentSender) === -1) state.currentSender = '';
+
+            select.disabled = false;
+            select.innerHTML = '<option value="">كل الراسلين</option>' + senders.map(function (name) {
+                return '<option value="' + esc(name) + '">' + esc(name) + ' (' + enNum(counts[name]) + ')</option>';
+            }).join('');
+            select.value = state.currentSender;
+        }
+
+        function renderRepList() {
+            var container = $('repListContainer');
+            var rows = getOverviewRows();
+
+            // تجميع واحد لكل دورة رسم
+            var repMap = {};
+            rows.forEach(function (s) {
+                var groupField = state.repViewMode === 'sender' ? 'الراسل' : 'المندوب';
+                var name = String(s[groupField] || '').trim();
+                if (!repMap[name]) {
+                    repMap[name] = { name: name, total: 0, delivered: 0, paid: 0, commission: 0, supply: 0, statuses: {} };
+                }
+                var r = repMap[name];
+                r.total++;
+                var st = s['الحالة'] || '';
+                r.statuses[st] = (r.statuses[st] || 0) + 1;
+                if (st === 'تم' || st === 'تم التسليم') r.delivered++;
+                if (isDoneStatusList(st)) {
+                    r.paid += parseFloat(s['المدفوع']) || 0;
+                    r.commission += parseFloat(s['عمولة المندوب']) || 0;
+                }
+            });
+
+            var list = Object.keys(repMap).map(function (k) { return repMap[k]; });
+
+            // بحث
+            if (state.repSearch) {
+                var re = new RegExp(escapeRegExp(state.repSearch), 'i');
+                list = list.filter(function (r) { return re.test(r.name); });
+            }
+            // ترتيب
+            function pctOf(r) { return r.total ? Math.round((r.delivered / r.total) * 100) : 0; }
+            if (state.repSort === 'pct-asc') list.sort(function (a, b) { return pctOf(a) - pctOf(b); });
+            else if (state.repSort === 'pct-desc') list.sort(function (a, b) { return pctOf(b) - pctOf(a); });
+            else if (state.repSort === 'count-asc') list.sort(function (a, b) { return a.total - b.total; });
+            else if (state.repSort === 'count-desc') list.sort(function (a, b) { return b.total - a.total; });
+
+            var unitLabel = state.repViewMode === 'sender' ? 'راسل' : 'مندوب';
+            $('ovRepCount').textContent = enNum(list.length) + ' ' + unitLabel;
+            if (!list.length) {
+                var emptyLabel = state.repViewMode === 'sender' ? 'لا يوجد راسلون' : 'لا يوجد مندوبون';
+                container.innerHTML = emptyState("<i class='fas fa-users-slash text-4xl mb-3 opacity-40'></i><p class='font-bold'>" + emptyLabel + "</p>");
+                return;
+            }
+
+            var order = ['قيد التوصيل', 'تم', 'تعديل سعر', 'شحن', 'الغاء', 'مؤجل'];
+            container.innerHTML = list.map(function (r) {
+                r.supply = r.paid - r.commission;
+                var pctVal = pctOf(r);
+                var isOpen = !!state.expandedReps[r.name];
+                var pctColor = pctVal >= 50 ? 'text-emerald-600 dark:text-emerald-400' : pctVal >= 20 ? 'text-amber-600 dark:text-amber-400' : 'text-red-500';
+                var details = isOpen ? '<div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">'
+                    + '<div class="grid grid-cols-3 gap-1.5">' + order.map(function (st) {
+                        var c = r.statuses[st] || 0;
+                        var color = st === 'تم' ? 'text-emerald-500' : st === 'الغاء' ? 'text-red-500' : st === 'مؤجل' ? 'text-orange-500' : st === 'تعديل سعر' ? 'text-purple-500' : st === 'شحن' ? 'text-indigo-500' : 'text-amber-500';
+                        return '<div class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60 text-center"><div class="text-sm font-extrabold ' + color + '">' + enNum(c) + '</div><div class="text-[10px] font-bold text-slate-400">' + st + '</div></div>';
+                    }).join('') + '</div>'
+                    + '</div>' : '';
+
+                return '<div class="rep-row border-b border-slate-100 dark:border-slate-800/60 py-3" data-name="' + esc(r.name) + '">'
+                    + '<div class="flex items-center justify-between gap-2">'
+                    + '<div class="flex items-center gap-2 min-w-0">'
+                    + '<div class="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-white font-extrabold text-sm shrink-0">' + esc(r.name.charAt(0)) + '</div>'
+                    + '<div class="min-w-0">'
+                    + '<div class="font-extrabold text-slate-800 dark:text-white text-sm truncate">' + esc(r.name) + '</div>'
+                    + '<div class="text-[11px] font-bold text-slate-400">' + enNum(r.total) + ' شحنة • ' + enNum(r.delivered) + ' تم</div>'
+                    + '</div></div>'
+                    + '<div class="flex items-center gap-1.5 shrink-0">'
+                    + '<span class="text-xs font-extrabold ' + pctColor + '">' + enNum(pctVal) + '%</span>'
+                    + '<i class="fas fa-chevron-down text-slate-400 text-xs transition-transform ' + (isOpen ? 'rotate-180' : '') + '"></i>'
+                    + '</div></div>'
+                    + '<div class="progress-bar mt-2"><div class="fill" style="width:' + pctVal + '%"></div></div>'
+                    + '<div class="grid grid-cols-3 gap-1.5 mt-2">'
+                    + '<div class="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-center"><div class="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">' + money(r.paid) + '</div><div class="text-[10px] font-bold text-slate-400">المدفوع</div></div>'
+                    + '<div class="p-2 rounded-lg bg-sky-50 dark:bg-sky-900/20 text-center"><div class="text-sm font-extrabold text-sky-600 dark:text-sky-400">' + money(r.commission) + '</div><div class="text-[10px] font-bold text-slate-400">العمولة</div></div>'
+                    + '<div class="p-2 rounded-lg bg-rose-50 dark:bg-rose-900/20 text-center"><div class="text-sm font-extrabold text-rose-600 dark:text-rose-400">' + money(r.supply) + '</div><div class="text-[10px] font-bold text-slate-400">التوريد</div></div>'
+                    + '</div>'
+                    + details
+                    + '</div>';
+            }).join('');
+        }
+
+        /* عدّاد اليوميات لوضع النشطة/المؤرشفة (نفس منطق قسم احصائيات housing) */
+        function computeOverviewDailyModeCounts() {
+            var map = {};
+            state.shipments.forEach(function (s) {
+                var d = (s['اليومية'] || '').trim();
+                if (!d) return;
+                if (!map[d]) map[d] = { total: 0, arch: 0 };
+                map[d].total++;
+                if (isArchived(s)) map[d].arch++;
+            });
+            var active = 0, archived = 0;
+            Object.keys(map).forEach(function (d) {
+                if (map[d].arch === map[d].total) archived++; else active++;
+            });
+            return { active: active, archived: archived };
+        }
+        function updateArchiveModeBtnCount() {
+            var btn = $('archiveModeBtn');
+            if (!btn) return;
+            var c = computeOverviewDailyModeCounts();
+            var isArch = state.overviewMode === 'archived';
+            var n = isArch ? c.archived : c.active;
+            var label = isArch ? 'مؤرشفة' : 'نشطة';
+            var icon = isArch ? 'fa-box-open' : 'fa-archive';
+            btn.innerHTML = '<i class="fas ' + icon + ' ml-1"></i> ' + label + ' (' + enNum(n) + ')';
+        }
+
+        function renderOverview() {
+            populateDailyOptions();
+            if (state.overviewMode === 'archived') populateArchivedDailyMonths();
+            populateSenderOptions();
+            updateArchiveModeBtnCount();
+            /* بوابة العرض: لا تفاصيل قبل اختيار يومية */
+            var noDaily = state.overviewMode === 'archived' ? !state.currentDailies.length : !state.currentDaily;
+            ['ovCardsGrid', 'statusFilterRow', 'ovRingsCard', 'ovDailyChartCard', 'ovRepsCard'].forEach(function (id) {
+                var el = $(id);
+                if (el) el.style.display = noDaily ? 'none' : '';
+            });
+            var ph = $('ovDailyPlaceholder');
+            if (ph) ph.style.display = noDaily ? '' : 'none';
+            if (noDaily) return;
+
+            var agg = computeOverview();
+            $('ovTotalCount').textContent = enNum(agg.total);
+            $('ovNoRepCount').textContent = enNum(agg.noRep);
+            $('ovNoRepBreakdown').textContent = agg.noRep ? 'مطلوب إسناد مندوب' : 'لا يوجد';
+            $('ovPaid').textContent = money(agg.paid);
+            $('ovCommission').textContent = money(agg.commission);
+            $('ovSupply').textContent = money(agg.supply);
+            $('ovSupplyBreakdown').textContent = 'شحنات محصّلة: ' + enNum(agg.collectedCount);
+            renderStatusRow(agg);
+            var overviewRows = getOverviewRows();
+            renderArchiveRings(overviewRows, overviewRows.length);
+            renderBarChart(overviewRows);
+            renderRepList();
+        }
+
+        // Delegation: فلاتر الحالات
+        $('statusFilterRow').addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-key]');
+            if (!btn) return;
+            var key = btn.getAttribute('data-key');
+            state.statusFilter = state.statusFilter === key ? '' : key;
+            renderOverview();
+        });
+
+        // Delegation: توسيع/طي المندوب
+        $('repListContainer').addEventListener('click', function (e) {
+            var el = e.target.closest('.rep-row');
+            if (!el) return;
+            var name = el.getAttribute('data-name');
+            state.expandedReps[name] = !state.expandedReps[name];
+            renderRepList();
+        });
+
+        // Debounce: بحث المناديب
+        $('repSearchInput').addEventListener('input', debounce(function () {
+            state.repSearch = $('repSearchInput').value.trim();
+            renderRepList();
+        }, 280));
+
+        $('repSortSelect').addEventListener('change', function () {
+            state.repSort = this.value;
+            renderRepList();
+        });
+
+        $('ovDailySelect').addEventListener('change', function () {
+            state.currentDaily = this.value;
+            state.currentSender = ''; // قائمة الراسل تعتمد على اليومية، فيجب تصفيرها عند تغييرها
+            renderOverview();
+        });
+
+        $('ovSenderSelect').addEventListener('change', function () {
+            state.currentSender = this.value;
+            renderOverview();
+        });
+
+        $('ovArchivedDailyMonths').addEventListener('change', function (e) {
+            var target = e.target;
+            if (target.classList.contains('archived-daily-checkbox')) {
+                var daily = target.getAttribute('data-daily');
+                var idx = state.currentDailies.indexOf(daily);
+                if (target.checked && idx === -1) state.currentDailies.push(daily);
+                else if (!target.checked && idx !== -1) state.currentDailies.splice(idx, 1);
+                state.currentSender = '';
+                populateArchivedDailyMonths();
+                populateSenderOptions();
+                renderOverview();
+            } else if (target.classList.contains('archived-month-checkbox')) {
+                var monthKey = target.getAttribute('data-month');
+                var monthContainer = target.closest('.border');
+                var checkboxesInMonth = monthContainer.querySelectorAll('.archived-daily-checkbox');
+                checkboxesInMonth.forEach(function (cb) {
+                    var daily = cb.getAttribute('data-daily');
+                    var idx = state.currentDailies.indexOf(daily);
+                    if (target.checked && idx === -1) state.currentDailies.push(daily);
+                    else if (!target.checked && idx !== -1) state.currentDailies.splice(idx, 1);
+                });
+                state.currentSender = '';
+                populateArchivedDailyMonths();
+                populateSenderOptions();
+                renderOverview();
+            }
+        });
+
+        window.toggleArchiveMode = function () {
+            state.overviewMode = state.overviewMode === 'active' ? 'archived' : 'active';
+            state.currentDaily = '';
+            state.currentDailies = [];
+            state.currentSender = '';
+            $('ovDailySelect').value = '';
+            state.statusFilter = '';
+            var isArchived = state.overviewMode === 'archived';
+            $('ovDailySelect').style.display = isArchived ? 'none' : '';
+            $('ovArchivedDailyPicker').style.display = isArchived ? '' : 'none';
+            if (isArchived) populateArchivedDailyMonths();
+            renderOverview();
+        };
+        window.toggleRepViewMode = function () {
+            state.repViewMode = state.repViewMode === 'rep' ? 'sender' : 'rep';
+            state.expandedReps = {};
+            var btn = document.getElementById('repViewToggleBtn');
+            if (btn) {
+                btn.innerHTML = state.repViewMode === 'sender' ? '<i class="fas fa-users ml-1"></i> عرض حسب المندوب' : '<i class="fas fa-right-left ml-1"></i> عرض حسب الراسل';
+            }
+            var titleEl = document.getElementById('ovRepsTitle');
+            if (titleEl) {
+                titleEl.innerHTML = state.repViewMode === 'sender'
+                    ? '<i class="fas fa-truck-fast text-indigo-500"></i> الراسلين'
+                    : '<i class="fas fa-users text-indigo-500"></i> المناديب';
+            }
+            renderRepList();
+            renderOverview();
+        };
+
+
+        // =================================================================
+        // 2) ACCOUNTS
+        // =================================================================
+        function roleBadge(role) {
+            var map = { admin: 'مدير', rep: 'مندوب', follower: 'متابعة' };
+            var label = map[role] || (role || 'غير معروف');
+            var cls = role === 'admin' ? 'role-badge-admin' : role === 'rep' ? 'role-badge-rep' : role === 'follower' ? 'role-badge-follower' : 'role-badge-other';
+            return '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold ' + cls + '">' + esc(label) + '</span>';
+        }
+
+        function renderUserFilters() {
+            var counts = { all: state.users.length, admin: 0, rep: 0, follower: 0 };
+            state.users.forEach(function (u) {
+                if (Object.prototype.hasOwnProperty.call(counts, u.role)) counts[u.role]++;
+            });
+            var tabs = [
+                { key: 'all', label: 'الكل (' + enNum(counts.all) + ')' },
+                { key: 'admin', label: 'مدراء (' + enNum(counts.admin) + ')' },
+                { key: 'rep', label: 'مناديب (' + enNum(counts.rep) + ')' },
+                { key: 'follower', label: 'متابعة (' + enNum(counts.follower) + ')' }
+            ];
+            $('userRoleFilterRow').innerHTML = tabs.map(function (t) {
+                return '<button data-role="' + t.key + '" class="filter-chip' + (state.userRoleFilter === t.key ? ' active' : '') + '">' + t.label + '</button>';
+            }).join('');
+        }
+
+        function renderUserList() {
+            renderUserFilters();
+            var list = state.users.slice();
+            var q = state.userSearch.trim().toLowerCase();
+            if (q) {
+                list = list.filter(function (u) {
+                    return String(u.full_name || u.username || '').toLowerCase().indexOf(q) !== -1
+                        || String(u.phone || '').toLowerCase().indexOf(q) !== -1
+                        || String(u.email || '').toLowerCase().indexOf(q) !== -1;
+                });
+            }
+            if (state.userRoleFilter !== 'all') {
+                list = list.filter(function (u) { return u.role === state.userRoleFilter; });
+            }
+
+            var container = $('userListContainer');
+            if (!list.length) {
+                container.innerHTML = emptyState('<i class="fas fa-users text-4xl mb-3 opacity-40"></i><p class="font-bold">لا يوجد مستخدمون مطابقون</p>');
+                return;
+            }
+
+            var meId = String(currentUser.id);
+            container.innerHTML = list.map(function (u) {
+                var isMe = String(u.id) === meId;
+                var approved = !!u.approved;
+                var actBtn = isMe ? '' : '<button data-action="toggle-active" data-id="' + esc(u.id) + '" class="toast-btn" style="color:' + (approved ? '#dc2626' : '#059669') + ';background:' + (approved ? 'rgba(220,38,38,.08)' : 'rgba(5,150,105,.08)') + ';border:1px solid ' + (approved ? 'rgba(220,38,38,.22)' : 'rgba(5,150,105,.22)') + '"><i class="fas ' + (approved ? 'fa-pause' : 'fa-play') + ' ml-1"></i>' + (approved ? 'إيقاف' : 'تفعيل') + '</button>';
+                var editBtn = isMe ? '' : '<button data-action="edit-user" data-id="' + esc(u.id) + '" class="toast-btn text-indigo-600" style="background:rgba(34, 197, 94,.08);border:1px solid rgba(34, 197, 94,.22)"><i class="fas fa-edit ml-1"></i>تعديل</button>';
+                var delBtn = isMe ? '' : '<button data-action="delete-user" data-id="' + esc(u.id) + '" class="toast-btn text-red-600" style="background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.22)"><i class="fas fa-trash ml-1"></i>حذف</button>';
+
+                return '<div class="glass-card p-3 flex flex-wrap items-center gap-3 mb-2">'
+                    + '<div class="flex items-center gap-3 flex-1 min-w-0">'
+                    + '<div class="w-11 h-11 rounded-full flex items-center justify-center text-white font-extrabold text-base shrink-0 ' + (isMe ? 'bg-gradient-to-br from-rose-500 to-pink-500' : 'bg-gradient-to-br from-indigo-500 to-sky-500') + '">' + esc(String(u.full_name || u.username || '؟').charAt(0)) + '</div>'
+                    + '<div class="min-w-0">'
+                    + '<div class="flex items-center gap-1.5 flex-wrap">'
+                    + '<span class="font-extrabold text-slate-800 dark:text-white text-sm truncate">' + esc(u.full_name || u.username || '-') + '</span>'
+                    + roleBadge(u.role)
+                    + (isMe ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-500 text-white">أنت</span>' : '')
+                    + (approved ? '' : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-300">موقوف</span>')
+                    + '</div>'
+                    + '<div class="text-[11px] font-bold text-slate-400 mt-0.5 truncate">' + esc(u.phone || '-') + (u.email ? ' • ' + esc(u.email) : '') + '</div>'
+                    + '<div class="text-[10px] font-semibold text-slate-400 mt-0.5">تاريخ الإنشاء: ' + formatDate(u.created_at) + '</div>'
+                    + '</div></div>'
+                    + '<div class="flex items-center gap-1.5 w-full sm:w-auto">' + actBtn + editBtn + delBtn + '</div>'
+                    + '</div>';
+            }).join('');
+        }
+
+        // Delegation: فلاتر الصلاحيات
+        $('userRoleFilterRow').addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-role]');
+            if (!btn) return;
+            state.userRoleFilter = btn.getAttribute('data-role');
+            renderUserList();
+        });
+
+        // Delegation: أزرار المستخدمين
+        $('userListContainer').addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-action]');
+            if (!btn) return;
+            var action = btn.getAttribute('data-action');
+            var uid = btn.getAttribute('data-id');
+            if (action === 'toggle-active') toggleUserActive(uid);
+            else if (action === 'edit-user') openUserForm(uid);
+            else if (action === 'delete-user') confirmDeleteUser(uid);
+        });
+
+        // Debounce: بحث المستخدمين
+        $('userSearchInput').addEventListener('input', debounce(function () {
+            state.userSearch = $('userSearchInput').value;
+            renderUserList();
+        }, 280));
+
+        async function toggleUserActive(id) {
+            var u = state.users.find(function (x) { return String(x.id) === String(id); });
+            if (!u) return toast('error', 'المستخدم غير موجود');
+            if (String(u.id) === String(currentUser.id)) return toast('warning', 'لا يمكن إيقاف حسابك الخاص');
+            var next = !u.approved;
+            var prev = u.approved;
+            u.approved = next; // تحديث تفاؤلي
+            renderUserList();
+            try {
+                var res = await supabaseClient.from(CONFIG.TABLES.USERS).update({ approved: next }).eq('id', u.id);
+                if (res.error) throw res.error;
+                toast('success', next ? 'تم تفعيل الحساب' : 'تم إيقاف الحساب');
+            } catch (err) {
+                u.approved = prev; // إرجاع للحالة الأصلية عند الفشل
+                renderUserList();
+                toast('error', err.message || 'فشل تحديث حالة الحساب');
+            }
+        }
+
+        function confirmDeleteUser(id) {
+            var u = state.users.find(function (x) { return String(x.id) === String(id); });
+            if (!u) return toast('error', 'المستخدم غير موجود');
+            if (String(u.id) === String(currentUser.id)) return toast('error', 'لا يمكنك حذف حسابك الخاص');
+            var name = u.full_name || u.username || '';
+            Swal.fire({
+                title: 'تأكيد الحذف',
+                html: 'هل أنت متأكد من حذف <b>' + esc(name) + '</b>؟<br><span class="text-xs text-slate-400">لا يمكن التراجع عن هذه العملية.</span>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، حذف',
+                cancelButtonText: 'إلغاء',
+                confirmButtonColor: '#dc2626'
+            }).then(async function (res) {
+                if (!res.isConfirmed) return;
+                try {
+                    var r = await supabaseClient.from(CONFIG.TABLES.USERS).delete().eq('id', u.id);
+                    if (r.error) throw r.error;
+                    state.users = state.users.filter(function (x) { return String(x.id) !== String(id); });
+                    renderUserList();
+                    toast('success', 'تم حذف المستخدم');
+                } catch (err) {
+                    toast('error', err.message || 'فشل حذف المستخدم');
+                }
+            });
+        }
+
+        // ---------- User form modal ----------
+        function resetUserForm() {
+            $('ufName').value = '';
+            $('ufPhone').value = '';
+            $('ufEmail').value = '';
+            $('ufPassword').value = '';
+            $('ufRole').value = 'rep';
+            $('ufApproved').checked = true;
+            $('userModalTitle').textContent = 'إضافة حساب جديد';
+            $('ufSubmitLabel').textContent = 'إنشاء الحساب';
+            $('ufPassLabel').innerHTML = 'كلمة المرور <span class="text-red-500">*</span>';
+            $('ufPassword').placeholder = '6 أحرف على الأقل';
+            state.editingUserId = null;
+        }
+
+        function openUserForm(id) {
+            resetUserForm();
+            if (id) {
+                var u = state.users.find(function (x) { return String(x.id) === String(id); });
+                if (u) {
+                    state.editingUserId = u.id;
+                    $('userModalTitle').textContent = 'تعديل الحساب';
+                    $('ufSubmitLabel').textContent = 'حفظ التعديلات';
+                    $('ufName').value = u.full_name || u.username || '';
+                    $('ufPhone').value = u.phone || '';
+                    $('ufEmail').value = u.email || '';
+                    $('ufRole').value = u.role || 'rep';
+                    $('ufApproved').checked = !!u.approved;
+                    $('ufPassLabel').innerHTML = 'كلمة المرور <span class="text-slate-400 text-[10px]">(اتركها فارغة للإبقاء)</span>';
+                    $('ufPassword').placeholder = 'اتركها فارغة إذا لم ترد التغيير';
+                }
+            }
+            toggleUserModal(true);
+        }
+        window.openUserForm = openUserForm;
+
+        function toggleUserModal(show) {
+            var m = $('userModal');
+            m.classList.toggle('hidden', !show);
+            m.classList.toggle('flex', show);
+            document.body.classList.toggle('overflow-hidden', show);
+        }
+
+        $('closeUserModal').addEventListener('click', function () { toggleUserModal(false); resetUserForm(); });
+        $('ufCancelBtn').addEventListener('click', function () { toggleUserModal(false); resetUserForm(); });
+        $('userModal').addEventListener('click', function (e) {
+            if (e.target === $('userModal')) { toggleUserModal(false); resetUserForm(); }
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && !$('userModal').classList.contains('hidden')) toggleUserModal(false);
+        });
+
+        $('userForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            var name = $('ufName').value.trim();
+            var phone = $('ufPhone').value.trim();
+            var email = $('ufEmail').value.trim();
+            var password = $('ufPassword').value;
+            var role = $('ufRole').value;
+            var approved = $('ufApproved').checked;
+            var isEdit = !!state.editingUserId;
+
+            if (!name) return Swal.fire({ icon: 'warning', title: 'بيانات ناقصة', text: 'يرجى إدخال الاسم' });
+            if (!phone) return Swal.fire({ icon: 'warning', title: 'بيانات ناقصة', text: 'يرجى إدخال رقم الموبايل' });
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                return Swal.fire({ icon: 'warning', title: 'بريد غير صحيح', text: 'يرجى إدخال بريد إلكتروني صحيح' });
+            }
+            if (!isEdit && !password) {
+                return Swal.fire({ icon: 'warning', title: 'بيانات ناقصة', text: 'كلمة المرور مطلوبة عند إنشاء حساب جديد' });
+            }
+            if (password && password.length < 6) {
+                return Swal.fire({ icon: 'warning', title: 'كلمة مرور ضعيفة', text: 'كلمة المرور يجب ألا تقل عن 6 أحرف' });
+            }
+
+            var submitBtn = $('ufSubmitBtn');
+            submitBtn.disabled = true;
+            $('ufSubmitLabel').textContent = 'جاري الحفظ...';
+
+            try {
+                if (isEdit) {
+                    var payload = { username: name, phone: phone, email: email || null, role: role, approved: approved };
+                    if (password) payload.password = await hashPasswordIfNeeded(password);
+                    var res = await supabaseClient.from(CONFIG.TABLES.USERS).update(payload).eq('id', state.editingUserId);
+                    if (res.error) throw res.error;
+                    toast('success', 'تم تحديث الحساب');
+                } else {
+                    var newHash = await hashPassword(password);
+                    var payload = { username: name, phone: phone, email: email || null, role: role, approved: approved, password: newHash };
+                    var res = await supabaseClient.from(CONFIG.TABLES.USERS).insert([payload]).select().single();
+                    if (res.error) throw res.error;
+                    toast('success', 'تم إنشاء الحساب');
+                }
+                await refreshUsersOnly();
+                toggleUserModal(false);
+                resetUserForm();
+                renderUserList();
+            } catch (err) {
+                toast('error', err.message || 'فشل حفظ الحساب');
+            } finally {
+                submitBtn.disabled = false;
+                $('ufSubmitLabel').textContent = isEdit ? 'حفظ التعديلات' : 'إنشاء الحساب';
+            }
+        });
+
+        async function refreshUsersOnly() {
+            try {
+                var u = await supabaseClient.from(CONFIG.TABLES.USERS).select('*').order('id', { ascending: false });
+                if (!u.error) state.users = u.data || [];
+            } catch (e) {}
+        }
+
+        window.reloadUsers = async function () {
+            await refreshUsersOnly();
+            renderUserList();
+            toast('success', 'تم تحديث المستخدمين');
+        };
+
+        // =================================================================
+        // 3) ARCHIVE
+        // =================================================================
+        function getArchiveShipments() {
+            return state.shipments.filter(function (s) { return isArchived(s); });
+        }
+
+        function renderRing(count, total, label, color) {
+            var f = total ? Math.round((count / total) * 100) : 0;
+            var size = 130;
+            var r = (size / 2) - 10;
+            var circ = 2 * Math.PI * r;
+            var off = circ * (1 - f / 100);
+            return '<svg viewBox="0 0 ' + size + ' ' + size + '" class="w-full max-w-[130px] mx-auto" role="img" aria-label="' + esc(label) + '">'
+                + '<circle cx="' + size / 2 + '" cy="' + size / 2 + '" r="' + r + '" fill="none" stroke="rgba(148,163,184,.15)" stroke-width="12"/>'
+                + '<circle cx="' + size / 2 + '" cy="' + size / 2 + '" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="12" stroke-linecap="round" stroke-dasharray="' + circ + '" stroke-dashoffset="' + off + '" transform="rotate(-90 ' + size / 2 + ' ' + size / 2 + ')"/>'
+                + '<text x="50%" y="55%" text-anchor="middle" class="ring-text" font-size="26" font-weight="900">' + enNum(f) + '%</text>'
+                + '</svg>';
+        }
+
+        function renderArchive() {
+            buildArchiveMonthOptions();
+        }
+
+        // فلترة موحّدة تُستخدم من جميع عناصر تبويب المؤرشف (الحلقات/الشارت/المناديب/اليوميات)
+        function filterArchiveByMonth(rows) {
+            if (!state.archiveMonth) return rows;
+            var parts = state.archiveMonth.split('-');
+            var y = parseInt(parts[0], 10);
+            var m = parseInt(parts[1], 10);
+            return rows.filter(function (s) {
+                var d = parseDate(s['اليومية']);
+                return !!d && d.y === y && d.m === m;
+            });
+        }
+
+        // بناء خيارات الشهور من المؤرشف فعليًا، من الأحدث للأقدم مع عدد شحنات كل شهر
+        function buildArchiveMonthOptions() {
+            var select = $('archiveMonthSelect');
+            if (!select) return;
+            var counts = {}, labels = {};
+            getArchiveShipments().forEach(function (s) {
+                var d = parseDate(s['اليومية']);
+                if (!d) return;
+                var key = d.y + '-' + (d.m < 10 ? '0' : '') + d.m;
+                counts[key] = (counts[key] || 0) + 1;
+                labels[key] = locMonth(d.m) + ' ' + enNum(d.y);
+            });
+            var keys = Object.keys(counts).sort().reverse();
+            var html = '<option value="">كل الشهور</option>';
+            keys.forEach(function (k) {
+                html += '<option value="' + k + '">' + labels[k] + ' (' + enNum(counts[k]) + ')</option>';
+            });
+            var prev = select.value;
+            select.innerHTML = html;
+            // الإبقاء على الاختيار الحالي إن كان لا يزال موجودًا في البيانات
+            var resolvedValue = state.archiveMonth && counts[state.archiveMonth] ? state.archiveMonth : (keys.indexOf(prev) !== -1 ? prev : '');
+            select.value = resolvedValue;
+            // مزامنة الحالة مع القيمة المعروضة فعليًا حتى تعتمد الفلترة على نفس الشهر الظاهر
+            state.archiveMonth = resolvedValue;
+        }
+
+        function renderArchiveRings(arch, total) {
+            var c = { 'تم': 0, 'شحن': 0, 'الغاء': 0 };
+            arch.forEach(function (s) {
+                var st = s['الحالة'] || '';
+                if (st === 'تم' || st === 'تم التسليم') c['تم']++;
+                else if (st === 'شحن') c['شحن']++;
+                else if (st === 'الغاء' || st === 'إلغاء') c['الغاء']++;
+            });
+
+            var ringCfg = [
+                { label: 'تم', count: c['تم'], color: '#10b981' },
+                { label: 'شحن', count: c['شحن'], color: '#3b82f6' },
+                { label: 'الغاء', count: c['الغاء'], color: '#ef4444' }
+            ];
+            $('archiveRings').innerHTML = ringCfg.map(function (r) {
+                return '<div class="text-center">' + renderRing(r.count, total, r.label, r.color)
+                    + '<div class="mt-1 font-bold text-xs text-slate-500 dark:text-slate-400">' + r.label + ' <span class="text-slate-400">(' + enNum(r.count) + ')</span></div></div>';
+            }).join('');
+        }
+
+        // قائمة مختصرة باليوميات الواقعة في الشهر المختار، بترتيب تنازلي حسب العدد
+        function renderArchiveDailies(arch) {
+            var container = $('archiveDailiesList');
+            if (!container) return;
+            if (!state.archiveMonth) { container.innerHTML = ''; return; }
+            var counts = {};
+            arch.forEach(function (s) {
+                var d = (s['اليومية'] || '').trim();
+                if (d) counts[d] = (counts[d] || 0) + 1;
+            });
+            var items = Object.keys(counts).map(function (k) { return { name: k, count: counts[k] }; })
+                .sort(function (a, b) { return b.count - a.count; });
+            if (!items.length) {
+                container.innerHTML = '<p class="text-xs font-bold text-slate-400 pt-1">لا توجد يوميات مسجلة ضمن هذا الشهر</p>';
+                return;
+            }
+            container.innerHTML = items.map(function (it) {
+                return '<div class="flex items-center justify-between px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 text-xs font-bold"><span class="text-slate-700 dark:text-slate-200 truncate">' + esc(it.name) + '</span><span class="text-slate-400 shrink-0">' + enNum(it.count) + ' شحنة</span></div>';
+            }).join('');
+        }
+
+
+        function renderBarChart(rows) {
+            var dated = [];
+            rows.forEach(function (s) {
+                var d = parseDate(s['اليومية']);
+                if (d) dated.push(d);
+            });
+
+            var labelEl = $('barChartLabel');
+            var container = $('barChartContainer');
+
+            if (!dated.length) {
+                labelEl.textContent = 'لا توجد تواريخ صالحة للعرض';
+                container.innerHTML = emptyState('لا توجد بيانات تاريخية كافية للرسم البياني');
+                return;
+            }
+
+            /* استخراج كل الشهور المختلفة الموجودة فعليًا في البيانات، من الأحدث للأقدم */
+            var monthKeySet = {};
+            dated.forEach(function (d) {
+                var key = d.y * 100 + d.m;
+                monthKeySet[key] = { y: d.y, m: d.m };
+            });
+            var monthKeys = Object.keys(monthKeySet).map(Number).sort(function (a, b) { return b - a; });
+
+            var sectionsHtml = [];
+            var validSectionsCount = 0;
+
+            monthKeys.forEach(function (mk) {
+                var monthInfo = monthKeySet[mk];
+                var y = monthInfo.y, m = monthInfo.m;
+
+                var cur = {}; // day -> count
+                var prev = {}; // day -> count (الشهر السابق)
+                var py = m === 1 ? y - 1 : y;
+                var pm = m === 1 ? 12 : m - 1;
+                dated.forEach(function (d) {
+                    if (d.y === y && d.m === m) cur[d.d] = (cur[d.d] || 0) + 1;
+                    else if (d.y === py && d.m === pm) prev[d.d] = (prev[d.d] || 0) + 1;
+                });
+
+                var days = Object.keys(cur).map(Number).sort(function (a, b) { return a - b; });
+                if (!days.length) return; // لا توجد بيانات لهذا الشهر تحديدًا (احترازي)
+
+                validSectionsCount++;
+
+                var maxC = Math.max.apply(null, days.map(function (d) { return cur[d]; }).concat([1]));
+                var bw = 22, gap = 6;
+                var chartWidth = Math.max(days.length * (bw + gap) + 12, 340);
+                var H = 200;
+
+                var x = function (i) { return 6 + i * (bw + gap); };
+                var yBase = H - 20;
+                var barH = function (v) { return Math.max(2, (v / maxC) * (H - 44)); };
+
+                var bars = days.map(function (d, i) {
+                    var cVal = cur[d] || 0;
+                    var pVal = prev[d] || 0;
+                    var h = barH(cVal);
+                    var growth, growColor;
+                    if (pVal > 0) {
+                        growth = (cVal - pVal > 0 ? '+' : '') + Math.round(((cVal - pVal) / pVal) * 100) + '%';
+                        growColor = cVal >= pVal ? '#22c55e' : '#ef4444';
+                    } else {
+                        growth = cVal > 0 ? 'جديد' : '';
+                        growColor = '#22c55e';
+                    }
+                    return '<g>'
+                        + '<rect x="' + x(i) + '" y="' + (yBase - h) + '" width="' + bw + '" height="' + h + '" rx="4" fill="#22c55e"/>'
+                        + '<text x="' + (x(i) + bw / 2) + '" y="' + (yBase - h - 6) + '" text-anchor="middle" font-size="9" font-weight="700" class="bar-text">' + enNum(cVal) + '</text>'
+                        + '<text x="' + (x(i) + bw / 2) + '" y="' + (yBase + 14) + '" text-anchor="middle" font-size="9" fill="#94a3b8" font-weight="600">' + enNum(d) + '</text>'
+                        + (growth ? '<text x="' + (x(i) + bw / 2) + '" y="' + (yBase + 25) + '" text-anchor="middle" font-size="8" font-weight="800" fill="' + growColor + '">' + growth + '</text>' : '')
+                        + '</g>';
+                }).join('');
+
+                sectionsHtml.push(
+                    '<div class="mb-4">'
+                    + '<p class="text-xs text-slate-400 font-semibold mb-2">شهر ' + locMonth(m) + ' ' + enNum(y) + ' — المقارنة مع نفس اليوم في الشهر السابق</p>'
+                    + '<svg viewBox="0 0 ' + chartWidth + ' ' + H + '" class="block" style="min-width:340px;width:' + chartWidth + 'px;height:' + H + 'px">' + bars + '</svg>'
+                    + '</div>'
+                );
+            });
+
+            if (!validSectionsCount) {
+                labelEl.textContent = 'لا توجد بيانات كافية';
+                container.innerHTML = emptyState('لا توجد شحنات بتاريخ صالح للعرض');
+                return;
+            }
+
+            /* العنوان أعلى القسم أصبح عامًا بدل تخصيصه لشهر واحد، لأن كل شهر له عنوانه الخاص أسفل شارته الآن */
+            labelEl.textContent = validSectionsCount > 1 ? (enNum(validSectionsCount) + ' شهور معروضة') : '';
+            container.innerHTML = sectionsHtml.join('');
+        }
+
+        // =================================================================
+        // Init
+        // =================================================================
+        function renderAll() {
+            renderOverview();
+            renderUserList();
+
+        }
+
+        // إظهار التبويب الافتراضي (إحصائيات) عند التحميل
+        $('tab-overview').classList.remove('hidden');
+
+        $('adminName').textContent = currentUser.full_name || currentUser.username || 'المدير';
+        ensureData(false);
+
+        // ===== قائمة الهيدر (تعديل الحساب / تسجيل الخروج) =====
+        function toggleAdminMenu() {
+            var dd = $('adminDropdown');
+            if (!dd) return;
+            var wasHidden = dd.classList.contains('hidden');
+            dd.classList.toggle('hidden');
+            if (wasHidden) {
+                setTimeout(function () {
+                    document.addEventListener('click', closeAdminMenuOnOutside);
+                    document.addEventListener('keydown', closeAdminMenuOnEscape);
+                }, 0);
+            }
+        }
+
+        function closeAdminMenu() {
+            var dd = $('adminDropdown');
+            if (dd) dd.classList.add('hidden');
+            document.removeEventListener('click', closeAdminMenuOnOutside);
+            document.removeEventListener('keydown', closeAdminMenuOnEscape);
+        }
+
+        function closeAdminMenuOnOutside(e) {
+            var wrap = $('adminMenuWrap');
+            if (wrap && !wrap.contains(e.target)) closeAdminMenu();
+        }
+
+        function closeAdminMenuOnEscape(e) {
+            if (e.key === 'Escape') closeAdminMenu();
+        }
+
+        window.toggleAdminMenu = function () { toggleAdminMenu(); };
+
+        $('adminMenuWrap').addEventListener('click', function (e) {
+            e.stopPropagation();
+        });
+
+        // ===== نافذة تعديل حساب المدير الحالي (منفصلة تماماً عن userModal) =====
+        function openAdminSelfEdit() {
+            closeAdminMenu();
+            var base = currentUser || {};
+            $('aseName').value = base.full_name || base.username || '';
+            $('asePhone').value = base.phone || '';
+            $('aseEmail').value = base.email || '';
+            $('asePassword').value = '';
+            $('adminSelfEditModal').classList.remove('hidden');
+            $('adminSelfEditModal').classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+        }
+        window.adminSelfEdit = openAdminSelfEdit;
+
+        function closeAdminSelfEdit() {
+            $('adminSelfEditModal').classList.add('hidden');
+            $('adminSelfEditModal').classList.remove('flex');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        $('closeAdminSelfEditModal').addEventListener('click', closeAdminSelfEdit);
+        $('aseCancelBtn').addEventListener('click', closeAdminSelfEdit);
+        $('adminSelfEditModal').addEventListener('click', function (e) {
+            if (e.target === $('adminSelfEditModal')) closeAdminSelfEdit();
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && !$('adminSelfEditModal').classList.contains('hidden')) closeAdminSelfEdit();
+        });
+
+        $('adminSelfEditForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            var name = $('aseName').value.trim();
+            var phone = $('asePhone').value.trim();
+            var email = $('aseEmail').value.trim();
+            var password = $('asePassword').value;
+
+            if (!name) return Swal.fire({ icon: 'warning', title: 'بيانات ناقصة', text: 'يرجى إدخال الاسم' });
+            if (!phone) return Swal.fire({ icon: 'warning', title: 'بيانات ناقصة', text: 'يرجى إدخال رقم الموبايل' });
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                return Swal.fire({ icon: 'warning', title: 'بريد غير صحيح', text: 'يرجى إدخال بريد إلكتروني صحيح' });
+            }
+            if (password && password.length < 6) {
+                return Swal.fire({ icon: 'warning', title: 'كلمة مرور ضعيفة', text: 'كلمة المرور يجب ألا تقل عن 6 أحرف' });
+            }
+
+            var submitBtn = $('aseSubmitBtn');
+            submitBtn.disabled = true;
+            $('aseSubmitLabel').textContent = 'جاري الحفظ...';
+
+            try {
+                // الـ payload يقتصر على الحقول المسموح للمدير تعديلها في حسابه فقط
+                // (لا يُرسل username/role/approved إطلاقاً)
+                var payload = { full_name: name, phone: phone, email: email || null };
+                if (password) payload.password = await hashPasswordIfNeeded(password);
+
+                var res = await supabaseClient.from(CONFIG.TABLES.USERS).update(payload).eq('id', currentUser.id);
+                if (res.error) throw res.error;
+
+                // تحديث الجلسة المحلية مع الحفاظ على role/approved/username القائمة
+                var stored = null;
+                try { stored = JSON.parse(localStorage.getItem('user') || 'null'); } catch (err) { stored = null; }
+                var updated = Object.assign({}, stored || {});
+                updated.full_name = name;
+                updated.phone = phone;
+                updated.email = email || '';
+                localStorage.setItem('user', JSON.stringify(updated));
+                currentUser = updated;
+                $('adminName').textContent = currentUser.full_name || currentUser.username || 'المدير';
+
+                await refreshUsersOnly();
+                if (typeof renderAll === 'function') renderAll();
+                closeAdminSelfEdit();
+                toast('success', 'تم تحديث بيانات حسابك');
+            } catch (err) {
+                toast('error', err.message || 'فشل حفظ التعديلات');
+            } finally {
+                submitBtn.disabled = false;
+                $('aseSubmitLabel').textContent = 'حفظ التعديلات';
+            }
+        });
+    })();
+</script>
+<script>
+    // تبويب تسكين الشحنات — إضافة معزولة، لا تمس أي وظيفة قائمة
+    window.showHousingTab = function () {
+        ['overview', 'accounts', 'housing'].forEach(function (k) {
+            var p = document.getElementById('tab-' + k);
+            if (p) p.classList.add('hidden');
+        });
+        var panel = document.getElementById('tab-housing');
+        if (panel) panel.classList.remove('hidden');
+        document.querySelectorAll('#adminTabs .sidebar-tab').forEach(function (b) {
+            b.classList.toggle('active', b.dataset.tab === 'housing');
+        });
+        var fr = document.getElementById('housingFrame');
+        if (fr && (!fr.dataset.loaded || fr.src === 'about:blank')) {
+            fr.dataset.loaded = '1';
+            /* cache-bust: ضمان تحميل احدث نسخة من صفحة تسكين الشحنات */
+            fr.src = 'housing-dashboard.html?v=' + Date.now();
+        }
+        try { localStorage.setItem('adminDashboardTab', 'housing'); } catch (e) { }
+    };
+
+    /* استرجاع آخر تبويب كان مفتوحاً بعد تحديث الصفحة (بدل الرجوع لإحصائيات دائماً) */
+    (function () {
+        var saved = null;
+        try { saved = localStorage.getItem('adminDashboardTab'); } catch (e) { }
+        if (saved === 'housing') {
+            window.showHousingTab();
+        } else if (saved === 'overview' || saved === 'accounts' ) {
+            window.switchTab(saved);
+        }
+    })();
+</script>
+
+<script>
+    // أداة توحيد أسماء الراسلين — إضافة معزولة، لا تمس أي وظيفة قائمة
+    (function () {
+        var user = null;
+        try { user = JSON.parse(localStorage.getItem('user') || 'null'); } catch (e) {}
+        var card = document.getElementById('senderUnifyCard');
+        if (!card) return;
+        if (user && user.role === 'admin') card.classList.remove('hidden');
+    })();
+
+    window._senderGroupsCache = [];
+
+    window.analyzeSenderGroups = async function () {
+        var btn = document.getElementById('senderAnalyzeBtn');
+        var statusEl = document.getElementById('senderGroupsStatus');
+        var listEl = document.getElementById('senderGroupsList');
+        try {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحليل...';
+            statusEl.textContent = 'جاري جلب البيانات...';
+            listEl.innerHTML = '';
+            var client = getSharedSupabaseClient();
+            var result = await client.from(CONFIG.TABLES.SHIPMENTS).select('الراسل').not('الراسل', 'is', null);
+            if (result.error) throw new Error(result.error.message);
+            var data = result.data || [];
+            var counts = {};
+            data.forEach(function (r) {
+                var raw = String(r['الراسl'] || '').trim();
+                if (!raw) return;
+                counts[raw] = (counts[raw] || 0) + 1;
+            });
+            var groups = {};
+            Object.keys(counts).forEach(function (raw) {
+                var key = normalizeSenderName(raw);
+                if (!key) return;
+                if (!groups[key]) groups[key] = {};
+                groups[key][raw] = counts[raw];
+            });
+            var candidates = Object.keys(groups).map(function (key) {
+                return { key: key, variants: groups[key] };
+            }).filter(function (g) {
+                return Object.keys(g.variants).length > 1;
+            }).sort(function (a, b) {
+                return Object.keys(b.variants).length - Object.keys(a.variants).length;
+            });
+            window._senderGroupsCache = candidates;
+            if (!candidates.length) {
+                statusEl.textContent = 'لا توجد مجموعات مكررة — كل الأسماء موحدة بالفعل.';
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> تم';
+                return;
+            }
+            statusEl.textContent = candidates.length + ' مجموعة مرشحة للمراجعة.';
+            listEl.innerHTML = candidates.map(function (g, gi) {
+                var totalRows = Object.values(g.variants).reduce(function (a, b) { return a + b; }, 0);
+                var variantCount = Object.keys(g.variants).length;
+                var options = Object.keys(g.variants).map(function (v) {
+                    return '<label class="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-300 cursor-pointer p-1 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/60">'
+                        + '<input type="radio" name="sg-' + gi + '" value="' + esc(v) + '" ' + (v === Object.keys(g.variants)[0] ? 'checked' : '') + '>'
+                        + '<span>' + esc(v) + '</span>'
+                        + '<span class="text-slate-400 font-normal">(' + enNum(counts[v]) + ')</span>'
+                        + '</label>';
+                }).join('');
+                return '<div class="border rounded-xl p-3 space-y-2 bg-white dark:bg-slate-900/40" data-group="' + gi + '">'
+                    + '<div class="flex items-center justify-between gap-2 flex-wrap">'
+                    + '<div class="text-xs font-extrabold text-slate-700 dark:text-white">'
+                    + 'المفتاح: ' + esc(g.key) + ' — ' + enNum(totalRows) + ' شحنة / ' + enNum(variantCount) + ' صيغة'
+                    + '</div>'
+                    + '<button onclick="mergeSenderGroup(' + gi + ')" class="btn-primary text-xs min-h-[36px] flex items-center gap-1"><i class="fas fa-code-merge"></i> دمج</button>'
+                    + '</div>'
+                    + '<div class="grid grid-cols-1 sm:grid-cols-2 gap-1">' + options + '</div>'
+                    + '</div>';
+            }).join('');
+        } catch (err) {
+            statusEl.textContent = 'خطأ: ' + (err.message || err);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-search"></i> تحليل أسماء الراسلين';
+        }
+    };
+
+    window.mergeSenderGroup = async function (gi) {
+        var g = window._senderGroupsCache[gi];
+        if (!g) return;
+        var container = document.querySelector('#senderGroupsList [data-group="' + gi + '"]');
+        var radio = container ? container.querySelector('input[type=radio]:checked') : null;
+        var chosen = radio ? radio.value : null;
+        var variants = Object.keys(g.variants);
+        var others = variants.filter(function (v) { return v !== chosen; });
+        if (!chosen || !others.length) return;
+        var totalRows = Object.values(g.variants).reduce(function (a, b) { return a + b; }, 0);
+        var variantLines = variants.map(function (v) {
+            var extra = v === chosen ? ' ← سيصبح القيمة الموحدة' : '';
+            return '• ' + esc(v) + ' (' + enNum(g.variants[v]) + ')' + extra;
+        }).join('<br>');
+        var isConfirmed = (await Swal.fire({
+            title: 'تأكيد دمج المجموعة',
+            html: '<div class="text-right" style="font-size:0.85rem;">' + variantLines + '</div><div class="mt-2 fw-bold">يتأثر حتى ' + enNum(totalRows) + ' شحنة</div>',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'نعم، ادمج',
+            cancelButtonText: 'إلغاء',
+            confirmButtonColor: '#16a34a'
+        })).isConfirmed;
+        if (!isConfirmed) return;
+        try {
+            var client = getSharedSupabaseClient();
+            var updResult = await client.from(CONFIG.TABLES.SHIPMENTS)
+                .update({ 'الراسl': chosen })
+                .in('الراسl', variants)
+                .select('id');
+            if (updResult.error) throw new Error(updResult.error.message);
+            var affected = (updResult.data || []).length;
+            await Swal.fire({
+                icon: 'success',
+                title: 'تم الدمج',
+                text: 'عدد الصفوف المحدثة: ' + enNum(affected),
+                confirmButtonColor: '#16a34a'
+            });
+            analyzeSenderGroups();
+        } catch (err) {
+            Swal.fire({ icon: 'error', title: 'فشل الدمج', text: err.message || String(err), confirmButtonColor: '#16a34a' });
+        }
+    };
+</script>
+</body>
+</html>
+
+
+
+
+
+
